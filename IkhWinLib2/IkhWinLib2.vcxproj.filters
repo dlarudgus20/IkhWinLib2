@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="IkhWinLib2">
+      <UniqueIdentifier>{ef273f96-9219-46a2-beea-5b8230713eba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IkhWinLib2\Exceptions">
+      <UniqueIdentifier>{f4cc89fe-0096-4861-a4ef-6b7241cbe40c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IkhWinLib2\Controls">
+      <UniqueIdentifier>{192e4551-3358-45d3-8590-682d1eaa9f41}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CObject.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\Defines.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CApplication.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CMsgTarget.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CWndClass.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CException.h">
+      <Filter>IkhWinLib2\Exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CSystemError.h">
+      <Filter>IkhWinLib2\Exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CMainWindow.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\MsgCracker.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CControlWnd.h">
+      <Filter>IkhWinLib2\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CEditCtrl.h">
+      <Filter>IkhWinLib2\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\EnableVisualStyle.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CComboBoxCtrl.h">
+      <Filter>IkhWinLib2\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\IkhWinLib2.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CWindow.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\stlgc.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\Utility.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\BoehmGC.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\FnEvent.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\NonCopyable.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CLogicError.h">
+      <Filter>IkhWinLib2\Exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CThreadOpenGLWnd.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CIdleOpenGLWnd.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\COpenGLWnd.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CWin32Thread.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CApplication.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CWindow.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CMsgTarget.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CWndClass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CMainWindow.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CEditCtrl.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CComboBoxCtrl.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CThreadOpenGLWnd.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CIdleOpenGLWnd.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="COpenGLWnd.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CWin32Thread.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

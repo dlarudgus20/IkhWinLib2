@@ -1,0 +1,13 @@
+﻿#include <IkhWinLib2/CWindow.h>
+#include <IkhWinLib2/CWndClass.h>
+using namespace IkhProgram::IkhWinLib2;
+
+void CreateWnd(CWindow *pWnd)
+{
+	pWnd->CreateEx(
+		WS_EX_TOPMOST
+		CWndClass(),
+		L"Test Window",
+		WS_OVERLAPPEDWINDOW
+		);
+}
