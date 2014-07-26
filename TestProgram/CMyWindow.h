@@ -1,4 +1,4 @@
-// Copyright (c) 2014, ÀÓ°æÇö
+ï»¿// Copyright (c) 2014, ìž„ê²½í˜„
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
 #include <IkhWinLib2/FnEvent.h>
 using namespace IkhProgram::IkhWinLib2;
 
-class CMyWindow : public CIdleOpenGLWnd
+class CMyWindow final : public CIdleOpenGLWnd
 {
 	DECLARE_MSGMAP();
 public:

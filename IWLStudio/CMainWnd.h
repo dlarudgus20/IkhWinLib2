@@ -22,19 +22,16 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "CMyApp.h"
+#include <IkhWinLib2/CMainWindow.h>
+using namespace IkhProgram::IkhWinLib2;
 
-#include "CMyWindow.h"
-
-IKHWINLIB2_APP_CLS(CMyApp)
-#include <IkhWinLib2/EnableVisualStyle.h>
-
-int CMyApp::Main()
+class CMainWnd final : public CMainWindow
 {
-	CMyWindow *pWnd = new CMyWindow;
+	DECLARE_MSGMAP();
+public:
+	void Create();
 
-	pWnd->Create();
-	ShowWindow(*pWnd, SW_NORMAL);
-
-	return (int)Run();
-}
+protected:
+	BOOL OnCreate(LPCREATESTRUCT lpcs);
+	void OnDestroy();
+};

@@ -22,19 +22,30 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "CMyApp.h"
+#include <IkhWinLib2/CWndClass.h>
 
-#include "CMyWindow.h"
+#include "CMainWnd.h"
 
-IKHWINLIB2_APP_CLS(CMyApp)
-#include <IkhWinLib2/EnableVisualStyle.h>
+BEGIN_MSGMAP(CMainWnd, CMainWindow)
+	MSGMAP_WM_CREATE(OnCreate)
+	MSGMAP_WM_DESTROY(OnDestroy)
+END_MSGMAP(CMainWnd, CMainWindow)
 
-int CMyApp::Main()
+void CMainWnd::Create()
 {
-	CMyWindow *pWnd = new CMyWindow;
-
-	pWnd->Create();
-	ShowWindow(*pWnd, SW_NORMAL);
-
-	return (int)Run();
+	CWindow::Create(CWndClass(), L"IkhWinLib2 Studio", WS_OVERLAPPEDWINDOW);
 }
+
+BOOL CMainWnd::OnCreate(LPCREATESTRUCT lpcs)
+{
+	if (!MSG_FORWARD_WM_CREATE(CMainWindow, lpcs))
+		return FALSE;
+
+	return TRUE;
+}
+
+void CMainWnd::OnDestroy()
+{
+	MSG_FORWARD_WM_DESTROY(CMainWindow);
+}
+

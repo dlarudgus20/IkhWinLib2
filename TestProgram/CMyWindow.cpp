@@ -1,4 +1,4 @@
-// Copyright (c) 2014, 임경현
+﻿// Copyright (c) 2014, 임경현
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
@@ -65,10 +65,28 @@ BOOL CMyWindow::OnCreate(LPCREATESTRUCT lpcs)
 	return TRUE;
 }
 
+class TestGCFeature : public CObject
+{
+public:
+	TestGCFeature()
+	{
+		OutputDebugString(
+			(std::to_wstring(GetTickCount()) + L" >> TestGCFeature::TestGCFeature()\n").c_str()
+			);
+	}
+	~TestGCFeature()
+	{
+		OutputDebugString(
+			(std::to_wstring(GetTickCount()) + L" >> TestGCFeature::~TestGCFeature()\n").c_str()
+			);
+	}
+};
 void CMyWindow::OnLButtonDown(BOOL fDoubleClick, int x, int y, UINT keyflags)
 {
 	auto fu = boost::async(
 		WrapGCThread([this, fDoubleClick] {
+			GCPtr<TestGCFeature> *test = GCNew<TestGCFeature>();
+
 			Sleep(3000);
 			MessageBox(*this, L"메시지!", L"박스?", MB_OK | MB_ICONINFORMATION);
 

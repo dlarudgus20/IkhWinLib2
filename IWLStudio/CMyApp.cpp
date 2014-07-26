@@ -1,4 +1,4 @@
-// Copyright (c) 2014, ÀÓ°æÇö
+ï»¿// Copyright (c) 2014, ìž„ê²½í˜„
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
@@ -24,10 +24,17 @@
 
 #include "CMyApp.h"
 
+#include "CMainWnd.h"
+
 IKHWINLIB2_APP_CLS(CMyApp)
 #include <IkhWinLib2/EnableVisualStyle.h>
 
 int CMyApp::Main()
 {
-	return 0;
+	CMainWnd wnd;
+
+	wnd.Create();
+	ShowWindow(wnd, SW_NORMAL);
+
+	return (int)Run();
 }
