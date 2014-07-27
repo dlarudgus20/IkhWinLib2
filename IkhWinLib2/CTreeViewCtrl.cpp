@@ -22,21 +22,18 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
-
-#include "CWindow.h"
-#include "IControl.h"
+#include "stdafx.h"
+#include "IkhWinLib2/CTreeViewCtrl.h"
+#include "IkhWinLib2/CWndClass.h"
 
 BEGIN_IKHWINLIB2()
 
-class CDateTimePickCtrl : public CWindow, public virtual IControl
+void CTreeViewCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle,
+	int x, int y, int nWidth, int nHeight, int id, HWND hWndParent)
 {
-public:
-	using IControl::Create;
-	using IControl::CreateEx;
-
-	virtual void CreateEx(DWORD dwExStyle, DWORD dwStyle,
-		int x, int y, int nWidth, int nHeight, int id, HWND hWndParent) override;
-};
+	CWindow::CreateEx(dwExStyle, WC_TREEVIEW, NULL, dwStyle,
+		x, y, nWidth, nHeight, hWndParent, (HMENU)id);
+}
 
 END_IKHWINLIB2()
+

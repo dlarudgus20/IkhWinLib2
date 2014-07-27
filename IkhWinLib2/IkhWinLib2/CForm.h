@@ -81,7 +81,7 @@ private:
 		ChildIterator ZOrderPrev, ZOrderNext;
 	};
 
-	ChildList m_vtWindow;
+	ChildList m_ChildList;
 
 	bool m_bLayoutIsSuspended = false;
 	bool m_bLayoutRequired = false;
@@ -111,7 +111,7 @@ public:
 	Child AddChild(CWindow *pWnd);
 	void RemoveChild(Child child);
 	Child FindChild(CWindow *pWnd);
-	typedef boost::optional<Child> TargetForm;
+	typedef boost::optional<Child> NoTargetOpt;
 	void DockChild(Child child, boost::optional<Child> target, Dock dock, int gap);
 	void MoveChild(Child child, RECT pos);
 
@@ -175,7 +175,7 @@ inline void CForm::_updateLayout()
 inline CForm::ChildIterator CForm::_findChildInfo(CWindow *pChild)
 {
 	auto f = [pChild](const std::shared_ptr<ChildInfo> &sp) { return sp->pWnd == pChild; };
-	return std::find_if(m_vtWindow.begin(), m_vtWindow.end(), f);
+	return std::find_if(m_ChildList.begin(), m_ChildList.end(), f);
 }
 
 END_IKHWINLIB2()

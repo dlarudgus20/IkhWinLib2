@@ -24,7 +24,11 @@
 
 #include <IkhWinLib2/CForm.h>
 #include <IkhWinLib2/CListBoxCtrl.h>
+#include <IkhWinLib2/CTreeViewCtrl.h>
+#include <IkhWinLib2/CPropViewCtrl.h>
 using namespace IkhProgram::IkhWinLib2;
+
+#include "CDesignerCtrl.h"
 
 class CMainWnd final : public CForm
 {
@@ -34,7 +38,9 @@ public:
 
 private:
 	CListBoxCtrl m_ToolList;
-	
+	CDesignerCtrl m_DesignerCtrl;
+	CTreeViewCtrl m_ProjTree;
+	CPropViewCtrl m_PropView;
 
 protected:
 	BOOL OnCreate(LPCREATESTRUCT lpcs);

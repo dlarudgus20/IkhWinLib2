@@ -33,7 +33,7 @@ END_MSGMAP(CMainWnd, CForm)
 
 void CMainWnd::Create()
 {
-	CWindow::Create(CWndClass(), L"IkhWinLib2 Studio", WS_OVERLAPPEDWINDOW);
+	CWindow::Create(CWndClass(), L"IkhWinLib2 Studio v0.0.1", WS_OVERLAPPEDWINDOW);
 }
 
 BOOL CMainWnd::OnCreate(LPCREATESTRUCT lpcs)
@@ -42,9 +42,31 @@ BOOL CMainWnd::OnCreate(LPCREATESTRUCT lpcs)
 		return FALSE;
 
 	SuspendLayout();
-
-
-
+	// Create
+	m_ToolList.Create(WS_CHILD | WS_VISIBLE | WS_BORDER, 0, 0, 100, 100, 0, *this);
+	auto chd_ToolList = AddChild(&m_ToolList);
+	m_DesignerCtrl.Create(WS_CHILD | WS_VISIBLE | WS_BORDER, 0, 0, 100, 100, 1, *this);
+	auto chd_DesignerCtrl = AddChild(&m_DesignerCtrl);
+	m_ProjTree.Create(WS_CHILD | WS_VISIBLE | WS_BORDER, 0, 0, 100, 100, 2, *this);
+	auto chd_ProjTree = AddChild(&m_ProjTree);
+	m_PropView.Create(WS_CHILD | WS_VISIBLE | WS_BORDER, 0, 0, 100, 100, 3, *this);
+	auto chd_PropView = AddChild(&m_PropView);
+	// m_ToolList
+	DockChild(chd_ToolList, CForm::NoTargetOpt(), CForm::DockLeft, 10);
+	DockChild(chd_ToolList, CForm::NoTargetOpt(), CForm::DockTop, 10);
+	DockChild(chd_ToolList, CForm::NoTargetOpt(), CForm::DockBottom, 10);
+	// m_DesignerCtrl
+	DockChild(chd_DesignerCtrl, chd_ToolList, CForm::DockLeft, 10);
+	DockChild(chd_DesignerCtrl, CForm::NoTargetOpt(), CForm::DockTop, 10);
+	DockChild(chd_DesignerCtrl, chd_ProjTree, CForm::DockRight, 10);
+	DockChild(chd_DesignerCtrl, CForm::NoTargetOpt(), CForm::DockBottom, 10);
+	// m_ProjTree
+	DockChild(chd_ProjTree, CForm::NoTargetOpt(), CForm::DockTop, 10);
+	DockChild(chd_ProjTree, CForm::NoTargetOpt(), CForm::DockRight, 10);
+	DockChild(chd_ProjTree, chd_PropView, CForm::DockBottom, 10);
+	// m_PropView
+	DockChild(chd_PropView, CForm::NoTargetOpt(), CForm::DockBottom, 10);
+	DockChild(chd_PropView, CForm::NoTargetOpt(), CForm::DockRight, 10);
 	ResumeLayout();
 
 	return TRUE;

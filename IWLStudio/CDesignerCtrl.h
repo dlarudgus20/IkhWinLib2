@@ -30,6 +30,9 @@ class CDesignerCtrl final : public CForm, public virtual IControl
 {
 	DECLARE_MSGMAP();
 public:
+	using IControl::Create;
+	using IControl::CreateEx;
+
 	virtual void CreateEx(DWORD dwExStyle, DWORD dwStyle,
 		int x, int y, int nWidth, int nHeight, int id, HWND hWndParent) override;
 

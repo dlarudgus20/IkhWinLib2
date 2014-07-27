@@ -29,14 +29,21 @@
 
 BEGIN_IKHWINLIB2()
 
-class CDateTimePickCtrl : public CWindow, public virtual IControl
+class CSplitterCtrl : public CWindow, public virtual IControl
 {
+	DECLARE_MSGMAP();
 public:
 	using IControl::Create;
 	using IControl::CreateEx;
 
 	virtual void CreateEx(DWORD dwExStyle, DWORD dwStyle,
 		int x, int y, int nWidth, int nHeight, int id, HWND hWndParent) override;
+
+protected:
+	BOOL OnCreate(LPCREATESTRUCT lpcs);
+	void OnPaint();
+	void OnSize(UINT state, int cx, int cy);
+	void OnDestroy();
 };
 
 END_IKHWINLIB2()

@@ -29,7 +29,7 @@
 
 BEGIN_IKHWINLIB2()
 
-class CDateTimePickCtrl : public CWindow, public virtual IControl
+class CTreeViewCtrl : public CWindow, public virtual IControl
 {
 public:
 	using IControl::Create;
@@ -40,3 +40,4 @@ public:
 };
 
 END_IKHWINLIB2()
+

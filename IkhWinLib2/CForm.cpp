@@ -42,7 +42,7 @@ CForm::Child CForm::AddChild(CWindow *pChild)
 	assert(this != NULL);
 	assert(GetHWND() != NULL);
 
-	if (_findChildInfo(pChild) != m_vtWindow.end())
+	if (_findChildInfo(pChild) != m_ChildList.end())
 		throw CInvalidChildError(L"pChild는 이미 이 폼의 차일드입니다.");
 
 	HWND hParent = GetParent(*pChild);
@@ -51,24 +51,24 @@ CForm::Child CForm::AddChild(CWindow *pChild)
 		SetParent(*pChild, *this);
 	}
 
-	m_vtWindow.push_back(
-		std::make_shared<ChildInfo>(pChild, m_vtWindow.end())
+	m_ChildList.push_back(
+		std::make_shared<ChildInfo>(pChild, m_ChildList.end())
 		);
 
-	if (m_vtWindow.size() >= 2)
+	if (m_ChildList.size() >= 2)
 	{
-		auto newone = std::prev(m_vtWindow.end());
+		auto newone = std::prev(m_ChildList.end());
 		auto oldone = std::prev(newone);
 		(*newone)->ZOrderPrev = oldone;
 		(*oldone)->ZOrderNext = newone;
 	}
 
-	auto it = std::prev(m_vtWindow.end());
-	pChild->evtDestroy += m_vtWindow.back()->efpDestroy.set(
-		[this, it](CWindow *) { m_vtWindow.erase(it); }
+	auto it = std::prev(m_ChildList.end());
+	pChild->evtDestroy += m_ChildList.back()->efpDestroy.set(
+		[this, it](CWindow *) { m_ChildList.erase(it); }
 	);
 
-	pChild->evtPosSizeChanged += m_vtWindow.back()->efpSizeChanged.set(
+	pChild->evtPosSizeChanged += m_ChildList.back()->efpSizeChanged.set(
 		[this, it](CWindow *) { if (!m_bLayouting) ApplyMovedChild(*it); }
 	);
 
@@ -82,7 +82,7 @@ void CForm::RemoveChild(CForm::Child child)
 	assert(this != NULL);
 	assert(GetHWND() != NULL);
 
-	m_vtWindow.erase(child.m_it);
+	m_ChildList.erase(child.m_it);
 
 	_updateLayout();
 }
@@ -93,7 +93,7 @@ CForm::Child CForm::FindChild(CWindow *pChild)
 	assert(GetHWND() != NULL);
 
 	auto it = _findChildInfo(pChild);
-	if (it == m_vtWindow.end())
+	if (it == m_ChildList.end())
 		throw CInvalidChildError();
 
 	return Child(it);
@@ -156,7 +156,7 @@ void CForm::PerformLayout()
 	GetClientRect(*this, &ClientRt);
 
 	stlgc::set<std::shared_ptr<ChildInfo> > unused;
-	for (const auto &sp : m_vtWindow)
+	for (const auto &sp : m_ChildList)
 	{
 		if (!sp->fProcessed)
 		{
@@ -166,8 +166,8 @@ void CForm::PerformLayout()
 	}
 
 	m_bLayouting = true;
-	HDWP hDefer = BeginDeferWindowPos((int)(unsigned)m_vtWindow.size());
-	for (const auto &sp : m_vtWindow)
+	HDWP hDefer = BeginDeferWindowPos((int)(unsigned)m_ChildList.size());
+	for (const auto &sp : m_ChildList)
 	{
 		DeferMoveChild(hDefer, sp);
 		sp->fProcessed = false;
@@ -180,7 +180,7 @@ void CForm::PerformLayout()
 void CForm::DeferMoveChild(HDWP hDefer, const std::shared_ptr<CForm::ChildInfo> &sp)
 {
 	HWND hWndInsertAfter;
-	if (sp->ZOrderPrev != m_vtWindow.end())
+	if (sp->ZOrderPrev != m_ChildList.end())
 		hWndInsertAfter = (*sp->ZOrderPrev)->pWnd->GetHWND();
 	else
 		hWndInsertAfter = NULL;
@@ -206,6 +206,8 @@ void CForm::RecursiveLayout(const std::shared_ptr<CForm::ChildInfo> &pci, const 
 
 	bool left_modified = false;
 	bool top_modified = false;
+	bool right_modified = false;
+	bool bottom_modified = false;
 
 	// TARGET_CHILD
 	if (pci->Dock[DockLeft].TargetKind == TARGET_CHILD)
@@ -219,6 +221,7 @@ void CForm::RecursiveLayout(const std::shared_ptr<CForm::ChildInfo> &pci, const 
 			rt.left += delta;
 			rt.right += delta;
 			left_modified = true;
+			right_modified = true;
 		}
 		else
 		{
@@ -236,6 +239,7 @@ void CForm::RecursiveLayout(const std::shared_ptr<CForm::ChildInfo> &pci, const 
 			rt.top += delta;
 			rt.bottom += delta;
 			top_modified = true;
+			bottom_modified = true;
 		}
 		else
 		{
@@ -253,6 +257,7 @@ void CForm::RecursiveLayout(const std::shared_ptr<CForm::ChildInfo> &pci, const 
 			rt.right += delta;
 			if (!left_modified)
 				rt.left += delta;
+			right_modified = true;
 		}
 		else
 		{
@@ -270,6 +275,7 @@ void CForm::RecursiveLayout(const std::shared_ptr<CForm::ChildInfo> &pci, const 
 			rt.bottom += delta;
 			if (!top_modified)
 				rt.top += delta;
+			bottom_modified = true;
 		}
 		else
 		{
@@ -282,14 +288,16 @@ void CForm::RecursiveLayout(const std::shared_ptr<CForm::ChildInfo> &pci, const 
 	{
 		LONG delta = pci->Dock[DockLeft].Gap - rt.left;
 		rt.left = pci->Dock[DockLeft].Gap;
-		rt.right += delta;
+		if (!right_modified)
+			rt.right += delta;
 		left_modified = true;
 	}
 	if (pci->Dock[DockTop].TargetKind == TARGET_FORM)
 	{
 		LONG delta = pci->Dock[DockTop].Gap - rt.top;
 		rt.top = pci->Dock[DockTop].Gap;
-		rt.bottom += delta;
+		if (!bottom_modified)
+			rt.bottom += delta;
 		top_modified = true;
 	}
 	if (pci->Dock[DockRight].TargetKind == TARGET_FORM)

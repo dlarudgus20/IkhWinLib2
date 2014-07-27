@@ -138,6 +138,15 @@
     <ClInclude Include="IkhWinLib2\IControl.h">
       <Filter>IkhWinLib2\Controls</Filter>
     </ClInclude>
+    <ClInclude Include="IkhWinLib2\CTreeViewCtrl.h">
+      <Filter>IkhWinLib2\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CPropViewCtrl.h">
+      <Filter>IkhWinLib2\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CSplitterCtrl.h">
+      <Filter>IkhWinLib2\Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -201,6 +210,15 @@
       <Filter>소스 파일\Controls</Filter>
     </ClCompile>
     <ClCompile Include="CDateTimePickCtrl.cpp">
+      <Filter>소스 파일\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="CTreeViewCtrl.cpp">
+      <Filter>소스 파일\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="CPropViewCtrl.cpp">
+      <Filter>소스 파일\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="CSplitterCtrl.cpp">
       <Filter>소스 파일\Controls</Filter>
     </ClCompile>
   </ItemGroup>

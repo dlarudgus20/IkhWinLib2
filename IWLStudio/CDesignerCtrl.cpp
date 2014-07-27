@@ -28,10 +28,10 @@
 
 static CWndClass s_WndClass(L"DesignerCtrl");
 
-BEGIN_MSGMAP(CDesignerCtrl, CControlWnd)
+BEGIN_MSGMAP(CDesignerCtrl, CForm)
 	MSGMAP_WM_CREATE(OnCreate)
 	MSGMAP_WM_DESTROY(OnDestroy)
-END_MSGMAP(CDesignerCtrl, CControlWnd)
+END_MSGMAP(CDesignerCtrl, CForm)
 
 void CDesignerCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle,
 	int x, int y, int nWidth, int nHeight, int id, HWND hWndParent)
@@ -42,7 +42,7 @@ void CDesignerCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle,
 
 BOOL CDesignerCtrl::OnCreate(LPCREATESTRUCT lpcs)
 {
-	if (!MSG_FORWARD_WM_CREATE(CControlWnd, lpcs))
+	if (!MSG_FORWARD_WM_CREATE(CForm, lpcs))
 		return FALSE;
 
 	return TRUE;
@@ -50,5 +50,5 @@ BOOL CDesignerCtrl::OnCreate(LPCREATESTRUCT lpcs)
 
 void CDesignerCtrl::OnDestroy()
 {
-	MSG_FORWARD_WM_DESTROY(CControlWnd);
+	MSG_FORWARD_WM_DESTROY(CForm);
 }

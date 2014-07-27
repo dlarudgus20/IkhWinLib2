@@ -22,21 +22,52 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
+#include "stdafx.h"
+#include "IkhWinLib2/CSplitterCtrl.h"
+#include "IkhWinLib2/CWndClass.h"
+using namespace IkhProgram::IkhWinLib2;
 
-#include "CWindow.h"
-#include "IControl.h"
+static CWndClass s_WndClass(L"IkhProgram::IkhWinLib2::CSplitterCtrl");
 
 BEGIN_IKHWINLIB2()
 
-class CDateTimePickCtrl : public CWindow, public virtual IControl
-{
-public:
-	using IControl::Create;
-	using IControl::CreateEx;
+BEGIN_MSGMAP(CSplitterCtrl, CWindow)
 
-	virtual void CreateEx(DWORD dwExStyle, DWORD dwStyle,
-		int x, int y, int nWidth, int nHeight, int id, HWND hWndParent) override;
-};
+END_MSGMAP(CSplitterCtrl, CWindow)
+
+void CSplitterCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle,
+	int x, int y, int nWidth, int nHeight, int id, HWND hWndParent)
+{
+	CWindow::CreateEx(dwExStyle, s_WndClass, NULL, dwStyle,
+		x, y, nWidth, nHeight, hWndParent, (HMENU)id);
+}
+
+BOOL CSplitterCtrl::OnCreate(LPCREATESTRUCT lpcs)
+{
+	if (!MSG_FORWARD_WM_CREATE(CWindow, lpcs))
+		return FALSE;
+
+	return TRUE;
+}
+
+void CSplitterCtrl::OnPaint()
+{
+	PAINTSTRUCT ps;
+	BeginPaint(*this, &ps);
+
+	;
+
+	EndPaint(*this, &ps);
+}
+
+void CSplitterCtrl::OnSize(UINT state, int cx, int cy)
+{
+	MSG_FORWARD_WM_SIZE(CWindow, state, cx, cy);
+}
+
+void CSplitterCtrl::OnDestroy()
+{
+	MSG_FORWARD_WM_DESTROY(CWindow);
+}
 
 END_IKHWINLIB2()

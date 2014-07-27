@@ -29,7 +29,7 @@
 
 BEGIN_IKHWINLIB2()
 
-class CDateTimePickCtrl : public CWindow, public virtual IControl
+class CPropViewCtrl : public CWindow, public virtual IControl
 {
 public:
 	using IControl::Create;

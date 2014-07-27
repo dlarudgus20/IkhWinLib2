@@ -32,6 +32,9 @@ BEGIN_IKHWINLIB2()
 class CProgressCtrl : public CWindow, public virtual IControl
 {
 public:
+	using IControl::Create;
+	using IControl::CreateEx;
+
 	virtual void CreateEx(DWORD dwExStyle, DWORD dwStyle,
 		int x, int y, int nWidth, int nHeight, int id, HWND hWndParent) override;
 };
