@@ -58,9 +58,11 @@ public:
 private:
 	stlgc::vector<FnObjType> _m_lstFunc;
 	stlgc::vector<std::weak_ptr<FnObjType> > _m_lstFuncPtr;
-	std::recursive_mutex _m_mu;
+	std::shared_ptr<std::recursive_mutex> _m_pmu;
 
 public:
+	FnEvent() : _m_pmu(std::make_shared<std::recursive_mutex>()) { }
+
 	/**
 	 * @brief 이벤트에 핸들러를 추가합니다.
 	 * @tparam F 핸들러의 타입입니다.
@@ -72,7 +74,7 @@ public:
 		>
 	FnEvent &operator +=(F fn)
 	{
-		SYN_LOCK_GUARD(_m_mu);
+		SYN_LOCK_GUARD(*_m_pmu);
 		_m_lstFunc.push_back(
 			FnObjType(std::move(fn))
 			);
@@ -95,7 +97,7 @@ public:
 	 */
 	void Clear()
 	{
-		SYN_LOCK_GUARD(_m_mu);
+		SYN_LOCK_GUARD(*_m_pmu);
 		_m_lstFunc.clear();
 		_m_lstFuncPtr.clear();
 	}
@@ -106,7 +108,7 @@ public:
 	*/
 	bool IsEmpty()
 	{
-		SYN_LOCK_GUARD(_m_mu);
+		SYN_LOCK_GUARD(*_m_pmu);
 		return _m_lstFunc.empty() && _m_lstFuncPtr.empty();
 	}
 
@@ -114,9 +116,10 @@ private:
 	/**
 	 * @brief 이벤트의 핸들러를 호출합니다.
 	 */
-	void operator() (Args&&... args)
+	template <typename ...Args2>
+	void operator() (Args2&&... args)
 	{
-		SYN_LOCK_GUARD(_m_mu);
+		SYN_LOCK_GUARD(*_m_pmu);
 
 		_m_lstFuncPtr.erase(
 			std::remove_if(_m_lstFuncPtr.begin(), _m_lstFuncPtr.end(),
@@ -127,13 +130,13 @@ private:
 
 		for (const std::function<FnType> &fn : _m_lstFunc)
 		{
-			fn(std::forward<Args>(args)...);
+			fn(std::forward<Args2>(args)...);
 		}
 		for (const std::weak_ptr<FnObjType> &fn : _m_lstFuncPtr)
 		{
 			auto sptr = fn.lock();
 			if (sptr)
-				(*sptr.get())(std::forward<Args>(args)...);
+				(*sptr.get())(std::forward<Args2>(args)...);
 		}
 	}
 };
@@ -147,6 +150,7 @@ public:
 
 private:
 	std::shared_ptr<FnObjType> m_pfn;
+	std::weak_ptr<std::recursive_mutex> _m_pmu;
 public:
 	EventFnPtr() = default;
 	template <typename F> EventFnPtr(F &&f)
@@ -162,21 +166,21 @@ public:
 
 	~EventFnPtr() NOEXCEPT
 	{
-		std::weak_ptr<FnObjType> wptr = m_pfn;
-		m_pfn.reset();
-
-		if (!wptr.expired())
+		auto sp = _m_pmu.lock();
+		if (sp)
 		{
-			OutputDebugString(TEXT("Waiting for Event Handler Exiting...\n"));
-			do 
-			{
-				Sleep(1);
-			} while (!wptr.expired());
+			SYN_LOCK_GUARD(*sp);
+			m_pfn.reset();
 		}
 	}
 	const std::shared_ptr<FnObjType> &get() const
 	{
 		return m_pfn;
+	}
+
+	void _mutex_set(const std::shared_ptr<std::recursive_mutex> &_mu)
+	{
+		_m_pmu = _mu;
 	}
 };
 
@@ -184,7 +188,7 @@ template <typename Owner, typename ...Args>
 FnEvent<Owner, void(Args...)> &FnEvent<Owner, void(Args...)>::operator +=(
 	std::weak_ptr<typename FnEvent<Owner, void(Args...)>::FnObjType> fn)
 {
-	SYN_LOCK_GUARD(_m_mu);
+	SYN_LOCK_GUARD(*_m_pmu);
 	_m_lstFuncPtr.push_back(std::move(fn));
 	return *this;
 }
@@ -193,7 +197,7 @@ template <typename Owner, typename ...Args>
 FnEvent<Owner, void(Args...)> &FnEvent<Owner, void(Args...)>::operator -=(
 	typename FnEvent<Owner, void(Args...)>::FnObjType *fn)
 {
-	SYN_LOCK_GUARD(_m_mu);
+	SYN_LOCK_GUARD(*_m_pmu);
 
 	bool succeeded = false;
 	auto it = std::remove_if(_m_lstFuncPtr.begin(), _m_lstFuncPtr.end(),
@@ -219,6 +223,8 @@ template <typename Owner, typename ...Args>
 FnEvent<Owner, void(Args...)> &FnEvent<Owner, void(Args...)>::operator +=(
 	EventFnPtr<typename FnEvent<Owner, void(Args...)>::FnType> &fn)
 {
+	SYN_LOCK_GUARD(*_m_pmu);
+	fn._mutex_set(_m_pmu);
 	*this += fn.get();
 	return *this;
 }
@@ -227,6 +233,7 @@ template <typename Owner, typename ...Args>
 FnEvent<Owner, void(Args...)> &FnEvent<Owner, void(Args...)>::operator -=(
 	EventFnPtr<typename FnEvent<Owner, void(Args...)>::FnType> &fn)
 {
+	SYN_LOCK_GUARD(*_m_pmu);
 	// fn.get() <- std::shared_ptr<FnObjType>
 	// fn.get().get() <- FnObjType *
 	*this -= fn.get().get();

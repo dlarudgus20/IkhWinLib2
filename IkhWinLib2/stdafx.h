@@ -37,7 +37,12 @@
 #include <memory.h>
 #include <assert.h>
 
+#include <algorithm>
+#include <functional>
 #include <iterator>
+#include <type_traits>
+#include <exception>
+#include <stdexcept>
 #include <string>
 #include <memory>
 #include <utility>
@@ -54,6 +59,10 @@
 #include <queue>
 #include <stack>
 #include <string>
+#include <future>
+#include <thread>
+#include <mutex>
+#include <chrono>
 
 #define GC_THREADS
 #include <gc.h>
@@ -64,3 +73,4 @@
 #define BOOST_RESULT_OF_USE_DECLTYPE
 #include <boost/thread/future.hpp>
 #include <boost/scope_exit.hpp>
+#include <boost/optional.hpp>

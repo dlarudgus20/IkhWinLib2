@@ -25,6 +25,7 @@
 #pragma once
 
 #include "CMsgTarget.h"
+#include "FnEvent.h"
 
 BEGIN_IKHWINLIB2()
 
@@ -73,7 +74,7 @@ public:
 	/**
 	 * @brief 부착을 해제합니다.
 	 */
-	void Deattach();
+	void Detach();
 
 	/**
 	 * @brief 창을 생성합니다. 인수의 의미는 <c>CreateWindowEx</c> API 함수와 같습니다.
@@ -100,9 +101,13 @@ public:
 	void SetFullscreen(bool bFullscreen = true);
 
 	/**
+	* @brief 창 핸들을 반환합니다.
+	*/
+	HWND GetHWND() const NOEXCEPT;
+	/**
 	 * @brief HWND로의 캐스트 연산자입니다. 창 핸들을 반환합니다.
 	 */
-	operator HWND();
+	operator HWND() const NOEXCEPT;
 
 	/**
 	 * @brief 이 창에 메시지를 보냅니다. <c>SendMessage</c> API 함수를 사용합니다. 이 함수는 재정의될 수 없습니다.
@@ -144,6 +149,11 @@ private:
 	 * @brief 창이 모두 파괴된 후 호출됩니다. 이 가상 함수는 WM_NCDESTROY 메시지를 처리한 후 호출됩니다.
 	 */
 	virtual void PostNcDestroy();
+
+public:
+	// for CForm
+	FnEvent<CWindow, void(CWindow *)> evtPosSizeChanged;
+	FnEvent<CWindow, void(CWindow *)> evtDestroy;
 };
 
 inline CWindow::CWindow() : m_hWnd(NULL), m_OldProc(NULL) { }
@@ -156,7 +166,10 @@ inline void CWindow::Create(LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwS
 	CreateEx(0, lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu);
 }
 
-inline CWindow::operator HWND() { assert(this != nullptr);  return m_hWnd; }
+inline HWND CWindow::GetHWND() const NOEXCEPT
+	{ assert(this != nullptr);  return m_hWnd; }
+inline CWindow::operator HWND() const NOEXCEPT
+	{ return GetHWND(); }
 
 #ifndef _DEBUG
 inline void CWindow::AssertCreation(CWindow *pWnd) { }

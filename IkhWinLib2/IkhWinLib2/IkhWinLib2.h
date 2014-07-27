@@ -41,7 +41,6 @@
 #include "CMsgTarget.h"
 
 #include "CWindow.h"
-#include "CMainWindow.h"
 #include "COpenGLWnd.h"
 #include "CIdleOpenGLWnd.h"
 #include "CThreadOpenGLWnd.h"
@@ -49,6 +48,8 @@
 #include "CControlWnd.h"
 #include "CEditCtrl.h"
 #include "CComboBoxCtrl.h"
+
+#include "CForm.h"
 
 #include "CWndClass.h"
 

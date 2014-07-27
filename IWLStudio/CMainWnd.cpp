@@ -26,10 +26,10 @@
 
 #include "CMainWnd.h"
 
-BEGIN_MSGMAP(CMainWnd, CMainWindow)
+BEGIN_MSGMAP(CMainWnd, CForm)
 	MSGMAP_WM_CREATE(OnCreate)
 	MSGMAP_WM_DESTROY(OnDestroy)
-END_MSGMAP(CMainWnd, CMainWindow)
+END_MSGMAP(CMainWnd, CForm)
 
 void CMainWnd::Create()
 {
@@ -38,14 +38,33 @@ void CMainWnd::Create()
 
 BOOL CMainWnd::OnCreate(LPCREATESTRUCT lpcs)
 {
-	if (!MSG_FORWARD_WM_CREATE(CMainWindow, lpcs))
+	if (!MSG_FORWARD_WM_CREATE(CForm, lpcs))
 		return FALSE;
+
+	SuspendLayout();
+
+	m_ed2.Create(WS_CHILD | WS_VISIBLE | WS_BORDER, 0, 0, 100, 30, 1, *this);
+	auto chded1 = AddChild(&m_ed1);
+	m_ed1.Create(WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE, 0, 0, 100, 30, 0, *this);
+	auto chded2 = AddChild(&m_ed2);
+
+	DockChild(chded1, CForm::TargetForm(), CForm::DockTop, 10);
+	DockChild(chded1, CForm::TargetForm(), CForm::DockLeft, 10);
+	DockChild(chded1, CForm::TargetForm(), CForm::DockRight, 10);
+	//DockChild(chded1, chded2, CForm::DockBottom, 10);
+	DockChild(chded2, chded1, CForm::DockTop, 10);
+	DockChild(chded2, CForm::TargetForm(), CForm::DockLeft, 10);
+	DockChild(chded2, CForm::TargetForm(), CForm::DockRight, 10);
+	DockChild(chded2, CForm::TargetForm(), CForm::DockBottom, 10);
+
+	ResumeLayout();
 
 	return TRUE;
 }
 
 void CMainWnd::OnDestroy()
 {
-	MSG_FORWARD_WM_DESTROY(CMainWindow);
+	PostQuitMessage(0);
+	MSG_FORWARD_WM_DESTROY(CForm);
 }
 

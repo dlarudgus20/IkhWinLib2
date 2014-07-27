@@ -22,14 +22,20 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <IkhWinLib2/CMainWindow.h>
+#include <IkhWinLib2/CForm.h>
+#include <IkhWinLib2/CComboBoxCtrl.h>
+#include <IkhWinLib2/CEditCtrl.h>
 using namespace IkhProgram::IkhWinLib2;
 
-class CMainWnd final : public CMainWindow
+class CMainWnd final : public CForm
 {
 	DECLARE_MSGMAP();
 public:
 	void Create();
+
+private:
+	CEditCtrl m_ed1;
+	CEditCtrl m_ed2;
 
 protected:
 	BOOL OnCreate(LPCREATESTRUCT lpcs);

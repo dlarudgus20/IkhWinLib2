@@ -48,21 +48,29 @@
  */
 namespace stlgc
 {
-	template <typename T> using deque				= std::deque<T, gc_allocator<T> >;
-	template <typename T> using forward_list		= std::forward_list<T, gc_allocator<T> >;
-	template <typename T> using list				= std::list<T, gc_allocator<T> >;
-	template <typename T> using map					= std::map<T, gc_allocator<T> >;
-	template <typename T> using set					= std::set<T, gc_allocator<T> >;
-	template <typename T> using multimap			= std::multimap<T, gc_allocator<T> >;
-	template <typename T> using multiset			= std::multiset<T, gc_allocator<T> >;
-	template <typename T> using unordered_map		= std::unordered_map<T, gc_allocator<T> >;
-	template <typename T> using unordered_set		= std::unordered_set<T, gc_allocator<T> >;
-	template <typename T> using unordered_multimap	= std::unordered_multimap<T, gc_allocator<T> >;
-	template <typename T> using unordered_multiset	= std::unordered_multiset<T, gc_allocator<T> >;
-	template <typename T> using vector				= std::vector<T, gc_allocator<T> >;
+	template <typename T> using vector = std::vector < T, gc_allocator<T> > ;
+	template <typename T> using deque = std::deque<T, gc_allocator<T> >;
+	template <typename T> using forward_list = std::forward_list<T, gc_allocator<T> >;
+	template <typename T> using list = std::list<T, gc_allocator<T> >;
 
-	template <typename T> using queue				= std::queue<T, stlgc::deque<T> >;
-	template <typename T> using stack				= std::stack<T, stlgc::deque<T> >;
+	template <typename K, typename T, typename Comp = std::less<K> > using map = std::map<K, T, Comp, gc_allocator<T> >;
+	template <typename K, typename T, typename Comp = std::less<K> > using multimap = std::multimap<K, T, Comp, gc_allocator<T> >;
+	template <typename K, typename T, typename Hash = std::hash<K>, typename KeyEqual = std::equal_to<K> >
+	using unordered_map = std::unordered_map<K, T, Hash, KeyEqual, gc_allocator<T> >;
+	template <typename K, typename T, typename Hash = std::hash<K>, typename KeyEqual = std::equal_to<K> >
+	using unordered_multimap = std::unordered_multimap<K, T, Hash, KeyEqual, gc_allocator<T> >;
+
+	template <typename T, typename Comp = std::less<T> > using set = std::set<T, Comp, gc_allocator<T> >;
+	template <typename T, typename Comp = std::less<T> > using multiset = std::multiset<T, Comp, gc_allocator<T> >;
+	template <typename T, typename Hash = std::hash<T>, typename KeyEqual = std::equal_to<T> >
+	using unordered_set = std::unordered_set<T, Hash, KeyEqual, gc_allocator<T> >;
+	template <typename T, typename Hash = std::hash<T>, typename KeyEqual = std::equal_to<T> >
+	using unordered_multiset = std::unordered_multiset<T, Hash, KeyEqual, gc_allocator<T> >;
+
+	template <typename T, typename Cont = stlgc::deque<T>> using queue = std::queue<T, Cont>;
+	template <typename T, typename Cont = stlgc::deque<T>> using stack = std::stack<T, Cont>;
+	template <typename T, typename Cont = stlgc::vector<T>, typename Comp = std::less<typename Cont::value_type> >
+	using priority_queue = std::priority_queue<T, Cont, Comp>;
 
 	template <typename Elem, typename Traits = std::char_traits<Elem> >
 	using basic_string = std::basic_string<Elem, Traits, gc_allocator<Elem> >;

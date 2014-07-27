@@ -44,6 +44,7 @@
 #include <iterator>
 #include <type_traits>
 #include <exception>
+#include <stdexcept>
 #include <memory>
 #include <utility>
 #include <future>
@@ -63,6 +64,7 @@
 #define BOOST_RESULT_OF_USE_DECLTYPE
 #include <boost/thread/future.hpp>
 #include <boost/scope_exit.hpp>
+#include <boost/optional.hpp>
 
 #include "stlgc.h"
 

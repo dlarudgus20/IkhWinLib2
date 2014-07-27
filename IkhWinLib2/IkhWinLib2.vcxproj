@@ -169,7 +169,7 @@
     <ClInclude Include="IkhWinLib2\CEditCtrl.h" />
     <ClInclude Include="IkhWinLib2\CException.h" />
     <ClInclude Include="IkhWinLib2\CLogicError.h" />
-    <ClInclude Include="IkhWinLib2\CMainWindow.h" />
+    <ClInclude Include="IkhWinLib2\CForm.h" />
     <ClInclude Include="IkhWinLib2\CMsgTarget.h" />
     <ClInclude Include="IkhWinLib2\CObject.h" />
     <ClInclude Include="IkhWinLib2\COpenGLWnd.h" />
@@ -193,7 +193,7 @@
     <ClCompile Include="CApplication.cpp" />
     <ClCompile Include="CComboBoxCtrl.cpp" />
     <ClCompile Include="CEditCtrl.cpp" />
-    <ClCompile Include="CMainWindow.cpp" />
+    <ClCompile Include="CForm.cpp" />
     <ClCompile Include="CMsgTarget.cpp" />
     <ClCompile Include="COpenGLWnd.cpp" />
     <ClCompile Include="CThreadOpenGLWnd.cpp" />

@@ -60,7 +60,7 @@ BOOL CMyWindow::OnCreate(LPCREATESTRUCT lpcs)
 	m_cbx.Create(WS_BORDER | WS_VISIBLE | WS_CHILD | CBS_DROPDOWN, 0, 50, 100, 30, 0, *this);
 	ComboBox_AddString(m_cbx, L"asdf");
 
-	IWLGetApp()->Idle += m_efpIdle.set(std::bind(&CMyWindow::OnIdle, this));
+	IWLGetApp()->evtIdle += m_efpIdle.set(std::bind(&CMyWindow::OnIdle, this));
 
 	return TRUE;
 }

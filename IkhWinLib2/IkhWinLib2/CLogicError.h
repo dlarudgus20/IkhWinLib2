@@ -35,4 +35,6 @@ IKHWINLIB2_MAKE_EXCEPTION(CInvalidOperationError, CLogicError, L"무효한 동작입니
 
 IKHWINLIB2_MAKE_EXCEPTION(CNotImplementedException, CLogicError, L"구현되지 않은 동작입니다.")
 
+IKHWINLIB2_MAKE_EXCEPTION(CInvalidChildError, CLogicError, L"무효한 child입니다.")
+
 END_IKHWINLIB2()

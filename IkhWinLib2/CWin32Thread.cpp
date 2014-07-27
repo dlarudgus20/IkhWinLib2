@@ -179,7 +179,7 @@ void CWin32Thread::OnIdle()
 {
 	assert(this != nullptr);
 
-	if (Idle.IsEmpty())
+	if (evtIdle.IsEmpty())
 	{
 		if (m_bCollectOnIdle)
 			GC_collect_a_little();
@@ -187,14 +187,14 @@ void CWin32Thread::OnIdle()
 	}
 	else
 	{
-		Idle();
+		evtIdle();
 	}
 }
 
 void CWin32Thread::OnGlobalMsg(const MSG &msg)
 {
 	assert(this != nullptr);
-	GlobalMsg(msg);
+	evtGlobalMsg(msg);
 }
 
 

@@ -54,9 +54,6 @@
     <ClInclude Include="IkhWinLib2\CSystemError.h">
       <Filter>IkhWinLib2\Exceptions</Filter>
     </ClInclude>
-    <ClInclude Include="IkhWinLib2\CMainWindow.h">
-      <Filter>IkhWinLib2</Filter>
-    </ClInclude>
     <ClInclude Include="IkhWinLib2\MsgCracker.h">
       <Filter>IkhWinLib2</Filter>
     </ClInclude>
@@ -108,6 +105,9 @@
     <ClInclude Include="IkhWinLib2\CWin32Thread.h">
       <Filter>IkhWinLib2</Filter>
     </ClInclude>
+    <ClInclude Include="IkhWinLib2\CForm.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -123,9 +123,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CWndClass.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CMainWindow.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CEditCtrl.cpp">
@@ -144,6 +141,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CWin32Thread.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CForm.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

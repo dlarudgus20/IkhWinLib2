@@ -172,26 +172,26 @@ public:
 	* @brief 아이들 타임에 호출되는 이벤트입니다.
 	* @see OnIdle
 	*/
-	FnEvent<CWin32Thread, void()> Idle;
+	FnEvent<CWin32Thread, void()> evtIdle;
 	/**
 	* @brief <c>PostMessage(NULL, </c>이나 <c>PostThreadMessage</c>로 스레드에 전달된 메시지를 받으면 호출되는 이벤트입니다.
 	* @param[in] msg 받은 메시지입니다.
 	* @see OnGlobalMsg
 	*/
-	FnEvent<CWin32Thread, void(const MSG &msg)> GlobalMsg;
+	FnEvent<CWin32Thread, void(const MSG &msg)> evtGlobalMsg;
 
 protected:
 	/**
 	* @brief 아이들 타임에 호출되는 가상 함수입니다.
 	* @remarks 디폴트 동작은 @ref Idle 이벤트의 핸들러가 없을 경우 생성자에 전달된 <c>bNoCollectOnIdle</c>이 <c>false</c>라면 쓰레기 수집을 조금 수행합니다. 있을 경우 Idle 이벤트를 호출합니다. 그 후에 <c>WaitMessage</c> 함수를 호출해 대기합니다.
-	* @see Idle
+	* @see evtIdle
 	*/
 	virtual void OnIdle();
 	/**
 	* @brief <c>PostMessage(NULL, </c>이나 <c>PostThreadMessage</c>로 스레드에 전달된 메시지를 받으면 호출되는 가상 함수입니다.
 	* @param[in] msg 받은 메시지입니다.
 	* @remarks 디폴트 동작은 @ref GlobalMsg 이벤트를 호출합니다.
-	* @see GlobalMsg
+	* @see evtGlobalMsg
 	*/
 	virtual void OnGlobalMsg(const MSG &msg);
 };

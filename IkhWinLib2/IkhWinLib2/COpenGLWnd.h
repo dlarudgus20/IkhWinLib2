@@ -55,7 +55,7 @@ public:
 
 	HGLRC InitGL();
 	void DestroyGL(HGLRC hrc);
-	struct GLInitor : private NonCopyableMovable
+	struct GLInitor : private IkhWinLib2::NonCopyableMovable
 	{
 		HGLRC m_hrc;
 		COpenGLWnd *m_pWnd;

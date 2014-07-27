@@ -34,7 +34,7 @@
 BEGIN_IKHWINLIB2()
 
 /**
- * @brief 이 클래스를 상속받으면 복사 불가능해 집니다. 이 클래스는 @ref CObject 를 상속받지 않습니다.
+ * @brief 이 클래스를 <c>private</c> 상속받으면 복사 불가능해 집니다. 이 클래스는 @ref CObject 를 상속받지 않습니다.
  * @example NonCopyable_Example.cpp
  */
 class NonCopyable
@@ -48,7 +48,7 @@ protected:
 };
 
 /**
- * @brief 이 클래스를 상속받으면 복사 및 이동 불가능해 집니다. 이 클래스는 @ref CObject 를 상속받지 않습니다.
+ * @brief 이 클래스를 <c>private</c> 상속받으면 복사 및 이동 불가능해 집니다. 이 클래스는 @ref CObject 를 상속받지 않습니다.
  */
 class NonCopyableMovable
 {

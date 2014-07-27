@@ -52,7 +52,7 @@ void CWindow::Attach(HWND hWnd)
 	m_OldProc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)WndProc);
 }
 
-void CWindow::Deattach()
+void CWindow::Detach()
 {
 	assert(this != nullptr);
 	assert(m_hWnd != nullptr);
@@ -111,7 +111,7 @@ void CWindow::SetFullscreen(bool bFullscreen /* = true */)
 CWindow::~CWindow()
 {
 	if (m_hWnd != nullptr)
-		Deattach();
+		Detach();
 }
 
 // protected static ÇÔ¼ö
@@ -179,6 +179,10 @@ LRESULT CALLBACK CWindow::WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARA
 		case WM_NCCREATE:
 			pWindow->PreNcCreate((LPCREATESTRUCT)lParam);
 			break;
+		case WM_SIZE:
+		case WM_MOVE:
+			pWindow->evtPosSizeChanged(pWindow);
+			break;
 	}
 
 	result = pWindow->MessageProc(iMessage, wParam, lParam);
@@ -187,6 +191,9 @@ LRESULT CALLBACK CWindow::WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARA
 	{
 		case WM_CREATE:
 			pWindow->PostCreate();
+			break;
+		case WM_DESTROY:
+			pWindow->evtDestroy(pWindow);
 			break;
 		case WM_NCDESTROY:
 			pWindow->PostNcDestroy();
