@@ -1,4 +1,4 @@
-// Copyright (c) 2014, ÀÓ°æÇö
+ï»¿// Copyright (c) 2014, ìž„ê²½í˜„
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
@@ -22,18 +22,16 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
-
-#include "CWindow.h"
-#include "IControl.h"
+#include "stdafx.h"
+#include "IkhWinLib2/CProgressCtrl.h"
 
 BEGIN_IKHWINLIB2()
 
-class CComboBoxCtrl : public CWindow, public virtual IControl
+void CProgressCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle,
+	int x, int y, int nWidth, int nHeight, int id, HWND hWndParent)
 {
-public:
-	virtual void CreateEx(DWORD dwExStyle, DWORD dwStyle,
-		int x, int y, int nWidth, int nHeight, int id, HWND hWndParent) override;
-};
+	CWindow::CreateEx(dwExStyle, PROGRESS_CLASS, NULL, dwStyle,
+		x, y, nWidth, nHeight, hWndParent, (HMENU)id);
+}
 
 END_IKHWINLIB2()

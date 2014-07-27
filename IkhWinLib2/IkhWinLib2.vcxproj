@@ -90,6 +90,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -107,6 +108,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -126,6 +128,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -147,6 +150,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -164,18 +168,27 @@
   <ItemGroup>
     <ClInclude Include="IkhWinLib2\BoehmGC.h" />
     <ClInclude Include="IkhWinLib2\CApplication.h" />
+    <ClInclude Include="IkhWinLib2\CButtonCtrl.h" />
     <ClInclude Include="IkhWinLib2\CComboBoxCtrl.h" />
-    <ClInclude Include="IkhWinLib2\CControlWnd.h" />
+    <ClInclude Include="IkhWinLib2\IControl.h" />
+    <ClInclude Include="IkhWinLib2\CDateTimePickCtrl.h" />
     <ClInclude Include="IkhWinLib2\CEditCtrl.h" />
     <ClInclude Include="IkhWinLib2\CException.h" />
+    <ClInclude Include="IkhWinLib2\CHotkeyCtrl.h" />
+    <ClInclude Include="IkhWinLib2\CListBoxCtrl.h" />
     <ClInclude Include="IkhWinLib2\CLogicError.h" />
     <ClInclude Include="IkhWinLib2\CForm.h" />
     <ClInclude Include="IkhWinLib2\CMsgTarget.h" />
     <ClInclude Include="IkhWinLib2\CObject.h" />
     <ClInclude Include="IkhWinLib2\COpenGLWnd.h" />
+    <ClInclude Include="IkhWinLib2\CProgressCtrl.h" />
+    <ClInclude Include="IkhWinLib2\CScrollbarCtrl.h" />
+    <ClInclude Include="IkhWinLib2\CSpinbtnCtrl.h" />
+    <ClInclude Include="IkhWinLib2\CStaticCtrl.h" />
     <ClInclude Include="IkhWinLib2\CThreadOpenGLWnd.h" />
     <ClInclude Include="IkhWinLib2\CSystemError.h" />
     <ClInclude Include="IkhWinLib2\CIdleOpenGLWnd.h" />
+    <ClInclude Include="IkhWinLib2\CTrackbarCtrl.h" />
     <ClInclude Include="IkhWinLib2\CWin32Thread.h" />
     <ClInclude Include="IkhWinLib2\CWndClass.h" />
     <ClInclude Include="IkhWinLib2\Defines.h" />
@@ -191,13 +204,22 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CApplication.cpp" />
+    <ClCompile Include="CButtonCtrl.cpp" />
     <ClCompile Include="CComboBoxCtrl.cpp" />
+    <ClCompile Include="CDateTimePickCtrl.cpp" />
     <ClCompile Include="CEditCtrl.cpp" />
     <ClCompile Include="CForm.cpp" />
+    <ClCompile Include="CHotkeyCtrl.cpp" />
+    <ClCompile Include="CListBoxCtrl.cpp" />
     <ClCompile Include="CMsgTarget.cpp" />
     <ClCompile Include="COpenGLWnd.cpp" />
+    <ClCompile Include="CProgressCtrl.cpp" />
+    <ClCompile Include="CScrollbarCtrl.cpp" />
+    <ClCompile Include="CSpinbtnCtrl.cpp" />
+    <ClCompile Include="CStaticCtrl.cpp" />
     <ClCompile Include="CThreadOpenGLWnd.cpp" />
     <ClCompile Include="CIdleOpenGLWnd.cpp" />
+    <ClCompile Include="CTrackbarCtrl.cpp" />
     <ClCompile Include="CWin32Thread.cpp" />
     <ClCompile Include="CWindow.cpp" />
     <ClCompile Include="CWndClass.cpp" />

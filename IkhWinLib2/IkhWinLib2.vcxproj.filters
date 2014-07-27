@@ -22,6 +22,9 @@
     <Filter Include="IkhWinLib2\Controls">
       <UniqueIdentifier>{192e4551-3358-45d3-8590-682d1eaa9f41}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Controls">
+      <UniqueIdentifier>{e8cb6587-b2c9-4c05-b126-f63d5892ba30}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -56,9 +59,6 @@
     </ClInclude>
     <ClInclude Include="IkhWinLib2\MsgCracker.h">
       <Filter>IkhWinLib2</Filter>
-    </ClInclude>
-    <ClInclude Include="IkhWinLib2\CControlWnd.h">
-      <Filter>IkhWinLib2\Controls</Filter>
     </ClInclude>
     <ClInclude Include="IkhWinLib2\CEditCtrl.h">
       <Filter>IkhWinLib2\Controls</Filter>
@@ -108,6 +108,36 @@
     <ClInclude Include="IkhWinLib2\CForm.h">
       <Filter>IkhWinLib2</Filter>
     </ClInclude>
+    <ClInclude Include="IkhWinLib2\CButtonCtrl.h">
+      <Filter>IkhWinLib2\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CListBoxCtrl.h">
+      <Filter>IkhWinLib2\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CStaticCtrl.h">
+      <Filter>IkhWinLib2\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CScrollbarCtrl.h">
+      <Filter>IkhWinLib2\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CProgressCtrl.h">
+      <Filter>IkhWinLib2\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CTrackbarCtrl.h">
+      <Filter>IkhWinLib2\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CSpinbtnCtrl.h">
+      <Filter>IkhWinLib2\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CHotkeyCtrl.h">
+      <Filter>IkhWinLib2\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CDateTimePickCtrl.h">
+      <Filter>IkhWinLib2\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\IControl.h">
+      <Filter>IkhWinLib2\Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -125,12 +155,6 @@
     <ClCompile Include="CWndClass.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="CEditCtrl.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="CComboBoxCtrl.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="CThreadOpenGLWnd.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -145,6 +169,39 @@
     </ClCompile>
     <ClCompile Include="CForm.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CComboBoxCtrl.cpp">
+      <Filter>소스 파일\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="CEditCtrl.cpp">
+      <Filter>소스 파일\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="CButtonCtrl.cpp">
+      <Filter>소스 파일\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="CListBoxCtrl.cpp">
+      <Filter>소스 파일\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="CScrollbarCtrl.cpp">
+      <Filter>소스 파일\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="CStaticCtrl.cpp">
+      <Filter>소스 파일\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="CProgressCtrl.cpp">
+      <Filter>소스 파일\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="CTrackbarCtrl.cpp">
+      <Filter>소스 파일\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="CSpinbtnCtrl.cpp">
+      <Filter>소스 파일\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="CHotkeyCtrl.cpp">
+      <Filter>소스 파일\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="CDateTimePickCtrl.cpp">
+      <Filter>소스 파일\Controls</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

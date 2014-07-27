@@ -46,8 +46,18 @@
 #include "CThreadOpenGLWnd.h"
 
 #include "CControlWnd.h"
-#include "CEditCtrl.h"
+#include "CButtonCtrl.h"
 #include "CComboBoxCtrl.h"
+#include "CEditCtrl.h"
+#include "CListBoxCtrl.h"
+#include "CScrollbarCtrl.h"
+#include "CStaticCtrl.h"
+
+#include "CDateTimePickCtrl.h"
+#include "CHotkeyCtrl.h"
+#include "CProgressCtrl.h"
+#include "CSpinbtnCtrl.h"
+#include "CTrackbarCtrl.h"
 
 #include "CForm.h"
 
@@ -58,11 +68,16 @@
 
 #include "EnableVisualStyle.h"
 
+/**
+* @macro IKHWINLIB2_NO_USING
+* @brief 네임스페이스를 using하지 않습니다.
+*/
 #ifndef IKHWINLIB2_NO_USING
 using namespace IkhProgram::IkhWinLib2;
 #endif
 
-/**
- * @macro IKHWINLIB2_NO_USING
- * @brief 네임스페이스를 using하지 않습니다.
- */
+#ifndef IKHWINLIB2_NO_AUTOMATICALLY_LINK
+# pragma comment(lib, "IkhWinLib2.lib")
+# pragma comment(lib, "gcmt-lib.lib")
+# pragma comment(lib, "comctl32.lib")
+#endif

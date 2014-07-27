@@ -1,4 +1,4 @@
-// Copyright (c) 2014, ÀÓ°æÇö
+ï»¿// Copyright (c) 2014, ìž„ê²½í˜„
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
@@ -22,18 +22,20 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
+#include <IkhWinLib2/CForm.h>
+#include <IkhWinLib2/IControl.h>
+using namespace IkhProgram::IkhWinLib2;
 
-#include "CWindow.h"
-#include "IControl.h"
-
-BEGIN_IKHWINLIB2()
-
-class CComboBoxCtrl : public CWindow, public virtual IControl
+class CDesignerCtrl final : public CForm, public virtual IControl
 {
+	DECLARE_MSGMAP();
 public:
 	virtual void CreateEx(DWORD dwExStyle, DWORD dwStyle,
 		int x, int y, int nWidth, int nHeight, int id, HWND hWndParent) override;
-};
 
-END_IKHWINLIB2()
+private:
+
+protected:
+	BOOL OnCreate(LPCREATESTRUCT lpcs);
+	void OnDestroy();
+};

@@ -24,16 +24,23 @@
 
 #pragma once
 
-#include "CWindow.h"
-#include "IControl.h"
+#include "Defines.h"
 
 BEGIN_IKHWINLIB2()
 
-class CComboBoxCtrl : public CWindow, public virtual IControl
+class IControl
 {
 public:
+	void Create(DWORD dwStyle, int x, int y, int nWidth, int nHeight, int id, HWND hWndParent);
+
 	virtual void CreateEx(DWORD dwExStyle, DWORD dwStyle,
-		int x, int y, int nWidth, int nHeight, int id, HWND hWndParent) override;
+		int x, int y, int nWidth, int nHeight, int id, HWND hWndParent) = 0;
 };
+
+inline void IControl::Create(DWORD dwStyle,
+	int x, int y, int nWidth, int nHeight, int id, HWND hWndParent)
+{
+	CreateEx(0, dwStyle, x, y, nWidth, nHeight, id, hWndParent);
+}
 
 END_IKHWINLIB2()

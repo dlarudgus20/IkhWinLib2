@@ -24,15 +24,16 @@
 
 #pragma once
 
-#include "CControlWnd.h"
+#include "CWindow.h"
+#include "IControl.h"
 
 BEGIN_IKHWINLIB2()
 
-class CEditCtrl : public CControlWnd
+class CEditCtrl : public CWindow, public virtual IControl
 {
 public:
 	virtual void CreateEx(DWORD dwExStyle, DWORD dwStyle,
-		int x, int y, int nWidth, int nHeight, UINT id, HWND hWndParent) override;
+		int x, int y, int nWidth, int nHeight, int id, HWND hWndParent) override;
 };
 
 END_IKHWINLIB2()

@@ -1,4 +1,4 @@
-// Copyright (c) 2014, ÀÓ°æÇö
+ï»¿// Copyright (c) 2014, ìž„ê²½í˜„
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
@@ -24,12 +24,12 @@
 
 #pragma once
 
-#include "CWindow.h"
 #include "IControl.h"
+#include "CWindow.h"
 
 BEGIN_IKHWINLIB2()
 
-class CComboBoxCtrl : public CWindow, public virtual IControl
+class CListBoxCtrl : public CWindow, public virtual IControl
 {
 public:
 	virtual void CreateEx(DWORD dwExStyle, DWORD dwStyle,

@@ -28,7 +28,7 @@
 BEGIN_IKHWINLIB2()
 
 void CComboBoxCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle,
-	int x, int y, int nWidth, int nHeight, UINT id, HWND hWndParent)
+	int x, int y, int nWidth, int nHeight, int id, HWND hWndParent)
 {
 	CWindow::CreateEx(dwExStyle, L"combobox", NULL, dwStyle,
 		x, y, nWidth, nHeight, hWndParent, (HMENU)id);

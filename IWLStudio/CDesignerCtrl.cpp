@@ -1,4 +1,4 @@
-// Copyright (c) 2014, ÀÓ°æÇö
+ï»¿// Copyright (c) 2014, ìž„ê²½í˜„
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
@@ -22,18 +22,33 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
+#include <IkhWinLib2/CWndClass.h>
 
-#include "CWindow.h"
-#include "IControl.h"
+#include "CDesignerCtrl.h"
 
-BEGIN_IKHWINLIB2()
+static CWndClass s_WndClass(L"DesignerCtrl");
 
-class CComboBoxCtrl : public CWindow, public virtual IControl
+BEGIN_MSGMAP(CDesignerCtrl, CControlWnd)
+	MSGMAP_WM_CREATE(OnCreate)
+	MSGMAP_WM_DESTROY(OnDestroy)
+END_MSGMAP(CDesignerCtrl, CControlWnd)
+
+void CDesignerCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle,
+	int x, int y, int nWidth, int nHeight, int id, HWND hWndParent)
 {
-public:
-	virtual void CreateEx(DWORD dwExStyle, DWORD dwStyle,
-		int x, int y, int nWidth, int nHeight, int id, HWND hWndParent) override;
-};
+	CWindow::CreateEx(dwExStyle, s_WndClass, NULL, dwStyle,
+		x, y, nWidth, nHeight, hWndParent, (HMENU)id);
+}
 
-END_IKHWINLIB2()
+BOOL CDesignerCtrl::OnCreate(LPCREATESTRUCT lpcs)
+{
+	if (!MSG_FORWARD_WM_CREATE(CControlWnd, lpcs))
+		return FALSE;
+
+	return TRUE;
+}
+
+void CDesignerCtrl::OnDestroy()
+{
+	MSG_FORWARD_WM_DESTROY(CControlWnd);
+}

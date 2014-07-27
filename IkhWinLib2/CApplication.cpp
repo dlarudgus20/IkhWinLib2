@@ -62,6 +62,7 @@ int CApplication::IWLMain()
 			Initor()
 			{
 				ms_TlsModeless = TlsAlloc();
+				InitCommonControls();
 				ms_pApp.reset(::CreateApplication());
 			}
 			~Initor()

@@ -1,4 +1,4 @@
-// Copyright (c) 2014, ÀÓ°æÇö
+ï»¿// Copyright (c) 2014, ìž„ê²½í˜„
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
 
 BEGIN_IKHWINLIB2()
 
-class CComboBoxCtrl : public CWindow, public virtual IControl
+class CTrackbarCtrl : public CWindow, public virtual IControl
 {
 public:
 	virtual void CreateEx(DWORD dwExStyle, DWORD dwStyle,

@@ -43,19 +43,7 @@ BOOL CMainWnd::OnCreate(LPCREATESTRUCT lpcs)
 
 	SuspendLayout();
 
-	m_ed2.Create(WS_CHILD | WS_VISIBLE | WS_BORDER, 0, 0, 100, 30, 1, *this);
-	auto chded1 = AddChild(&m_ed1);
-	m_ed1.Create(WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE, 0, 0, 100, 30, 0, *this);
-	auto chded2 = AddChild(&m_ed2);
 
-	DockChild(chded1, CForm::TargetForm(), CForm::DockTop, 10);
-	DockChild(chded1, CForm::TargetForm(), CForm::DockLeft, 10);
-	DockChild(chded1, CForm::TargetForm(), CForm::DockRight, 10);
-	//DockChild(chded1, chded2, CForm::DockBottom, 10);
-	DockChild(chded2, chded1, CForm::DockTop, 10);
-	DockChild(chded2, CForm::TargetForm(), CForm::DockLeft, 10);
-	DockChild(chded2, CForm::TargetForm(), CForm::DockRight, 10);
-	DockChild(chded2, CForm::TargetForm(), CForm::DockBottom, 10);
 
 	ResumeLayout();
 
