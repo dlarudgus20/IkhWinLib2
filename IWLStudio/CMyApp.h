@@ -30,5 +30,5 @@ using namespace IkhProgram::IkhWinLib2;
 class CMyApp final : public CApplication
 {
 private:
-	virtual int Main() override;
+	virtual int Main(int argc, TCHAR *argv[]) override;
 };

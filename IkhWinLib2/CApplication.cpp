@@ -72,7 +72,7 @@ int CApplication::IWLMain()
 			}
 		} _initor;
 
-		return ms_pApp->Main();
+		return ms_pApp->Main(__argc, __wargv);
 	}
 }
 

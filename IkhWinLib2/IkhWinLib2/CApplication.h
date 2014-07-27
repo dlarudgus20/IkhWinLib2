@@ -73,7 +73,7 @@ private:
 	 * @brief 프로그램이 시작 지점이 되는 가상 함수입니다.
 	 * @return 프로그램의 종료 코드입니다.
 	 */
-	virtual int Main() = 0;
+	virtual int Main(int argc, TCHAR *argv[]) = 0;
 };
 
 inline CApplication *CApplication::GetApp() NOEXCEPT

@@ -29,7 +29,7 @@
 IKHWINLIB2_APP_CLS(CMyApp)
 #include <IkhWinLib2/EnableVisualStyle.h>
 
-int CMyApp::Main()
+int CMyApp::Main(int argc, TCHAR *argv[])
 {
 	CMainWnd wnd;
 

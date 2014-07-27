@@ -26,6 +26,8 @@
 
 #include "CWindow.h"
 #include "IControl.h"
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/adjacency_list.hpp>
 
 BEGIN_IKHWINLIB2()
 

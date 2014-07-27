@@ -32,7 +32,10 @@ static CWndClass s_WndClass(L"IkhProgram::IkhWinLib2::CSplitterCtrl");
 BEGIN_IKHWINLIB2()
 
 BEGIN_MSGMAP(CSplitterCtrl, CWindow)
-
+	MSGMAP_WM_CREATE(OnCreate)
+	MSGMAP_WM_PAINT(OnPaint)
+	MSGMAP_WM_SIZE(OnSize)
+	MSGMAP_WM_DESTROY(OnDestroy)
 END_MSGMAP(CSplitterCtrl, CWindow)
 
 void CSplitterCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle,
