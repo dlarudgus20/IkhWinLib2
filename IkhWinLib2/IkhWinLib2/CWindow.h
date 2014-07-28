@@ -34,10 +34,12 @@ BEGIN_IKHWINLIB2()
  */
 class CWindow : public CMsgTarget
 {
+	friend class CModalDialog;
 protected:
 	static void AssertCreation(CWindow *pWnd);
 
 	static void HookCreatingWindow(CWindow *pWnd);
+	static const LPCTSTR CntStr_WindowPtrProp;
 	static void CleanHookCreatingWindow(CWindow *pWnd);
 private:
 	// CALLBACK ÇÔ¼ö

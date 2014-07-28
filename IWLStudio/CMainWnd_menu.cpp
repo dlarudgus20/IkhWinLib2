@@ -22,55 +22,29 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "stdafx.h"
-#include "IkhWinLib2/CSplitterCtrl.h"
-#include "IkhWinLib2/CWndClass.h"
-using namespace IkhProgram::IkhWinLib2;
+#include "CMainWnd.h"
 
-static CWndClass s_WndClass(L"IkhProgram::IkhWinLib2::CSplitterCtrl");
-
-BEGIN_IKHWINLIB2()
-
-BEGIN_MSGMAP(CSplitterCtrl, CWindow)
-	MSGMAP_WM_CREATE(OnCreate)
-	MSGMAP_WM_PAINT(OnPaint)
-	MSGMAP_WM_SIZE(OnSize)
-	MSGMAP_WM_DESTROY(OnDestroy)
-END_MSGMAP(CSplitterCtrl, CWindow)
-
-void CSplitterCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle,
-	int x, int y, int nWidth, int nHeight, int id, HWND hWndParent)
+void CMainWnd::OnFileProjNew(int id, HWND hCtl, UINT codeNotify)
 {
-	CWindow::CreateEx(dwExStyle, s_WndClass, NULL, dwStyle,
-		x, y, nWidth, nHeight, hWndParent, (HMENU)id);
+
 }
 
-BOOL CSplitterCtrl::OnCreate(LPCREATESTRUCT lpcs)
+void CMainWnd::OnFileProjOpen(int id, HWND hCtl, UINT codeNotify)
 {
-	if (!MSG_FORWARD_WM_CREATE(CWindow, lpcs))
-		return FALSE;
 
-	return TRUE;
 }
 
-void CSplitterCtrl::OnPaint()
+void CMainWnd::OnFileSave(int id, HWND hCtl, UINT codeNotify)
 {
-	PAINTSTRUCT ps;
-	BeginPaint(*this, &ps);
 
-	;
-
-	EndPaint(*this, &ps);
 }
 
-void CSplitterCtrl::OnSize(UINT state, int cx, int cy)
+void CMainWnd::OnFileAllSave(int id, HWND hCtl, UINT codeNotify)
 {
-	MSG_FORWARD_WM_SIZE(CWindow, state, cx, cy);
+
 }
 
-void CSplitterCtrl::OnDestroy()
+void CMainWnd::OnFileExit(int id, HWND hCtl, UINT codeNotify)
 {
-	MSG_FORWARD_WM_DESTROY(CWindow);
+	SendMessage(*this, WM_CLOSE, 0, 0);
 }
-
-END_IKHWINLIB2()

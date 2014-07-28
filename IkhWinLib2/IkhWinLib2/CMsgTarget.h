@@ -101,6 +101,18 @@ protected:
 
 #include "MsgCracker.h"
 
+#define BEGIN_CMDMAP() \
+		case WM_COMMAND: \
+			switch ((int)LOWORD(wParam)) {
+
+/* void OnCommand(int id, HWND hCtl, UINT codeNotify) */
+#define CMDMAP_ID(id, fn) \
+				case (id): return ((fn)((id), (HWND)lParam, (UINT)HIWORD(wParam)), 0);
+
+#define END_CMDMAP() \
+			} \
+			break;
+
 /**
  * @brief @ref MsgCracker.h에서 지원하지 않는 메시지 핸들러를 선언합니다.
  * @example CMsgTarget_MSGMAP.cpp
@@ -120,8 +132,9 @@ protected:
  * @example CMsgTarget_MSGMAP.cpp
  */
 #define END_MSGMAP(cls, base) \
-			default: return base::MessageProc(iMessage, wParam, lParam); \
+			default: break; \
 		} \
+		return base::MessageProc(iMessage, wParam, lParam); \
 	}
 
 END_IKHWINLIB2()

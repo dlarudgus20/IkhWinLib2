@@ -24,16 +24,27 @@
 
 #include <IkhWinLib2/CWndClass.h>
 
+#include "resource.h"
 #include "CMainWnd.h"
 
 BEGIN_MSGMAP(CMainWnd, CForm)
 	MSGMAP_WM_CREATE(OnCreate)
+	BEGIN_CMDMAP()
+		CMDMAP_ID(ID_FILE_PROJNEW, OnFileProjNew)
+		CMDMAP_ID(ID_FILE_PROJOPEN, OnFileProjOpen)
+		CMDMAP_ID(ID_FILE_SAVE, OnFileSave)
+		CMDMAP_ID(ID_FILE_ALLSAVE, OnFileAllSave)
+		CMDMAP_ID(ID_FILE_EXIT, OnFileExit)
+	END_CMDMAP()
 	MSGMAP_WM_DESTROY(OnDestroy)
 END_MSGMAP(CMainWnd, CForm)
 
 void CMainWnd::Create()
 {
-	CWindow::Create(CWndClass(), L"IkhWinLib2 Studio v0.0.1", WS_OVERLAPPEDWINDOW);
+	CWindow::Create(CWndClass(), L"IkhWinLib2 Studio v0.0.1", WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+		nullptr, LoadMenu(GetModuleHandle(NULL), MAKEINTRESOURCE(IDR_MAIN_MENU))
+		);
 }
 
 BOOL CMainWnd::OnCreate(LPCREATESTRUCT lpcs)

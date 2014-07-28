@@ -22,20 +22,46 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "CMyApp.h"
+#include "stdafx.h"
+#include "IkhWinLib2/CColorDialog.h"
 
-#include "resource.h"
-#include "CMainWnd.h"
+BEGIN_IKHWINLIB2()
 
-IKHWINLIB2_APP_CLS(CMyApp)
-#include <IkhWinLib2/EnableVisualStyle.h>
-
-int CMyApp::Main(int argc, TCHAR *argv[])
+CColorDialog::CColorDialog(DWORD flags, COLORREF defColor, const COLORREF arCustomColor[16])
 {
-	CMainWnd wnd;
+	ZeroMemory(&m_cc, sizeof(m_cc));
 
-	wnd.Create();
-	ShowWindow(wnd, SW_NORMAL);
+	if (arCustomColor != NULL)
+	{
+		memcpy(m_CustColor, arCustomColor, sizeof(m_CustColor));
+	}
+	else
+	{
+		ZeroMemory(m_CustColor, sizeof(m_CustColor));
+	}
 
-	return (int)Run(MAKEINTRESOURCE(IDR_MAIN_ACCELERATOR));
+	m_cc.lStructSize = sizeof(m_cc);
+	m_cc.Flags = flags;
+	m_cc.rgbResult = defColor;
+	m_cc.lpCustColors = m_CustColor;
 }
+
+INT_PTR CColorDialog::DoModal(HWND hWndParent)
+{
+	CWindow::AssertCreation(this);
+
+	m_cc.hwndOwner = hWndParent;
+
+	CWindow::HookCreatingWindow(this);
+	if (ChooseColor(&m_cc))
+	{
+		return IDOK;
+	}
+	else
+	{
+		CWindow::CleanHookCreatingWindow(this);
+		return IDCANCEL;
+	}
+}
+
+END_IKHWINLIB2()

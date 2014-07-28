@@ -22,20 +22,32 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "CMyApp.h"
+#pragma once
 
-#include "resource.h"
-#include "CMainWnd.h"
+#include "CWindow.h"
 
-IKHWINLIB2_APP_CLS(CMyApp)
-#include <IkhWinLib2/EnableVisualStyle.h>
+BEGIN_IKHWINLIB2()
 
-int CMyApp::Main(int argc, TCHAR *argv[])
+class IModelessDialog
 {
-	CMainWnd wnd;
+public:
+	virtual ~IModelessDialog() = default;
+	virtual void CreateModeless(HWND hWndParent) = 0;
+};
 
-	wnd.Create();
-	ShowWindow(wnd, SW_NORMAL);
+class CModelessDialog : public CWindow, public virtual IModelessDialog
+{
+	friend class CDialog;
+private:
+	using CWindow::Create;
+	using CWindow::CreateEx;
 
-	return (int)Run(MAKEINTRESOURCE(IDR_MAIN_ACCELERATOR));
-}
+	static void CreateResModeless(CWindow *pWnd, LPCTSTR lpDialog, HWND hWndParent);
+protected:
+	void CreateResModeless(LPCTSTR lpDialog, HWND hWndParent)
+	{
+		CreateResModeless(this, lpDialog, hWndParent);
+	}
+};
+
+END_IKHWINLIB2()

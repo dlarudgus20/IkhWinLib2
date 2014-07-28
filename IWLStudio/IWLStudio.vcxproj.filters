@@ -24,6 +24,9 @@
     <ClInclude Include="CDesignerCtrl.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CMyApp.cpp">
@@ -35,5 +38,13 @@
     <ClCompile Include="CDesignerCtrl.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="CMainWnd_menu.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="IWLStudio.rc">
+      <Filter>리소스 파일</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

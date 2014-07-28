@@ -44,5 +44,10 @@ private:
 
 protected:
 	BOOL OnCreate(LPCREATESTRUCT lpcs);
+	void OnFileProjNew(int id, HWND hCtl, UINT codeNotify);
+	void OnFileProjOpen(int id, HWND hCtl, UINT codeNotify);
+	void OnFileSave(int id, HWND hCtl, UINT codeNotify);
+	void OnFileAllSave(int id, HWND hCtl, UINT codeNotify);
+	void OnFileExit(int id, HWND hCtl, UINT codeNotify);
 	void OnDestroy();
 };

@@ -169,9 +169,15 @@
     <ClInclude Include="IkhWinLib2\BoehmGC.h" />
     <ClInclude Include="IkhWinLib2\CApplication.h" />
     <ClInclude Include="IkhWinLib2\CButtonCtrl.h" />
+    <ClInclude Include="IkhWinLib2\CColorDialog.h" />
     <ClInclude Include="IkhWinLib2\CComboBoxCtrl.h" />
+    <ClInclude Include="IkhWinLib2\CDialog.h" />
+    <ClInclude Include="IkhWinLib2\CFileDialog.h" />
+    <ClInclude Include="IkhWinLib2\CFindReplaceDialog.h" />
+    <ClInclude Include="IkhWinLib2\CFontDialog.h" />
+    <ClInclude Include="IkhWinLib2\CModalDialog.h" />
+    <ClInclude Include="IkhWinLib2\CModelessDialog.h" />
     <ClInclude Include="IkhWinLib2\CPropViewCtrl.h" />
-    <ClInclude Include="IkhWinLib2\CSplitterCtrl.h" />
     <ClInclude Include="IkhWinLib2\CTreeViewCtrl.h" />
     <ClInclude Include="IkhWinLib2\IControl.h" />
     <ClInclude Include="IkhWinLib2\CDateTimePickCtrl.h" />
@@ -202,25 +208,31 @@
     <ClInclude Include="IkhWinLib2\NonCopyable.h" />
     <ClInclude Include="IkhWinLib2\stlgc.h" />
     <ClInclude Include="IkhWinLib2\Utility.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CApplication.cpp" />
     <ClCompile Include="CButtonCtrl.cpp" />
+    <ClCompile Include="CColorDialog.cpp" />
     <ClCompile Include="CComboBoxCtrl.cpp" />
     <ClCompile Include="CDateTimePickCtrl.cpp" />
     <ClCompile Include="CEditCtrl.cpp" />
+    <ClCompile Include="CFileDialog.cpp" />
+    <ClCompile Include="CFindReplaceDialog.cpp" />
+    <ClCompile Include="CFontDialog.cpp" />
     <ClCompile Include="CForm.cpp" />
     <ClCompile Include="CHotkeyCtrl.cpp" />
     <ClCompile Include="CListBoxCtrl.cpp" />
+    <ClCompile Include="CModalDialog.cpp" />
+    <ClCompile Include="CModelessDialog.cpp" />
     <ClCompile Include="CMsgTarget.cpp" />
     <ClCompile Include="COpenGLWnd.cpp" />
     <ClCompile Include="CProgressCtrl.cpp" />
     <ClCompile Include="CPropViewCtrl.cpp" />
     <ClCompile Include="CScrollbarCtrl.cpp" />
     <ClCompile Include="CSpinbtnCtrl.cpp" />
-    <ClCompile Include="CSplitterCtrl.cpp" />
     <ClCompile Include="CStaticCtrl.cpp" />
     <ClCompile Include="CThreadOpenGLWnd.cpp" />
     <ClCompile Include="CIdleOpenGLWnd.cpp" />
@@ -236,6 +248,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="IkhWinLib2.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

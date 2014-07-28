@@ -166,11 +166,16 @@
     <ClInclude Include="CDesignerCtrl.h" />
     <ClInclude Include="CMainWnd.h" />
     <ClInclude Include="CMyApp.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CDesignerCtrl.cpp" />
     <ClCompile Include="CMainWnd.cpp" />
+    <ClCompile Include="CMainWnd_menu.cpp" />
     <ClCompile Include="CMyApp.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="IWLStudio.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

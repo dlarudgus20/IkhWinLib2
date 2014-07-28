@@ -31,13 +31,14 @@ using namespace IkhProgram::IkhWinLib2;
 
 namespace
 {
-	const LPCTSTR CntStr_WindowPtrProp = TEXT("IkhWinLib_WinProp_WindowPtr");
 
 	__declspec(thread) CWindow *Static_pHookingWnd;
 	__declspec(thread) HHOOK Static_hHook = nullptr;
 }
 
 BEGIN_IKHWINLIB2()
+
+const LPCTSTR CWindow::CntStr_WindowPtrProp = TEXT("IkhWinLib_WinProp_WindowPtr");
 
 void CWindow::Attach(HWND hWnd)
 {

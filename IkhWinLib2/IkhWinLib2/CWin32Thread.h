@@ -90,6 +90,7 @@ public:
 	* @param[in] hAccel 액셀러레이터의 핸들입니다. 없을 경우 nullptr입니다.
 	*/
 	WPARAM Run(HACCEL hAccel = nullptr) NOEXCEPT;
+	WPARAM Run(LPCTSTR lpAccel) NOEXCEPT;
 
 	/**
 	* @brief 모달리스 대화상자를 등록/해제합니다.
@@ -243,6 +244,11 @@ inline HANDLE CWin32Thread::GetHandle() const NOEXCEPT
 inline DWORD CWin32Thread::GetId() const NOEXCEPT
 {
 	return m_id;
+}
+
+inline WPARAM CWin32Thread::Run(LPCTSTR lpAccel) NOEXCEPT
+{
+	return Run(LoadAccelerators(GetModuleHandle(NULL), lpAccel));
 }
 
 template <typename Ret>

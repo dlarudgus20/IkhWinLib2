@@ -22,20 +22,36 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "CMyApp.h"
+#pragma once
 
-#include "resource.h"
-#include "CMainWnd.h"
+#include "CModalDialog.h"
 
-IKHWINLIB2_APP_CLS(CMyApp)
-#include <IkhWinLib2/EnableVisualStyle.h>
+BEGIN_IKHWINLIB2()
 
-int CMyApp::Main(int argc, TCHAR *argv[])
+class CFontDialog : public CModalDialog
 {
-	CMainWnd wnd;
+private:
+	CHOOSEFONT m_cf;
+	LOGFONT m_lf;
+public:
+	explicit CFontDialog(DWORD dwFlags = CF_SCREENFONTS | CF_EFFECTS,
+		int nSizeMin = 0, int nSizeMax = 0, HDC hDC = NULL);
+	explicit CFontDialog(DWORD dwFlags, const LOGFONT &LogFont,
+		int nSizeMin = 0, int nSizeMax = 0, HDC hDC = NULL);
 
-	wnd.Create();
-	ShowWindow(wnd, SW_NORMAL);
+	virtual INT_PTR DoModal(HWND hWndParent) override;
 
-	return (int)Run(MAKEINTRESOURCE(IDR_MAIN_ACCELERATOR));
+	const LOGFONT &GetLogFont() const NOEXCEPT;
+	const CHOOSEFONT &GetChooseFont() const NOEXCEPT;
+};
+
+inline const LOGFONT &CFontDialog::GetLogFont() const NOEXCEPT
+{
+	return m_lf;
 }
+inline const CHOOSEFONT &CFontDialog::GetChooseFont() const NOEXCEPT
+{
+	return m_cf;
+}
+
+END_IKHWINLIB2()

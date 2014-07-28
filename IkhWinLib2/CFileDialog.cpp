@@ -22,20 +22,63 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "CMyApp.h"
+#include "stdafx.h"
+#include "IkhWinLib2/CFileDialog.h"
 
-#include "resource.h"
-#include "CMainWnd.h"
+BEGIN_IKHWINLIB2()
 
-IKHWINLIB2_APP_CLS(CMyApp)
-#include <IkhWinLib2/EnableVisualStyle.h>
-
-int CMyApp::Main(int argc, TCHAR *argv[])
+CFileDialog::CFileDialog(bool bOpen, LPCTSTR lpFilter, LPCTSTR lpDefExt, LPCTSTR lpTitle,
+	DWORD flags, DWORD nFilterIndex, LPCTSTR lpFile, LPCTSTR lpInitDir)
 {
-	CMainWnd wnd;
+	ZeroMemory(&m_of, sizeof(m_of));
 
-	wnd.Create();
-	ShowWindow(wnd, SW_NORMAL);
+	m_pfDlgOpen = bOpen ? GetOpenFileName : GetSaveFileName;
 
-	return (int)Run(MAKEINTRESOURCE(IDR_MAIN_ACCELERATOR));
+	if (lpFile != NULL)
+	{
+		lstrcpy(m_lpFile, lpFile);
+	}
+	else
+	{
+		m_lpFile[0] = L'\0';
+	}
+	m_of.lpstrFile = m_lpFile;
+	m_of.nMaxFile = sizeof(m_lpFile) / sizeof(m_lpFile[0]);
+
+	m_of.lStructSize = sizeof(m_of);
+
+	m_of.Flags = flags;
+	m_of.lpstrTitle = lpTitle;
+	m_of.lpstrFilter = lpFilter;
+	m_of.lpstrDefExt = lpDefExt;
+	m_of.nFilterIndex = nFilterIndex;
+	m_of.lpstrInitialDir = lpInitDir;
+
+	m_lpFileTitle[0] = L'\0';
+	m_of.lpstrFileTitle = m_lpFileTitle;
+	m_of.nMaxFileTitle = sizeof(m_lpFileTitle) / sizeof(m_lpFileTitle[0]);
+
+	m_lpCustomFilter[0] = L'\0';
+	m_of.lpstrCustomFilter = m_lpCustomFilter;
+	m_of.nMaxCustFilter = sizeof(m_lpCustomFilter) / sizeof(m_lpCustomFilter[0]);
 }
+
+INT_PTR CFileDialog::DoModal(HWND hWndParent)
+{
+	CWindow::AssertCreation(this);
+
+	m_of.hwndOwner = hWndParent;
+
+	CWindow::HookCreatingWindow(this);
+	if (m_pfDlgOpen(&m_of))
+	{
+		return IDOK;
+	}
+	else
+	{
+		CWindow::CleanHookCreatingWindow(this);
+		return IDCANCEL;
+	}
+}
+
+END_IKHWINLIB2()

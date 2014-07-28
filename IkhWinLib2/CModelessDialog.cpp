@@ -22,20 +22,23 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "CMyApp.h"
+#include "stdafx.h"
+#include "IkhWinLib2/CModelessDialog.h"
+#include "IkhWinLib2/CModalDialog.h"
+#include "IkhWinLib2/CSystemError.h"
 
-#include "resource.h"
-#include "CMainWnd.h"
+BEGIN_IKHWINLIB2()
 
-IKHWINLIB2_APP_CLS(CMyApp)
-#include <IkhWinLib2/EnableVisualStyle.h>
-
-int CMyApp::Main(int argc, TCHAR *argv[])
+void CModelessDialog::CreateResModeless(CWindow *pWnd, LPCTSTR lpDialog, HWND hWndParent)
 {
-	CMainWnd wnd;
+	CWindow::AssertCreation(pWnd);
 
-	wnd.Create();
-	ShowWindow(wnd, SW_NORMAL);
-
-	return (int)Run(MAKEINTRESOURCE(IDR_MAIN_ACCELERATOR));
+	CWindow::HookCreatingWindow(pWnd);
+	if (!CreateDialog(GetModuleHandle(NULL), lpDialog, hWndParent, CModalDialog::DlgProc))
+	{
+		CWindow::CleanHookCreatingWindow(pWnd);
+		throw CWindowCreationError(L"대화상자를 생성하지 못했습니다.");
+	}
 }
+
+END_IKHWINLIB2()

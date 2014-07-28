@@ -22,20 +22,51 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "CMyApp.h"
+#include "stdafx.h"
+#include "IkhWinLib2/CFindReplaceDialog.h"
+#include "IkhWinLib2/CSystemError.h"
 
-#include "resource.h"
-#include "CMainWnd.h"
+BEGIN_IKHWINLIB2()
 
-IKHWINLIB2_APP_CLS(CMyApp)
-#include <IkhWinLib2/EnableVisualStyle.h>
-
-int CMyApp::Main(int argc, TCHAR *argv[])
+CFindReplaceDialog::CFindReplaceDialog(bool bFind, DWORD flags,
+	LPCTSTR lpFind, LPCTSTR lpReplace)
 {
-	CMainWnd wnd;
+	ZeroMemory(&m_fp, sizeof(m_fp));
 
-	wnd.Create();
-	ShowWindow(wnd, SW_NORMAL);
+	m_pfnCreate = bFind ? FindText : ReplaceText;
 
-	return (int)Run(MAKEINTRESOURCE(IDR_MAIN_ACCELERATOR));
+	if (lpFind != NULL)
+		lstrcpy(m_lpFind, lpFind);
+	else
+		m_lpFind[0] = L'\0';
+
+	if (lpReplace != NULL)
+		lstrcpy(m_lpReplace, lpReplace);
+	else
+		m_lpFind[0] = L'\0';
+
+	m_fp.lStructSize = sizeof(m_fp);
+
+	m_fp.Flags = flags;
+
+	m_fp.lpstrFindWhat = m_lpFind;
+	m_fp.wFindWhatLen = sizeof(m_lpFind) / sizeof(m_lpFind[0]);
+	m_fp.lpstrReplaceWith = m_lpReplace;
+	m_fp.wReplaceWithLen = sizeof(m_lpReplace) / sizeof(m_lpReplace[0]);
 }
+
+void CFindReplaceDialog::CreateModeless(HWND hWndParent)
+{
+	CWindow::AssertCreation(this);
+
+	m_fp.hwndOwner = hWndParent;
+
+	CWindow::HookCreatingWindow(this);
+	if (!m_pfnCreate(&m_fp))
+	{
+		CWindow::CleanHookCreatingWindow(this);
+		throw CWindowCreationError(L"대화상자를 생성하지 못했습니다.");
+	}
+}
+
+END_IKHWINLIB2()

@@ -25,6 +25,12 @@
     <Filter Include="소스 파일\Controls">
       <UniqueIdentifier>{e8cb6587-b2c9-4c05-b126-f63d5892ba30}</UniqueIdentifier>
     </Filter>
+    <Filter Include="IkhWinLib2\Dialog">
+      <UniqueIdentifier>{04f7d4b3-ac05-4261-bad7-faff102a2b1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Dialog">
+      <UniqueIdentifier>{4056a8e6-375f-4489-bed5-f27e40015c97}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -144,8 +150,29 @@
     <ClInclude Include="IkhWinLib2\CPropViewCtrl.h">
       <Filter>IkhWinLib2\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="IkhWinLib2\CSplitterCtrl.h">
-      <Filter>IkhWinLib2\Controls</Filter>
+    <ClInclude Include="resource.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CModalDialog.h">
+      <Filter>IkhWinLib2\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CModelessDialog.h">
+      <Filter>IkhWinLib2\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CDialog.h">
+      <Filter>IkhWinLib2\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CFontDialog.h">
+      <Filter>IkhWinLib2\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CFileDialog.h">
+      <Filter>IkhWinLib2\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CColorDialog.h">
+      <Filter>IkhWinLib2\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="IkhWinLib2\CFindReplaceDialog.h">
+      <Filter>IkhWinLib2\Dialog</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -218,8 +245,28 @@
     <ClCompile Include="CPropViewCtrl.cpp">
       <Filter>소스 파일\Controls</Filter>
     </ClCompile>
-    <ClCompile Include="CSplitterCtrl.cpp">
-      <Filter>소스 파일\Controls</Filter>
+    <ClCompile Include="CModalDialog.cpp">
+      <Filter>소스 파일\Dialog</Filter>
     </ClCompile>
+    <ClCompile Include="CModelessDialog.cpp">
+      <Filter>소스 파일\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="CFileDialog.cpp">
+      <Filter>소스 파일\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="CFontDialog.cpp">
+      <Filter>소스 파일\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="CColorDialog.cpp">
+      <Filter>소스 파일\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="CFindReplaceDialog.cpp">
+      <Filter>소스 파일\Dialog</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="IkhWinLib2.rc">
+      <Filter>리소스 파일</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

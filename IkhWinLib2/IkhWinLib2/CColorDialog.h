@@ -22,20 +22,35 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "CMyApp.h"
+#pragma once
 
-#include "resource.h"
-#include "CMainWnd.h"
+#include "CModalDialog.h"
 
-IKHWINLIB2_APP_CLS(CMyApp)
-#include <IkhWinLib2/EnableVisualStyle.h>
+BEGIN_IKHWINLIB2()
 
-int CMyApp::Main(int argc, TCHAR *argv[])
+class CColorDialog : public CModalDialog
 {
-	CMainWnd wnd;
+private:
+	CHOOSECOLOR m_cc;
+	COLORREF m_CustColor[16];
 
-	wnd.Create();
-	ShowWindow(wnd, SW_NORMAL);
+public:
+	explicit CColorDialog(DWORD flags = CC_ANYCOLOR,
+		COLORREF defColor = 0, const COLORREF arCustomColor[16] = NULL);
 
-	return (int)Run(MAKEINTRESOURCE(IDR_MAIN_ACCELERATOR));
+	virtual INT_PTR DoModal(HWND hWndParent) override;
+
+	COLORREF GetColor() const NOEXCEPT;
+	void GetCustomColors(COLORREF *arCustomColor) const NOEXCEPT;
+};
+
+inline COLORREF CColorDialog::GetColor() const NOEXCEPT
+{
+	return m_cc.rgbResult;
 }
+inline void CColorDialog::GetCustomColors(COLORREF *arCustomColor) const NOEXCEPT
+{
+	memcpy(arCustomColor, m_CustColor, sizeof(m_CustColor));
+}
+
+END_IKHWINLIB2()

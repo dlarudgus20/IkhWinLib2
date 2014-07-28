@@ -22,30 +22,57 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#pragma once
-
-#include "CWindow.h"
-#include "IControl.h"
-#include <boost/graph/graph_traits.hpp>
-#include <boost/graph/adjacency_list.hpp>
+#include "stdafx.h"
+#include "IkhWinLib2/CFontDialog.h"
 
 BEGIN_IKHWINLIB2()
 
-class CSplitterCtrl : public CWindow, public virtual IControl
+CFontDialog::CFontDialog(DWORD dwFlags, int nSizeMin, int nSizeMax, HDC hDC)
 {
-	DECLARE_MSGMAP();
-public:
-	using IControl::Create;
-	using IControl::CreateEx;
+	ZeroMemory(&m_cf, sizeof(m_cf));
 
-	virtual void CreateEx(DWORD dwExStyle, DWORD dwStyle,
-		int x, int y, int nWidth, int nHeight, int id, HWND hWndParent) override;
+	m_cf.lStructSize = sizeof(m_cf);
+	m_cf.hInstance = GetModuleHandle(NULL);
+	m_cf.lpLogFont = &m_lf;
 
-protected:
-	BOOL OnCreate(LPCREATESTRUCT lpcs);
-	void OnPaint();
-	void OnSize(UINT state, int cx, int cy);
-	void OnDestroy();
-};
+	m_cf.Flags = dwFlags;
+	m_cf.nSizeMin = nSizeMin;
+	m_cf.nSizeMax = nSizeMax;
+	m_cf.hDC = hDC;
+}
+
+CFontDialog::CFontDialog(DWORD dwFlags, const LOGFONT &LogFont, int nSizeMin, int nSizeMax, HDC hDC)
+{
+	ZeroMemory(&m_cf, sizeof(m_cf));
+
+	memcpy(&m_lf, &LogFont, sizeof(m_lf));
+
+	m_cf.lStructSize = sizeof(m_cf);
+	m_cf.hInstance = GetModuleHandle(NULL);
+	m_cf.lpLogFont = &m_lf;
+
+	m_cf.Flags = dwFlags | CF_INITTOLOGFONTSTRUCT;
+	m_cf.nSizeMin = nSizeMin;
+	m_cf.nSizeMax = nSizeMax;
+	m_cf.hDC = hDC;
+}
+
+INT_PTR CFontDialog::DoModal(HWND hWndParent)
+{
+	CWindow::AssertCreation(this);
+
+	m_cf.hwndOwner = hWndParent;
+
+	CWindow::HookCreatingWindow(this);
+	if (ChooseFont(&m_cf))
+	{
+		return IDOK;
+	}
+	else
+	{
+		CWindow::CleanHookCreatingWindow(this);
+		return IDCANCEL;
+	}
+}
 
 END_IKHWINLIB2()

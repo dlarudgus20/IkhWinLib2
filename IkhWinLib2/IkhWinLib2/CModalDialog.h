@@ -22,20 +22,29 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "CMyApp.h"
+#pragma once
 
-#include "resource.h"
-#include "CMainWnd.h"
+#include "CWindow.h"
 
-IKHWINLIB2_APP_CLS(CMyApp)
-#include <IkhWinLib2/EnableVisualStyle.h>
+BEGIN_IKHWINLIB2()
 
-int CMyApp::Main(int argc, TCHAR *argv[])
+class IModalDialog
 {
-	CMainWnd wnd;
+public:
+	virtual ~IModalDialog() = default;
+	virtual INT_PTR DoModal(HWND hWndParent) = 0;
+};
 
-	wnd.Create();
-	ShowWindow(wnd, SW_NORMAL);
+class CModalDialog : public CWindow, public virtual IModalDialog
+{
+	friend class CModelessDialog;
+private:
+	using CWindow::Create;
+	using CWindow::CreateEx;
 
-	return (int)Run(MAKEINTRESOURCE(IDR_MAIN_ACCELERATOR));
-}
+	static INT_PTR CALLBACK DlgProc(HWND hDlg, UINT iMessage, WPARAM wParam, LPARAM lParam);
+protected:
+	INT_PTR DoResModal(LPCTSTR lpDialog, HWND hWndParent);
+};
+
+END_IKHWINLIB2()
