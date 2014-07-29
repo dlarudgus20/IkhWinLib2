@@ -26,6 +26,7 @@
 
 #include "resource.h"
 #include "CMainWnd.h"
+#include "CProject.h"
 
 BEGIN_MSGMAP(CMainWnd, CForm)
 	MSGMAP_WM_CREATE(OnCreate)
@@ -36,8 +37,9 @@ BEGIN_MSGMAP(CMainWnd, CForm)
 		CMDMAP_ID(ID_FILE_ALLSAVE, OnFileAllSave)
 		CMDMAP_ID(ID_FILE_EXIT, OnFileExit)
 	END_CMDMAP()
+	MSGMAP_WM_CLOSE(OnClose)
 	MSGMAP_WM_DESTROY(OnDestroy)
-END_MSGMAP(CMainWnd, CForm)
+END_MSGMAP_CHAIN(m_pProject.get(), CMainWnd, CForm)
 
 void CMainWnd::Create()
 {
@@ -81,6 +83,11 @@ BOOL CMainWnd::OnCreate(LPCREATESTRUCT lpcs)
 	ResumeLayout();
 
 	return TRUE;
+}
+
+void CMainWnd::OnClose()
+{
+	DestroyWindow(*this);
 }
 
 void CMainWnd::OnDestroy()

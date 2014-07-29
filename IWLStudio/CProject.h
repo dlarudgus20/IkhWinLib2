@@ -22,37 +22,30 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <IkhWinLib2/CForm.h>
-#include <IkhWinLib2/CListBoxCtrl.h>
+#pragma once
+
+#include <IkhWinLib2/CMsgTarget.h>
 #include <IkhWinLib2/CTreeViewCtrl.h>
-#include <IkhWinLib2/CPropViewCtrl.h>
 using namespace IkhProgram::IkhWinLib2;
 
-#include "CDesignerCtrl.h"
-class CProject;
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+using namespace boost::property_tree;
 
-class CMainWnd final : public CForm
+class CProject final : public CMsgTarget
 {
 	DECLARE_MSGMAP();
-public:
-	void Create();
-
 private:
-	CListBoxCtrl m_ToolList;
-	CDesignerCtrl m_DesignerCtrl;
-	CTreeViewCtrl m_ProjTree;
-	CPropViewCtrl m_PropView;
+	std::wstring m_fname;
+	wptree m_pt;
 
-	stlgc::list<std::shared_ptr<CProject> > m_lstProject;
-	std::shared_ptr<CProject> m_pProject;
+	CTreeViewCtrl &m_TreeView;
 
-protected:
-	BOOL OnCreate(LPCREATESTRUCT lpcs);
-	void OnFileProjNew(int id, HWND hCtl, UINT codeNotify);
-	void OnFileProjOpen(int id, HWND hCtl, UINT codeNotify);
-	void OnFileSave(int id, HWND hCtl, UINT codeNotify);
-	void OnFileAllSave(int id, HWND hCtl, UINT codeNotify);
-	void OnFileExit(int id, HWND hCtl, UINT codeNotify);
-	void OnClose();
-	void OnDestroy();
+public:
+	explicit CProject(CTreeViewCtrl &tvctl, const std::wstring &fname);
+
+	/** @exception json_parser::json_parser_error */
+	void Load(const std::wstring &fname = L"");
+	/** @exception json_parser::json_parser_error */
+	void Save(const std::wstring &fname = L"");
 };

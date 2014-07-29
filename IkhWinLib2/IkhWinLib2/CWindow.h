@@ -125,7 +125,6 @@ public:
 	 */
 	void PostMsg(UINT iMessage, WPARAM wParam, LPARAM lParam);
 
-protected:
 	virtual LRESULT MessageProc(UINT iMessage, WPARAM wParam, LPARAM lParam) override;
 
 private:

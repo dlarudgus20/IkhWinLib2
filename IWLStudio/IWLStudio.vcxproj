@@ -166,6 +166,7 @@
     <ClInclude Include="CDesignerCtrl.h" />
     <ClInclude Include="CMainWnd.h" />
     <ClInclude Include="CMyApp.h" />
+    <ClInclude Include="CProject.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -173,6 +174,7 @@
     <ClCompile Include="CMainWnd.cpp" />
     <ClCompile Include="CMainWnd_menu.cpp" />
     <ClCompile Include="CMyApp.cpp" />
+    <ClCompile Include="CProject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="IWLStudio.rc" />

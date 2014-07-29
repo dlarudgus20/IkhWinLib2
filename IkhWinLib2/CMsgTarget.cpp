@@ -70,4 +70,9 @@ boost::future<LRESULT> CMsgTarget::PostMsgEx(UINT iMessage, WPARAM wParam, LPARA
 		);
 }
 
+LRESULT CMsgTarget::MessageProc(UINT iMessage, WPARAM wParam, LPARAM lParam)
+{
+	return 0;
+}
+
 END_IKHWINLIB2()

@@ -67,6 +67,7 @@
 #include <boost/thread/future.hpp>
 #include <boost/scope_exit.hpp>
 #include <boost/optional.hpp>
+#include <boost/format.hpp>
 
 #include "stlgc.h"
 

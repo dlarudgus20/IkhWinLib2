@@ -22,37 +22,42 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <IkhWinLib2/CForm.h>
-#include <IkhWinLib2/CListBoxCtrl.h>
-#include <IkhWinLib2/CTreeViewCtrl.h>
-#include <IkhWinLib2/CPropViewCtrl.h>
-using namespace IkhProgram::IkhWinLib2;
+#include <boost/locale.hpp>
+#include <locale>
 
-#include "CDesignerCtrl.h"
-class CProject;
+#include "CProject.h"
 
-class CMainWnd final : public CForm
+BEGIN_MSGMAP(CProject, CMsgTarget)
+END_MSGMAP(CProject, CMsgTarget)
+
+CProject::CProject(CTreeViewCtrl &tvctl, const std::wstring &fname)
+	: m_TreeView(tvctl), m_fname(fname)
 {
-	DECLARE_MSGMAP();
-public:
-	void Create();
 
-private:
-	CListBoxCtrl m_ToolList;
-	CDesignerCtrl m_DesignerCtrl;
-	CTreeViewCtrl m_ProjTree;
-	CPropViewCtrl m_PropView;
+}
 
-	stlgc::list<std::shared_ptr<CProject> > m_lstProject;
-	std::shared_ptr<CProject> m_pProject;
+void CProject::Load(const std::wstring &fname)
+{
+	if (!fname.empty())
+	{
+		m_fname = fname;
+	}
 
-protected:
-	BOOL OnCreate(LPCREATESTRUCT lpcs);
-	void OnFileProjNew(int id, HWND hCtl, UINT codeNotify);
-	void OnFileProjOpen(int id, HWND hCtl, UINT codeNotify);
-	void OnFileSave(int id, HWND hCtl, UINT codeNotify);
-	void OnFileAllSave(int id, HWND hCtl, UINT codeNotify);
-	void OnFileExit(int id, HWND hCtl, UINT codeNotify);
-	void OnClose();
-	void OnDestroy();
-};
+	read_json(
+		boost::locale::conv::from_utf(m_fname, std::locale()),
+		m_pt
+		);
+}
+
+void CProject::Save(const std::wstring &fname)
+{
+	if (!fname.empty())
+	{
+		m_fname = fname;
+	}
+
+	write_json(
+		boost::locale::conv::from_utf(m_fname, std::locale()),
+		m_pt
+		);
+}

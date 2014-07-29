@@ -69,8 +69,6 @@ public:
 	 */
 	virtual boost::future<LRESULT> PostMsgEx(UINT iMessage, WPARAM wParam, LPARAM lParam);
 
-protected:
-
 	/**
 	 * @brief 메시지 처리 함수입니다. 이 순수 추상 함수를 직접 재정의하는 것보다는 메시지 맵 매크로를 사용하는 것을 권장합니다.
 	 * @remarks 이 순수 추상 함수의 CMsgTarget의 구현에서는 아무 일도 하지 않고 0을 리턴합니다.
@@ -87,7 +85,7 @@ protected:
  * @example CMsgTarget_MSGMAP.cpp
  */
 #define DECLARE_MSGMAP() \
-	protected: virtual LRESULT MessageProc(UINT iMessage, WPARAM wParam, LPARAM lParam) override
+	public: virtual LRESULT MessageProc(UINT iMessage, WPARAM wParam, LPARAM lParam) override
 
 /**
  * @brief 메시지 맵 구현의 시작입니다.
@@ -107,18 +105,34 @@ protected:
 
 /* void OnCommand(int id, HWND hCtl, UINT codeNotify) */
 #define CMDMAP_ID(id, fn) \
-				case (id): return ((fn)((id), (HWND)lParam, (UINT)HIWORD(wParam)), 0);
+			case (id): return ((fn)((id), (HWND)lParam, (UINT)HIWORD(wParam)), 0);
 
 #define END_CMDMAP() \
+			default: break; \
 			} \
 			break;
+
+#define BEGIN_NOTIFYMAP() \
+		case WM_NOTIFY: { \
+			NMHDR *phdr = (NMHDR *)lParam; \
+
+/* LRESULT OnNotify(NMHDR *phdr); */
+#define NOTIFYMAP_ID(code, id, fn) \
+			if ((int)wParam == (id) && phdr->code == (code)) { \
+				return (fn)(phdr); }
+#define NOTIFYMAP_WND(code, wnd, fn) \
+			if (phdr->hwndFrom == static_cast<HWND>(wnd) && phdr->code == (code)) { \
+				return (fn)(phdr); }
+
+#define END_NOTIFYMAP() \
+			break; }
 
 /**
  * @brief @ref MsgCracker.h에서 지원하지 않는 메시지 핸들러를 선언합니다.
  * @example CMsgTarget_MSGMAP.cpp
  */
 #define MSGMAP_CUSTOM(msg, fn) \
-	case (msg) : return (fn)(wParam, lParam)
+		case (msg): return (fn)(wParam, lParam);
 
 /**
  * @brief @ref MsgCracker.h에서 지원하지 않는 메시지에 대해 부모의 메시지 함수를 호출합니다.
@@ -127,12 +141,19 @@ protected:
 #define MSG_FORWARD_CUSTOM(base, msg, wParam, lParam) \
 	(base::MessageProc)(msg, wParam, lParam)
 
+#define END_MSGMAP_CHAIN(target, cls, base) \
+		default: \
+			if (target) return static_cast<CMsgTarget *>(target)->MessageProc(iMessage, wParam, lParam); \
+			else break; \
+		} \
+		return base::MessageProc(iMessage, wParam, lParam); \
+	}
 /**
  * @brief 메시지 맵 구현의 끝입니다.
  * @example CMsgTarget_MSGMAP.cpp
  */
 #define END_MSGMAP(cls, base) \
-			default: break; \
+		default: break;\
 		} \
 		return base::MessageProc(iMessage, wParam, lParam); \
 	}

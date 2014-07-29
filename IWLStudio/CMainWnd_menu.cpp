@@ -22,26 +22,63 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#include <IkhWinLib2/CFileDialog.h>
+
 #include "CMainWnd.h"
+#include "CProject.h"
 
 void CMainWnd::OnFileProjNew(int id, HWND hCtl, UINT codeNotify)
 {
+	CFileDialog dialog(false, L"IWL Studio 프로젝트 파일\0*.iwlproj\0", L"iwlproj", L"새 프로젝트");
 
+	if (dialog.DoModal(*this) == IDOK)
+	{
+		m_pProject.reset(new CProject(m_ProjTree, dialog.GetFileName()));
+		m_lstProject.push_back(m_pProject);
+	}
 }
 
 void CMainWnd::OnFileProjOpen(int id, HWND hCtl, UINT codeNotify)
 {
+	CFileDialog dialog(true, L"IWL Studio 프로젝트 파일\0*.iwlproj\0", L"iwlproj", L"프로젝트 열기");
 
+	if (dialog.DoModal(*this) == IDOK)
+	{
+		try
+		{
+			std::shared_ptr<CProject> sp(new CProject(m_ProjTree, dialog.GetFileName()));
+			sp->Load();
+
+			m_pProject = sp;
+			m_lstProject.push_back(sp);
+		}
+		catch (json_parser::json_parser_error &e)
+		{
+			MessageBox(*this, L"프로젝트 파일 파싱에 실패하였습니다.", L"에러", MB_OK | MB_ICONERROR);
+			OutputDebugStringA((std::string("error on opening projet file : ") + e.what() + "\n").c_str());
+		}
+	}
 }
 
 void CMainWnd::OnFileSave(int id, HWND hCtl, UINT codeNotify)
 {
-
+	try
+	{
+		if (m_pProject)
+		{
+			m_pProject->Save();
+		}
+	}
+	catch (json_parser::json_parser_error &e)
+	{
+		MessageBox(*this, L"프로젝트 파일 저장에 실패하였습니다.", L"에러", MB_OK | MB_ICONERROR);
+		OutputDebugStringA((std::string("error on saving projet file : ") + e.what() + "\n").c_str());
+	}
 }
 
 void CMainWnd::OnFileAllSave(int id, HWND hCtl, UINT codeNotify)
 {
-
+	OutputDebugStringA("not impl: CMainWnd::OnFileAllSave()\n");
 }
 
 void CMainWnd::OnFileExit(int id, HWND hCtl, UINT codeNotify)
