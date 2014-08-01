@@ -22,48 +22,48 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <IkhWinLib2/CForm.h>
-#include <IkhWinLib2/CListBoxCtrl.h>
-#include <IkhWinLib2/CTreeViewCtrl.h>
-#include <IkhWinLib2/CPropViewCtrl.h>
-using namespace IkhProgram::IkhWinLib2;
+#pragma once
 
-#include "CDesignerCtrl.h"
-#include "CProject.h"
+#include "CObject.h"
+#include "NonCopyable.h"
 
-class CMainWnd final : public CForm
+BEGIN_IKHWINLIB2()
+
+class CDDBitmap : public CObject, private NonCopyable
 {
-	DECLARE_MSGMAP();
-public:
-	void Create();
-
 private:
-	enum
+	class CMemDC : private NonCopyable
 	{
-		TOOLLIST_ID,
-		DESIGNERCTRL_ID,
-		PROJTREE_ID,
-		PROPVIEW_ID,
+	private:
+		HDC m_hMemDC;
+		HGDIOBJ m_hOld;
+	public:
+		explicit CMemDC(HDC hdc, HBITMAP hBit);
+		~CMemDC();
+		operator HDC() const NOEXCEPT { return m_hMemDC; }
 	};
-	CListBoxCtrl m_ToolList;
-	CDesignerCtrl m_DesignerCtrl;
-	CTreeViewCtrl m_ProjTree;
-	CPropViewCtrl m_PropView;
 
-	std::unique_ptr<CProject> m_pProject;
+	HBITMAP m_hBit;
 
 public:
-	CMainWnd();
+	explicit CDDBitmap(LPCTSTR lpResBitmap);
+	virtual ~CDDBitmap();
 
-protected:
-	BOOL OnCreate(LPCREATESTRUCT lpcs);
-	void OnToolListSelChange(int id, HWND hCtl, UINT codeNotify);
-	void OnClose();
-	void OnDestroy();
+	BOOL DrawBit(HDC hdc, int x, int y, int cx = -1, int cy = -1,
+		int BitX = 0, int BitY = 0, DWORD dwRop = SRCCOPY) const;
+	BOOL DrawStretch(HDC hdc, int x, int y, int cx, int cy,
+		int BitX, int BitY, int BitCx, int BitCy, DWORD dwRop = SRCCOPY) const;
+	BOOL DrawTransparent(HDC hdc, int x, int y, int cx, int cy,
+		int BitX, int BitY, int BitCx, int BitCy, UINT crTransparent) const;
 
-	void OnFileProjNew(int id, HWND hCtl, UINT codeNotify);
-	void OnFileProjOpen(int id, HWND hCtl, UINT codeNotify);
-	void OnFileSave(int id, HWND hCtl, UINT codeNotify);
-	void OnFileAllSave(int id, HWND hCtl, UINT codeNotify);
-	void OnFileExit(int id, HWND hCtl, UINT codeNotify);
+	void GetBitmapStruct(BITMAP &ret) const;
+
+	operator HBITMAP() const NOEXCEPT;
 };
+
+inline CDDBitmap::operator HBITMAP() const NOEXCEPT
+{
+	return m_hBit;
+}
+
+END_IKHWINLIB2()

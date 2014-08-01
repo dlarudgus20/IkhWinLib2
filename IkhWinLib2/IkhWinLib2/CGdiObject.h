@@ -22,48 +22,52 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <IkhWinLib2/CForm.h>
-#include <IkhWinLib2/CListBoxCtrl.h>
-#include <IkhWinLib2/CTreeViewCtrl.h>
-#include <IkhWinLib2/CPropViewCtrl.h>
-using namespace IkhProgram::IkhWinLib2;
+#pragma once
 
-#include "CDesignerCtrl.h"
-#include "CProject.h"
+#include "CObject.h"
+#include "NonCopyable.h"
 
-class CMainWnd final : public CForm
+BEGIN_IKHWINLIB2()
+
+template <typename T>
+class CGdiObject : public CObject, private NonCopyable
 {
-	DECLARE_MSGMAP();
-public:
-	void Create();
-
 private:
-	enum
-	{
-		TOOLLIST_ID,
-		DESIGNERCTRL_ID,
-		PROJTREE_ID,
-		PROPVIEW_ID,
-	};
-	CListBoxCtrl m_ToolList;
-	CDesignerCtrl m_DesignerCtrl;
-	CTreeViewCtrl m_ProjTree;
-	CPropViewCtrl m_PropView;
+	T m_obj;
 
-	std::unique_ptr<CProject> m_pProject;
+	void set(CGdiObject &&rhs) { m_obj = rhs.m_obj; rhs.m_obj = nullptr; }
+	void destroy() { if (m_obj != nullptr) DeleteObject(m_obj); }
 
 public:
-	CMainWnd();
+	CGdiObject() : m_obj(nullptr) { }
+	CGdiObject(T obj) : m_obj(obj) { }
+	CGdiObject(CGdiObject &&rhs) { set(rhs); }
+	CGdiObject &operator =(CGdiObject &&rhs) { destroy(); set(rhs); return *this; }
+	virtual ~CGdiObject() { destroy(); }
 
-protected:
-	BOOL OnCreate(LPCREATESTRUCT lpcs);
-	void OnToolListSelChange(int id, HWND hCtl, UINT codeNotify);
-	void OnClose();
-	void OnDestroy();
+	CGdiObject &operator =(T obj) { destroy(); m_obj = obj; }
 
-	void OnFileProjNew(int id, HWND hCtl, UINT codeNotify);
-	void OnFileProjOpen(int id, HWND hCtl, UINT codeNotify);
-	void OnFileSave(int id, HWND hCtl, UINT codeNotify);
-	void OnFileAllSave(int id, HWND hCtl, UINT codeNotify);
-	void OnFileExit(int id, HWND hCtl, UINT codeNotify);
+	operator T() const NOEXCEPT { return m_obj; }
 };
+
+struct GdiObjectDeleter
+{
+	void operator ()(HGDIOBJ obj) const
+	{
+		DeleteObject(obj);
+	}
+};
+
+template <typename T>
+using gdi_unique_ptr = std::unique_ptr<typename std::remove_pointer<T>::type, GdiObjectDeleter>;
+
+template <typename T>
+using gdi_shared_ptr = std::shared_ptr<typename std::remove_pointer<T>::type>;
+
+template <typename T>
+inline gdi_shared_ptr<T> gdi_make_shared(T obj)
+{
+	return gdi_shared_ptr<T>(obj, GdiObjectDeleter());
+}
+
+END_IKHWINLIB2()

@@ -22,48 +22,19 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <IkhWinLib2/CForm.h>
-#include <IkhWinLib2/CListBoxCtrl.h>
-#include <IkhWinLib2/CTreeViewCtrl.h>
-#include <IkhWinLib2/CPropViewCtrl.h>
-using namespace IkhProgram::IkhWinLib2;
+#include "CMyApp.h"
 
-#include "CDesignerCtrl.h"
-#include "CProject.h"
+#include "CMainWnd.h"
 
-class CMainWnd final : public CForm
+IKHWINLIB2_APP_CLS(CMyApp)
+#include <IkhWinLib2/EnableVisualStyle.h>
+
+int CMyApp::Main(int argc, TCHAR *argv[])
 {
-	DECLARE_MSGMAP();
-public:
-	void Create();
+	CMainWnd wnd;
 
-private:
-	enum
-	{
-		TOOLLIST_ID,
-		DESIGNERCTRL_ID,
-		PROJTREE_ID,
-		PROPVIEW_ID,
-	};
-	CListBoxCtrl m_ToolList;
-	CDesignerCtrl m_DesignerCtrl;
-	CTreeViewCtrl m_ProjTree;
-	CPropViewCtrl m_PropView;
+	wnd.Create();
+	ShowWindow(wnd, SW_NORMAL);
 
-	std::unique_ptr<CProject> m_pProject;
-
-public:
-	CMainWnd();
-
-protected:
-	BOOL OnCreate(LPCREATESTRUCT lpcs);
-	void OnToolListSelChange(int id, HWND hCtl, UINT codeNotify);
-	void OnClose();
-	void OnDestroy();
-
-	void OnFileProjNew(int id, HWND hCtl, UINT codeNotify);
-	void OnFileProjOpen(int id, HWND hCtl, UINT codeNotify);
-	void OnFileSave(int id, HWND hCtl, UINT codeNotify);
-	void OnFileAllSave(int id, HWND hCtl, UINT codeNotify);
-	void OnFileExit(int id, HWND hCtl, UINT codeNotify);
-};
+	return (int)Run();
+}

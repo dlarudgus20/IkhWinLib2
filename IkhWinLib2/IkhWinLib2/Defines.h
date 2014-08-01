@@ -34,12 +34,20 @@
 #include <windowsx.h>
 #include <commctrl.h>
 #include <commdlg.h>
+#include <mmsystem.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <memory.h>
 #include <assert.h>
+
+#include <iostream>
+#include <iomanip>
+#include <istream>
+#include <ostream>
+#include <sstream>
+#include <fstream>
 
 #include <algorithm>
 #include <functional>
@@ -53,7 +61,9 @@
 #include <thread>
 #include <mutex>
 #include <chrono>
+#include <random>
 #include <new>
+using std::swap;
 
 #ifndef GC_THREADS
 # define GC_THREADS
@@ -68,6 +78,7 @@
 #include <boost/scope_exit.hpp>
 #include <boost/optional.hpp>
 #include <boost/format.hpp>
+#include <boost/scope_exit.hpp>
 
 #include "stlgc.h"
 

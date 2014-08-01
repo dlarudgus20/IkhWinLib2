@@ -25,7 +25,6 @@
 #include <IkhWinLib2/CFileDialog.h>
 
 #include "CMainWnd.h"
-#include "CProject.h"
 
 void CMainWnd::OnFileProjNew(int id, HWND hCtl, UINT codeNotify)
 {
@@ -34,7 +33,6 @@ void CMainWnd::OnFileProjNew(int id, HWND hCtl, UINT codeNotify)
 	if (dialog.DoModal(*this) == IDOK)
 	{
 		m_pProject.reset(new CProject(m_ProjTree, dialog.GetFileName()));
-		m_lstProject.push_back(m_pProject);
 	}
 }
 
@@ -46,11 +44,10 @@ void CMainWnd::OnFileProjOpen(int id, HWND hCtl, UINT codeNotify)
 	{
 		try
 		{
-			std::shared_ptr<CProject> sp(new CProject(m_ProjTree, dialog.GetFileName()));
+			auto sp = std::make_unique<CProject>(m_ProjTree, dialog.GetFileName());
 			sp->Load();
 
-			m_pProject = sp;
-			m_lstProject.push_back(sp);
+			m_pProject = std::move(sp);
 		}
 		catch (json_parser::json_parser_error &e)
 		{

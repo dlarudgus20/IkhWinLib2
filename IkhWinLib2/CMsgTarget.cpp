@@ -70,8 +70,10 @@ boost::future<LRESULT> CMsgTarget::PostMsgEx(UINT iMessage, WPARAM wParam, LPARA
 		);
 }
 
-LRESULT CMsgTarget::MessageProc(UINT iMessage, WPARAM wParam, LPARAM lParam)
+LRESULT CMsgTarget::MessageProc(UINT iMessage, WPARAM wParam, LPARAM lParam, bool *pbProc)
 {
+	if (pbProc != nullptr)
+		*pbProc = false;
 	return 0;
 }
 

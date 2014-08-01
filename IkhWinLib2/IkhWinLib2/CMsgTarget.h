@@ -77,7 +77,7 @@ public:
 	 * @param[in] lParam 메시지의 <c>LPARAM</c>입니다.
 	 * @return 메시지에 대한 리턴값입니다.
 	 */
-	virtual LRESULT MessageProc(UINT iMessage, WPARAM wParam, LPARAM lParam) = 0;
+	virtual LRESULT MessageProc(UINT iMessage, WPARAM wParam, LPARAM lParam, bool *pbProc = nullptr) = 0;
 };
 
 /**
@@ -85,31 +85,35 @@ public:
  * @example CMsgTarget_MSGMAP.cpp
  */
 #define DECLARE_MSGMAP() \
-	public: virtual LRESULT MessageProc(UINT iMessage, WPARAM wParam, LPARAM lParam) override
+	public: \
+		virtual LRESULT MessageProc(UINT iMessage, WPARAM wParam, LPARAM lParam, bool *pbProc = nullptr) override
 
 /**
  * @brief 메시지 맵 구현의 시작입니다.
  * @example CMsgTarget_MSGMAP.cpp
  */
 #define BEGIN_MSGMAP(cls, base) \
-	LRESULT cls::MessageProc(UINT iMessage, WPARAM wParam, LPARAM lParam) \
+	LRESULT cls::MessageProc(UINT iMessage, WPARAM wParam, LPARAM lParam, bool *pbProc) \
 	{ \
+		bool _proc; if (pbProc == nullptr) pbProc = &_proc; \
+		*pbProc = true; \
 		switch (iMessage) \
 		{
 
 #include "MsgCracker.h"
 
 #define BEGIN_CMDMAP() \
-		case WM_COMMAND: \
-			switch ((int)LOWORD(wParam)) {
+		case WM_COMMAND:
 
 /* void OnCommand(int id, HWND hCtl, UINT codeNotify) */
 #define CMDMAP_ID(id, fn) \
-			case (id): return ((fn)((id), (HWND)lParam, (UINT)HIWORD(wParam)), 0);
+			if ((int)LOWORD(wParam) == (id)) \
+				return ((fn)(LOWORD(wParam), (HWND)lParam, (UINT)HIWORD(wParam)), 0);
+#define CMDMAP_CTRL(code, id, fn) \
+			if ((int)LOWORD(wParam) == (id) && HIWORD(wParam) == (code)) \
+				return ((fn)(LOWORD(wParam), (HWND)lParam, (UINT)HIWORD(wParam)), 0);
 
 #define END_CMDMAP() \
-			default: break; \
-			} \
 			break;
 
 #define BEGIN_NOTIFYMAP() \
@@ -141,21 +145,27 @@ public:
 #define MSG_FORWARD_CUSTOM(base, msg, wParam, lParam) \
 	(base::MessageProc)(msg, wParam, lParam)
 
-#define END_MSGMAP_CHAIN(target, cls, base) \
-		default: \
-			if (target) return static_cast<CMsgTarget *>(target)->MessageProc(iMessage, wParam, lParam); \
-			else break; \
-		} \
-		return base::MessageProc(iMessage, wParam, lParam); \
-	}
+#define BEGIN_CHAIN() \
+		default:
+
+#define MSG_CHAIN(target) \
+			if (target) { \
+				LRESULT r = static_cast<CMsgTarget *>(target)->MessageProc( \
+					iMessage, wParam, lParam, pbProc); \
+				if (*pbProc) return r; \
+			}
+
+#define END_CHAIN() \
+			break;
+
 /**
  * @brief 메시지 맵 구현의 끝입니다.
  * @example CMsgTarget_MSGMAP.cpp
  */
 #define END_MSGMAP(cls, base) \
-		default: break;\
 		} \
-		return base::MessageProc(iMessage, wParam, lParam); \
+		*pbProc = false; \
+		return base::MessageProc(iMessage, wParam, lParam, pbProc); \
 	}
 
 END_IKHWINLIB2()

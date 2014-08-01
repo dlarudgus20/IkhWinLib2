@@ -63,6 +63,11 @@
 
 #include "CWndClass.h"
 
+#include "CDbBufDC.h"
+#include "CImageList.h"
+#include "CDDBitmap.h"
+#include "CGdiObject.h"
+
 #include "FnEvent.h"
 #include "NonCopyable.h"
 
@@ -80,4 +85,6 @@ using namespace IkhProgram::IkhWinLib2;
 # pragma comment(lib, "IkhWinLib2.lib")
 # pragma comment(lib, "gcmt-lib.lib")
 # pragma comment(lib, "comctl32.lib")
+# pragma comment(lib, "msimg32.lib")
+# pragma comment(lib, "winmm.lib")
 #endif

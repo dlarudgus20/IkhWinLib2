@@ -30,6 +30,7 @@
 #include <windowsx.h>
 #include <commctrl.h>
 #include <commdlg.h>
+#include <mmsystem.h>
 
 #include <gl/gl.h>
 
@@ -38,6 +39,13 @@
 #include <string.h>
 #include <memory.h>
 #include <assert.h>
+
+#include <iostream>
+#include <iomanip>
+#include <istream>
+#include <ostream>
+#include <sstream>
+#include <fstream>
 
 #include <algorithm>
 #include <functional>
@@ -48,6 +56,11 @@
 #include <string>
 #include <memory>
 #include <utility>
+#include <future>
+#include <thread>
+#include <mutex>
+#include <chrono>
+#include <random>
 #include <new>
 
 #include <deque>
@@ -61,10 +74,6 @@
 #include <queue>
 #include <stack>
 #include <string>
-#include <future>
-#include <thread>
-#include <mutex>
-#include <chrono>
 
 #define GC_THREADS
 #include <gc.h>
@@ -77,3 +86,4 @@
 #include <boost/scope_exit.hpp>
 #include <boost/optional.hpp>
 #include <boost/format.hpp>
+#include <boost/scope_exit.hpp>

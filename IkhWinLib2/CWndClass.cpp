@@ -33,6 +33,13 @@ namespace
 
 BEGIN_IKHWINLIB2()
 
+std::wstring CWndClass::Generate()
+{
+	TCHAR name[33];
+	wsprintf(name, L"IkhWinLib2_Window_Class_%08x", s_id++);
+	return name;
+}
+
 CWndClass::CWndClass(LPCTSTR lpszClassName, UINT style, HBRUSH hbrBackground, LPCTSTR lpszMenuName,
 	HCURSOR hCursor, HICON hIcon, HICON hIconSm)
 {
@@ -48,16 +55,7 @@ CWndClass::CWndClass(LPCTSTR lpszClassName, UINT style, HBRUSH hbrBackground, LP
 	m_wc.lpszMenuName = lpszMenuName;
 	m_wc.style = style;
 
-	if (lpszClassName == nullptr)
-	{
-		TCHAR name[33];
-		wsprintf(name, L"IkhWinLib2_Window_Class_%08x", s_id++);
-		m_name = name;
-	}
-	else
-	{
-		m_name = lpszClassName;
-	}
+	m_name = (lpszClassName == nullptr) ? Generate() : lpszClassName;
 	m_wc.lpszClassName = m_name.c_str();
 
 	if (RegisterClassEx(&m_wc) == NULL)
