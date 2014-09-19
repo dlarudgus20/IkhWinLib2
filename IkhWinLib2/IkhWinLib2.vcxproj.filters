@@ -186,6 +186,9 @@
     <ClInclude Include="IkhWinLib2\CDDBitmap.h">
       <Filter>IkhWinLib2</Filter>
     </ClInclude>
+    <ClInclude Include="IkhWinLib2\CToolTipCtrl.h">
+      <Filter>IkhWinLib2\Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -283,6 +286,9 @@
     </ClCompile>
     <ClCompile Include="CDDBitmap.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CToolTipCtrl.cpp">
+      <Filter>소스 파일\Controls</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

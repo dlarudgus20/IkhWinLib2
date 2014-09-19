@@ -97,7 +97,7 @@ void CDesignerCtrl::InitToolList(CListBoxCtrl &ToolList)
 }
 void CDesignerCtrl::OnToolListSelChange(int idx)
 {
-	assert(0 <= idx && idx < m_vtCtrlCtor.size());
+	assert(0 <= idx && static_cast<size_t>(idx) < m_vtCtrlCtor.size());
 	m_NowCtrlCtor = (idx != 0) ? m_vtCtrlCtor[idx] : nullptr;
 }
 

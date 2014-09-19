@@ -98,6 +98,7 @@
     </Link>
     <Lib>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <TargetMachine>MachineX86</TargetMachine>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -138,6 +139,7 @@
     </Link>
     <Lib>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <TargetMachine>MachineX86</TargetMachine>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -182,6 +184,7 @@
     <ClInclude Include="IkhWinLib2\CModalDialog.h" />
     <ClInclude Include="IkhWinLib2\CModelessDialog.h" />
     <ClInclude Include="IkhWinLib2\CPropViewCtrl.h" />
+    <ClInclude Include="IkhWinLib2\CToolTipCtrl.h" />
     <ClInclude Include="IkhWinLib2\CTreeViewCtrl.h" />
     <ClInclude Include="IkhWinLib2\IControl.h" />
     <ClInclude Include="IkhWinLib2\CDateTimePickCtrl.h" />
@@ -243,6 +246,7 @@
     <ClCompile Include="CStaticCtrl.cpp" />
     <ClCompile Include="CThreadOpenGLWnd.cpp" />
     <ClCompile Include="CIdleOpenGLWnd.cpp" />
+    <ClCompile Include="CToolTipCtrl.cpp" />
     <ClCompile Include="CTrackbarCtrl.cpp" />
     <ClCompile Include="CTreeViewCtrl.cpp" />
     <ClCompile Include="CWin32Thread.cpp" />

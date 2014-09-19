@@ -37,6 +37,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <memory.h>
 #include <assert.h>
 
@@ -82,8 +83,10 @@
 
 #define BOOST_THREAD_VERSION 4
 #define BOOST_RESULT_OF_USE_DECLTYPE
+#define BOOST_BIND_NO_PLACEHOLDERS
 #include <boost/thread/future.hpp>
 #include <boost/scope_exit.hpp>
 #include <boost/optional.hpp>
 #include <boost/format.hpp>
 #include <boost/scope_exit.hpp>
+#include <boost/bind.hpp>
