@@ -69,7 +69,7 @@ void SphereManager::Run()
 	std::vector<Sphere> NewSpheres = m_Spheres;
 
 	RunForce(NewSpheres);
-	//RunCollision(NewSpheres);
+	RunCollision(NewSpheres);
 
 	m_Spheres = std::move(NewSpheres);
 	m_day += LOGICAL_TIME_SPAN;
@@ -143,70 +143,251 @@ void SphereManager::RunForce(std::vector<Sphere> &NewSpheres)
 
 void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 {
+	// 충돌 처리
+	// 복잡한 상황을 처리하지 못함; 코딩이 필요함
+
 	std::vector<std::shared_ptr<CollisionInfo> > collisions;
 
 	// pair.first -> 충돌정보
 	// pair.second -> `true`이면 negative - i와 j를 반대로!
-	std::multimap<int, std::pair<std::shared_ptr<CollisionInfo>, bool> > col_map;
+	typedef std::multimap<int, std::pair<std::shared_ptr<CollisionInfo>, bool> > col_map_t;
+	col_map_t col_map;
 
-	double RemainTime = LOGICAL_TIME_SPAN;
+	// 충돌 감지
 
-	bool bNoCollision;
-	while (1)
+	// 중복 판정 방지
+	std::unordered_map<int, std::unordered_set<int> > DetectedCollisions;
+
+	for (int i = 0; static_cast<size_t>(i) < m_Spheres.size() - 1; i++)
 	{
-		bNoCollision = true;
-
-		// 충돌 감지
-		for (int i = 0; static_cast<size_t>(i) < m_Spheres.size() - 1; i++)
+		//#pragma omp parallel for
+		for (int j = 0; static_cast<size_t>(j) < m_Spheres.size(); j++)
 		{
-			#pragma omp parallel for
-			for (int j = 0; static_cast<size_t>(j) < m_Spheres.size(); j++)
-			{
-				auto ptr = DetectCollision(NewSpheres, i, j, RemainTime);
-				if (!ptr)
-					continue;
+			if (i == j)
+				continue;
 
-				#pragma omp critical
-				{
-					bNoCollision = false;
-					collisions.push_back(std::move(ptr));
-				}
+			auto &detected_set = DetectedCollisions[i];
+			if (detected_set.find(j) != detected_set.end())
+				continue;
+
+			auto ptr = DetectCollision(NewSpheres, i, j, LOGICAL_TIME_SPAN);
+			if (!ptr)
+				continue;
+
+			#pragma omp critical
+			{
+				DetectedCollisions[j].insert(i);
+				collisions.push_back(std::move(ptr));
 			}
 		}
+	}
 
-		if (bNoCollision)
-			break;
+	decltype(DetectedCollisions)().swap(DetectedCollisions);
 
-		// 맨 먼저 일어난 충돌들을 col_map에 기록
-		for (auto &ptr : collisions)
+	std::unordered_map<int, double> map_time;
+
+	// 맨 먼저 일어난 충돌들을 col_map에 기록
+	for (auto &ptr : collisions)
+	{
+		int arkey[2] = { ptr->i, ptr->j };
+		bool key_is_j = false;
+
+		for (int key : arkey)
 		{
-			int arkey[2] = { ptr->i, ptr->j };
-			bool key_is_j = false;
-
-			for (int key : arkey)
+			auto it = col_map.find(key);
+			if (it == col_map.end())
 			{
-				auto it = col_map.find(key);
-				if (it == col_map.end())
+				col_map.emplace(key, std::make_pair(ptr, key_is_j));
+			}
+			else
+			{
+				if (it->second.first->t - ptr->t < EPSILON)
 				{
+					// 충돌이 동시에 일어남
 					col_map.emplace(key, std::make_pair(ptr, key_is_j));
+				}
+				else if (it->second.first->t > ptr->t)
+				{
+					// `ptr`의 충돌이 `it->second.first`보다 먼저 일어남
+					it->second.first = ptr;
 				}
 				else
 				{
-					if (it->second.first->t - ptr->t < EPSILON)
-					{
-						// 충돌이 동시에 일어남
-						col_map.emplace(key, std::make_pair(ptr, key_is_j));
-					}
-					else if (it->second.first->t > ptr->t)
-					{
-						// `ptr`의 충돌이 `it->second.first`보다 먼저 일어남
-						it->second.first = ptr;
-					}
+					goto cont;
 				}
-
-				key_is_j = true;
 			}
+
+			map_time[key] = ptr->t;
+
+		cont:
+			key_is_j = true;
 		}
+	}
+
+	// 충격량/각충격량의 총합을 계산해 map에 기록
+
+	std::unordered_map<int, std::array<double, 3> > map_sum_I, map_sum_A;
+
+	std::pair<col_map_t::iterator, col_map_t::iterator> eq_rg;
+
+	for (int idx = 0; ; )
+	{
+		eq_rg = col_map.equal_range(idx);
+		if (eq_rg.first != eq_rg.second)
+		{
+			auto i_sum_I = map_sum_I.emplace(idx, std::array<double, 3>{ { 0.0, 0.0, 0.0 } }).first;
+			auto i_sum_A = map_sum_A.emplace(idx, std::array<double, 3>{ { 0.0, 0.0, 0.0 } }).first;
+
+			std::for_each(eq_rg.first, eq_rg.second,
+				[&NewSpheres, &map_sum_I, &map_sum_A, i_sum_I, i_sum_A, idx] (col_map_t::value_type &pr) {
+				auto &ptr = pr.second.first;
+				if (!ptr->bProcessed)
+				{
+					if (pr.second.second) // j번 sphere 기준으로 처리해야 한다면
+					{
+						// j번 sphere의 좌표계로 바꿈
+						std::swap(ptr->i, ptr->j);
+						negativen(ptr->p);
+						negativen(ptr->v);
+					}
+
+					auto j_sum_I = map_sum_I.emplace(idx, std::array<double, 3>{ { 0.0, 0.0, 0.0 } }).first;
+					auto j_sum_A = map_sum_A.emplace(idx, std::array<double, 3>{ { 0.0, 0.0, 0.0 } }).first;
+
+					double v_length = sqrt(ptr->v_length_2);
+
+					double cos_theta_2 = square(ptr->p_dot_v) / ptr->p_length_2 / ptr->v_length_2;
+					double sin_theta_2 = 1 - cos_theta_2;
+
+					double sum_inverse_mass = (1 / NewSpheres[ptr->i].mass)
+						+ (1 / NewSpheres[ptr->j].mass);
+
+					double sum_inverse_moment = (1 / (NewSpheres[ptr->i].mass * 2 / 5))
+						+ (1 / (NewSpheres[ptr->i].mass * 2 / 5));
+
+					double J_length = (2 * v_length * cos_theta_2)
+						/ (sum_inverse_mass * cos_theta_2 + sum_inverse_moment * sin_theta_2);
+
+					double J[3];
+					memcpy(J, ptr->v, sizeof(J));
+					J[0] *= J_length / v_length;
+					J[1] *= J_length / v_length;
+					J[2] *= J_length / v_length;
+
+					double I_length = J_length * sqrt(cos_theta_2);
+
+					double i_moment_arm[3], j_moment_arm[3];
+					std::array<double, 3> i_I, j_I;
+
+					memcpy(i_moment_arm, ptr->p, sizeof(i_moment_arm));
+
+					double p_length = sqrt(ptr->p_length_2);
+					i_moment_arm[0] /= p_length;
+					i_moment_arm[1] /= p_length;
+					i_moment_arm[2] /= p_length;
+					memcpy(j_moment_arm, i_moment_arm, sizeof(j_moment_arm));
+					memcpy(i_I.data(), i_moment_arm, sizeof(i_I));
+					memcpy(j_I.data(), i_moment_arm, sizeof(j_I));
+
+					i_I[0] *= I_length;
+					i_I[1] *= I_length;
+					i_I[2] *= I_length;
+
+					j_I[0] *= -I_length;
+					j_I[1] *= -I_length;
+					j_I[2] *= -I_length;
+
+					i_moment_arm[0] *= NewSpheres[ptr->i].radius;
+					i_moment_arm[1] *= NewSpheres[ptr->i].radius;
+					i_moment_arm[2] *= NewSpheres[ptr->i].radius;
+
+					j_moment_arm[0] *= -NewSpheres[ptr->j].radius;
+					j_moment_arm[1] *= -NewSpheres[ptr->j].radius;
+					j_moment_arm[2] *= -NewSpheres[ptr->j].radius;
+
+					std::array<double, 3> i_A, j_A;
+
+					cross_product(i_A.data(), i_moment_arm, J); // i_A = i_r x i_J
+					cross_product(i_A.data(), j_moment_arm, J); // j_A = j_r x j_J = j_r x (-i_J) = -(j_r x i_J)
+
+					i_sum_I->second[0] += i_I[0];
+					i_sum_I->second[1] += i_I[1];
+					i_sum_I->second[2] += i_I[2];
+					i_sum_A->second[0] += i_A[0];
+					i_sum_A->second[1] += i_A[1];
+					i_sum_A->second[2] += i_A[2];
+
+					j_sum_I->second[0] += j_I[0];
+					j_sum_I->second[1] += j_I[1];
+					j_sum_I->second[2] += j_I[2];
+					j_sum_A->second[0] += j_A[0];
+					j_sum_A->second[1] += j_A[1];
+					j_sum_A->second[2] += j_A[2];
+
+					ptr->bProcessed = true;
+				}
+			});
+		}
+
+		if (eq_rg.second == col_map.end())
+			break;
+
+		idx = eq_rg.second->first;
+	}
+
+	// 충격량/각충격량을 토대로 최종 위치/속도/각속도 계산
+	auto it_sum_I = map_sum_I.begin();
+	auto it_sum_A = map_sum_A.begin();
+	for (; it_sum_I != map_sum_I.end(); ++it_sum_I, ++it_sum_A)
+	{
+		int i = it_sum_I->first;
+
+		const Sphere &oldsp = m_Spheres[i];
+		Sphere &newsp = NewSpheres[i];
+
+		const std::array<double, 3> &pr_I = it_sum_I->second;
+		const std::array<double, 3> &pr_A = it_sum_A->second;
+
+		double dv[3] = {
+			pr_I[0] / oldsp.mass,
+			pr_I[1] / oldsp.mass,
+			pr_I[2] / oldsp.mass
+		};
+
+		double moment_of_inerita = 2 * oldsp.mass * square(oldsp.radius) / 5;
+		double dw[3] = {
+			pr_A[0] / moment_of_inerita,
+			pr_A[1] / moment_of_inerita,
+			pr_A[2] / moment_of_inerita
+		};
+
+		double before_time = map_time[i];
+		double after_time = LOGICAL_TIME_SPAN - before_time;
+
+		// 충돌 지점까지 계산
+		// v = (v0 + v1)/2
+		// RunForce() 참조
+		double old_v[3] = {
+			(oldsp.velocity[0] + newsp.velocity[0]) / 2,
+			(oldsp.velocity[1] + newsp.velocity[1]) / 2,
+			(oldsp.velocity[2] + newsp.velocity[2]) / 2,
+		};
+		newsp.coord[0] = oldsp.coord[0] + old_v[0] * before_time;
+		newsp.coord[1] = oldsp.coord[1] + old_v[1] * before_time;
+		newsp.coord[2] = oldsp.coord[2] + old_v[2] * before_time;
+
+		// 속도/각속도를 변화시킨 후 남은 시간을 동안 다시 움직임
+		newsp.AngularVelocity[0] += dw[0];
+		newsp.AngularVelocity[1] += dw[1];
+		newsp.AngularVelocity[2] += dw[2];
+
+		newsp.velocity[0] += dv[0];
+		newsp.velocity[1] += dv[0];
+		newsp.velocity[2] += dv[2];
+
+		newsp.coord[0] += newsp.velocity[0] * after_time;
+		newsp.coord[1] += newsp.velocity[1] * after_time;
+		newsp.coord[2] += newsp.velocity[2] * after_time;
 	}
 }
 
@@ -219,45 +400,59 @@ std::shared_ptr<SphereManager::CollisionInfo> SphereManager::DetectCollision(
 	const Sphere &newsp_2 = NewSpheres[j];
 
 	// 궤적: p + tv (p=처음 위치, v=속도)
-	// 원점 간 거리: |(p1 - p2) + t(v1 - v2)| = r1+r2 =: k
+	// 구의 중심 간 거리: |(p1 - p2) + t(v1 - v2)|
+	// 충돌시엔 r1+r2 =: k 과 같아짐
 	// p:=p1-p2, v:=v1-v2
 	// |p + tv|^2 = k^2
 	// |p|^2 + |v|^2 t^2 + 2t (p.v) = k^2
 	// (|v|^2)t^2 + 2(p.v) t + |p|^2 - k^2 = 0
-	// t = -(p.v) +- sqrt( (p.v)^2 - (|v||p|)^2 + k^2 |v|^2
+	// t = -(p.v) +- sqrt( (p.v)^2 - (|v||p|)^2 + k^2 |v|^2 )
 
 	CollisionInfo info;
+	info.i = i;
+	info.j = j;
 
 	info.p[0] = oldsp_1.coord[0] - oldsp_2.coord[0];
 	info.p[1] = oldsp_1.coord[1] - oldsp_2.coord[1];
 	info.p[2] = oldsp_1.coord[2] - oldsp_2.coord[2];
 
-	info.v[0] = oldsp_1.velocity[0] - oldsp_2.velocity[0];
-	info.v[0] = oldsp_1.velocity[1] - oldsp_2.velocity[1];
-	info.v[0] = oldsp_1.velocity[2] - oldsp_2.velocity[2];
+	// v = (v0 + v1)/2
+	// RunForce() 참조
+	info.v[0] = ((oldsp_1.velocity[0] + newsp_1.velocity[0]) - (oldsp_2.velocity[0] + newsp_2.velocity[0])) / 2;
+	info.v[1] = ((oldsp_1.velocity[1] + newsp_1.velocity[1]) - (oldsp_2.velocity[1] + newsp_2.velocity[1])) / 2;
+	info.v[2] = ((oldsp_1.velocity[2] + newsp_1.velocity[2]) - (oldsp_2.velocity[2] + newsp_2.velocity[2])) / 2;
 
 	info.p_dot_v = dot_product(info.p, info.v);
-	info.p_length_2 = dot_product(info.p, info.p);
-	info.v_length_2 = dot_product(info.v, info.v);
+	info.p_length_2 = get_length_2(info.p);
+	info.v_length_2 = get_length_2(info.v);
 
 	// 두 원의 반지름 합
 	double k = oldsp_1.radius + oldsp_2.radius;
 
 	// 판별식 < 0 이면 충돌 ㄴㄴ
-	double D = info.p_dot_v * info.p_dot_v - info.p_length_2 * info.v_length_2 + k * k * info.v_length_2;
+	double D = info.p_dot_v * info.p_dot_v - info.p_length_2 * info.v_length_2 + square(k) * info.v_length_2;
 	if (D < 0)
 		return std::shared_ptr<CollisionInfo>();
 
 	double sqrt_D = sqrt(D);
-	double t1 = -info.p_dot_v + sqrt_D;
-	double t2 = -info.p_dot_v - sqrt_D;
+	double t1 = info.p_dot_v + sqrt_D;
+	double t2 = info.p_dot_v - sqrt_D;
 
 	// 근이 음수면 충돌 ㄴㄴ
 	if (t1 < 0)
 		return std::shared_ptr<CollisionInfo>();
 
 	// 처음 충돌의 시각
-	info.t = min(t1, t2);
+	if (t2 < 0)
+	{
+		info.t = t1;
+	}
+	else
+	{
+		info.t = t2;
+	}
+	//info.t = min(t1, t2);
+
 	// ...이 RemainTime보다 작아야 함
 	if (info.t > RemainTime)
 		return std::shared_ptr<CollisionInfo>();

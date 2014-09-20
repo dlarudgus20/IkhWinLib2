@@ -30,7 +30,11 @@ using namespace IkhProgram::IkhWinLib2;
 #include <gl/gl.h>
 #include <gl/glu.h>
 
-inline void cross_product(double (&dest)[3], const double (&lhs)[3], const double (&rhs)[3])
+inline double square(double d)
+{
+	return d * d;
+}
+inline void cross_product(double dest[3], const double (&lhs)[3], const double (&rhs)[3])
 {
 	dest[0] = rhs[1] * lhs[2] - lhs[1] * rhs[2];
 	dest[1] = rhs[2] * lhs[0] - lhs[2] * rhs[0];
@@ -39,6 +43,14 @@ inline void cross_product(double (&dest)[3], const double (&lhs)[3], const doubl
 inline double dot_product(const double (&lhs)[3], const double (&rhs)[3])
 {
 	return lhs[0] * rhs[0] + lhs[1] * rhs[1] + lhs[2] * rhs[2];
+}
+inline double get_length_2(const double (&lhs)[3])
+{
+	return dot_product(lhs, lhs);
+}
+inline double get_length(const double (&lhs)[3])
+{
+	return sqrt(get_length_2(lhs));
 }
 
 template <typename T>
@@ -61,11 +73,9 @@ struct Sphere
 	float color[4];
 
 	double velocity[3];
+	double AngularVelocity[3];
 
 	GLuint DisplayList;
-
-	double MomentOfInerita() const { return mass * radius * radius * 2 / 5; }
-	double Momentum() const { return mass * sqrt(dot_product(velocity, velocity)); }
 
 	void CompileDisplayList(GLUquadric *quadric);
 	void DeleteDisplayList();
@@ -92,10 +102,12 @@ public:
 		int i, j;
 		// 충돌 발생 시각
 		double t;
-		// i번 Sphere에서 본 2번 Sphere의 위치와 속도
+		// i번 Sphere에서 본 j번 Sphere의 위치와 속도
 		double p[3], v[3];
 		// pre-calculated values
 		double p_dot_v, p_length_2, v_length_2;
+
+		bool bProcessed = false;
 	};
 private:
 	std::shared_ptr<CollisionInfo> DetectCollision(
