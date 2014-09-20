@@ -30,6 +30,30 @@ using namespace IkhProgram::IkhWinLib2;
 #include <gl/gl.h>
 #include <gl/glu.h>
 
+inline void cross_product(double (&dest)[3], const double (&lhs)[3], const double (&rhs)[3])
+{
+	dest[0] = rhs[1] * lhs[2] - lhs[1] * rhs[2];
+	dest[1] = rhs[2] * lhs[0] - lhs[2] * rhs[0];
+	dest[2] = rhs[0] * lhs[1] - lhs[0] * rhs[1];
+}
+inline double dot_product(const double (&lhs)[3], const double (&rhs)[3])
+{
+	return lhs[0] * rhs[0] + lhs[1] * rhs[1] + lhs[2] * rhs[2];
+}
+
+template <typename T>
+inline void negativen(T &data)
+{
+	data = -data;
+}
+
+inline void negativen(double (&data)[3])
+{
+	data[0] = -data[0];
+	data[1] = -data[1];
+	data[2] = -data[2];
+}
+
 struct Sphere
 {
 	double coord[3];
@@ -39,6 +63,9 @@ struct Sphere
 	double velocity[3];
 
 	GLuint DisplayList;
+
+	double MomentOfInerita() const { return mass * radius * radius * 2 / 5; }
+	double Momentum() const { return mass * sqrt(dot_product(velocity, velocity)); }
 
 	void CompileDisplayList(GLUquadric *quadric);
 	void DeleteDisplayList();
@@ -55,6 +82,24 @@ private:
 	GLUquadric *m_quadric;
 
 	void Run();
+	void RunForce(std::vector<Sphere> &NewSpheres);
+	void RunCollision(std::vector<Sphere> &NewSpheres);
+
+public:
+	struct CollisionInfo
+	{
+		// Sphere 번호
+		int i, j;
+		// 충돌 발생 시각
+		double t;
+		// i번 Sphere에서 본 2번 Sphere의 위치와 속도
+		double p[3], v[3];
+		// pre-calculated values
+		double p_dot_v, p_length_2, v_length_2;
+	};
+private:
+	std::shared_ptr<CollisionInfo> DetectCollision(
+		const std::vector<Sphere> &NewSpheres, int i, int j, double RemainTime) const;
 
 public:
 	SphereManager();
