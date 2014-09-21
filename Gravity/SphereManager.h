@@ -73,6 +73,8 @@ struct Sphere
 	float color[4];
 
 	double velocity[3];
+
+	double angle[3];
 	double AngularVelocity[3];
 
 	GLuint DisplayList;

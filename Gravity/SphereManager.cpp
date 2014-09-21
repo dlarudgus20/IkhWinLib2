@@ -138,6 +138,11 @@ void SphereManager::RunForce(std::vector<Sphere> &NewSpheres)
 		newsp.velocity[0] += dv[0];
 		newsp.velocity[1] += dv[1];
 		newsp.velocity[2] += dv[2];
+
+		// 각속도 처리
+		newsp.angle[0] += newsp.AngularVelocity[0] * LOGICAL_TIME_SPAN;
+		newsp.angle[1] += newsp.AngularVelocity[1] * LOGICAL_TIME_SPAN;
+		newsp.angle[2] += newsp.AngularVelocity[2] * LOGICAL_TIME_SPAN;
 	}
 }
 
@@ -156,11 +161,12 @@ void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 	// 충돌 감지
 
 	// 중복 판정 방지
-	std::unordered_map<int, std::unordered_set<int> > DetectedCollisions;
+	std::vector<std::unordered_set<int> > DetectedCollisions;
+	DetectedCollisions.resize(m_Spheres.size());
 
 	for (int i = 0; static_cast<size_t>(i) < m_Spheres.size() - 1; i++)
 	{
-		//#pragma omp parallel for
+		#pragma omp parallel for
 		for (int j = 0; static_cast<size_t>(j) < m_Spheres.size(); j++)
 		{
 			if (i == j)
@@ -251,8 +257,8 @@ void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 						negativen(ptr->v);
 					}
 
-					auto j_sum_I = map_sum_I.emplace(idx, std::array<double, 3>{ { 0.0, 0.0, 0.0 } }).first;
-					auto j_sum_A = map_sum_A.emplace(idx, std::array<double, 3>{ { 0.0, 0.0, 0.0 } }).first;
+					auto j_sum_I = map_sum_I.emplace(ptr->j, std::array<double, 3>{ { 0.0, 0.0, 0.0 } }).first;
+					auto j_sum_A = map_sum_A.emplace(ptr->j, std::array<double, 3>{ { 0.0, 0.0, 0.0 } }).first;
 
 					double v_length = sqrt(ptr->v_length_2);
 
@@ -376,11 +382,7 @@ void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 		newsp.coord[1] = oldsp.coord[1] + old_v[1] * before_time;
 		newsp.coord[2] = oldsp.coord[2] + old_v[2] * before_time;
 
-		// 속도/각속도를 변화시킨 후 남은 시간을 동안 다시 움직임
-		newsp.AngularVelocity[0] += dw[0];
-		newsp.AngularVelocity[1] += dw[1];
-		newsp.AngularVelocity[2] += dw[2];
-
+		// 속도를 변화시킨 후 남은 시간을 동안 다시 움직임
 		newsp.velocity[0] += dv[0];
 		newsp.velocity[1] += dv[0];
 		newsp.velocity[2] += dv[2];
@@ -388,6 +390,25 @@ void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 		newsp.coord[0] += newsp.velocity[0] * after_time;
 		newsp.coord[1] += newsp.velocity[1] * after_time;
 		newsp.coord[2] += newsp.velocity[2] * after_time;
+
+		// 각속도에 대해서도 동일한 처리
+		double old_w[3] = {
+			(oldsp.AngularVelocity[0] + newsp.AngularVelocity[0]) / 2,
+			(oldsp.AngularVelocity[1] + newsp.AngularVelocity[1]) / 2,
+			(oldsp.AngularVelocity[2] + newsp.AngularVelocity[2]) / 2,
+		};
+
+		newsp.angle[0] = oldsp.angle[0] + old_w[0] * before_time;
+		newsp.angle[1] = oldsp.angle[1] + old_w[1] * before_time;
+		newsp.angle[2] = oldsp.angle[2] + old_w[2] * before_time;
+
+		newsp.AngularVelocity[0] += dw[0];
+		newsp.AngularVelocity[1] += dw[1];
+		newsp.AngularVelocity[2] += dw[2];
+
+		newsp.angle[0] += newsp.AngularVelocity[0] * after_time;
+		newsp.angle[1] += newsp.AngularVelocity[1] * after_time;
+		newsp.angle[2] += newsp.AngularVelocity[2] * after_time;
 	}
 }
 
@@ -406,7 +427,7 @@ std::shared_ptr<SphereManager::CollisionInfo> SphereManager::DetectCollision(
 	// |p + tv|^2 = k^2
 	// |p|^2 + |v|^2 t^2 + 2t (p.v) = k^2
 	// (|v|^2)t^2 + 2(p.v) t + |p|^2 - k^2 = 0
-	// t = -(p.v) +- sqrt( (p.v)^2 - (|v||p|)^2 + k^2 |v|^2 )
+	// t = ( -(p.v) +- sqrt( (p.v)^2 - (|v||p|)^2 + k^2 |v|^2 ) ) / ( |v|^2 )
 
 	CollisionInfo info;
 	info.i = i;
@@ -435,8 +456,8 @@ std::shared_ptr<SphereManager::CollisionInfo> SphereManager::DetectCollision(
 		return std::shared_ptr<CollisionInfo>();
 
 	double sqrt_D = sqrt(D);
-	double t1 = info.p_dot_v + sqrt_D;
-	double t2 = info.p_dot_v - sqrt_D;
+	double t1 = (-info.p_dot_v + sqrt_D) / info.v_length_2;
+	double t2 = (-info.p_dot_v - sqrt_D) / info.v_length_2;
 
 	// 근이 음수면 충돌 ㄴㄴ
 	if (t1 < 0)
@@ -466,6 +487,7 @@ void SphereManager::Render()
 	{
 		glPushMatrix();
 		glTranslated(s.coord[0], s.coord[1], s.coord[2]);
+		//glRotated(get_length(s.angle), s.angle[0], s.angle[1], s.angle[2]);
 		glCallList(s.DisplayList);
 		glPopMatrix();
 	}
