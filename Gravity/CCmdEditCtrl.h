@@ -31,7 +31,7 @@ using namespace IkhProgram::IkhWinLib2;
 class CCmdEditCtrl : public CEditCtrl
 {
 public:
-	FnEvent<CCmdEditCtrl, void(CCmdEditCtrl *, std::wstring)> evtInput;
+	FnEvent<CCmdEditCtrl, void(CCmdEditCtrl *, const std::wstring &)> evtInput;
 
 private:
 	virtual bool PreMessage(UINT iMessage, WPARAM wParam, LPARAM lParam, LRESULT &result) override;

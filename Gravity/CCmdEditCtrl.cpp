@@ -22,6 +22,7 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#include "stdafx.h"
 #include "CCmdEditCtrl.h"
 
 bool CCmdEditCtrl::PreMessage(UINT iMessage, WPARAM wParam, LPARAM lParam, LRESULT &result)
@@ -30,7 +31,15 @@ bool CCmdEditCtrl::PreMessage(UINT iMessage, WPARAM wParam, LPARAM lParam, LRESU
 	{
 		std::wstring title = GetWindowText(*this);
 		SetWindowText(*this, L"");
-		evtInput(this, std::move(title));
+		evtInput(this, title);
+		return false;
+	}
+	else if (iMessage == WM_KEYUP && wParam == VK_RETURN)
+	{
+		return false;
+	}
+	else if (iMessage == WM_CHAR && wParam == L'\r')
+	{
 		return false;
 	}
 	else

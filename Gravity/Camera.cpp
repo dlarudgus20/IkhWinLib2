@@ -22,8 +22,8 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#include "stdafx.h"
 #include "Camera.h"
-
 
 const double Camera::m_OriOrthoRect[4] = { -4000, 4000, -4000, 4000 };
 const double Camera::m_OriOrthoNear = 0;

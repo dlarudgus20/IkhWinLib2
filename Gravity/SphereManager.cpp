@@ -22,6 +22,7 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#include "stdafx.h"
 #include "SphereManager.h"
 
 #define LOGICAL_TIME_SPAN (0.5)
@@ -487,7 +488,7 @@ void SphereManager::Render()
 	{
 		glPushMatrix();
 		glTranslated(s.coord[0], s.coord[1], s.coord[2]);
-		//glRotated(get_length(s.angle), s.angle[0], s.angle[1], s.angle[2]);
+		//glRotated(get_length(s.angle), s.angle[0], s.angle[1], s.angle[2]); // 버그 있는듯
 		glCallList(s.DisplayList);
 		glPopMatrix();
 	}
@@ -497,7 +498,7 @@ void Sphere::CompileDisplayList(GLUquadric *quadric)
 {
 	DisplayList = glGenLists(1);
 	glNewList(DisplayList, GL_COMPILE);
-	glColor4fv(color);
+	glColor4fv(color.data());
 	gluSphere(quadric, radius, GLint(radius * 100), GLint(radius * 100));
 	glEndList();
 }

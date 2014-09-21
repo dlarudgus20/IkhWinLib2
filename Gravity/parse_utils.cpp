@@ -23,53 +23,22 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdafx.h"
-#include "CTextBoxCtrl.h"
+#include "parse_utils.h"
 
-#include <IkhWinLib2/CWndClass.h>
-#include <IkhWinLib2/CDbBufDC.h>
-
-BEGIN_MSGMAP(CTextBoxCtrl, CWindow)
-	MSGMAP_WM_CREATE(OnCreate)
-	MSGMAP_WM_PAINT(OnPaint)
-END_MSGMAP(CTextBoxCtrl, CWindow)
-
-void CTextBoxCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle,
-	int x, int y, int nWidth, int nHeight, int id, HWND hWndParent)
+namespace parse_utils
 {
-	CWindow::CreateEx(
-		dwExStyle,
-		CWndClass(nullptr, CS_HREDRAW | CS_VREDRAW, nullptr),
-		nullptr, dwStyle,
-		x, y, nWidth, nHeight, hWndParent, (HMENU)id
-		);
-}
+	namespace detail
+	{
+		wchar_t find_first_letter(const wchar_t **pptr)
+		{
+			while (1)
+			{
+				wchar_t ch = **pptr;
+				if (ch == '\0' || !isspace(ch))
+					return ch;
 
-BOOL CTextBoxCtrl::OnCreate(LPCREATESTRUCT lpcs)
-{
-	if (!MSG_FORWARD_WM_CREATE(CWindow, lpcs))
-		return FALSE;
-
-	return TRUE;
-}
-
-void CTextBoxCtrl::OnPaint()
-{
-	PAINTSTRUCT ps;
-	BeginPaint(*this, &ps);
-	TextOut(ps.hdc, 0, 0, m_str);
-	EndPaint(*this, &ps);
-}
-
-void CTextBoxCtrl::SetString(const std::wstring &str)
-{
-	m_str = str;
-
-	HDC hdc = GetDC(*this);
-	RECT rt = { 0, 0, 0, 0 };
-	DrawText(hdc, m_str.c_str(), -1, &rt, DT_LEFT | DT_TOP | DT_CALCRECT);
-	ReleaseDC(*this, hdc);
-
-	SetWindowPos(*this, nullptr, 0, 0, rt.right, rt.bottom,
-		SWP_NOMOVE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOACTIVATE);
-	InvalidateRect(*this, nullptr, FALSE);
+				(*pptr)++;
+			}
+		}
+	}
 }

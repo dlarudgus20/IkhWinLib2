@@ -24,12 +24,6 @@
 
 #pragma once
 
-#include <IkhWinLib2/Defines.h>
-using namespace IkhProgram::IkhWinLib2;
-
-#include <gl/gl.h>
-#include <gl/glu.h>
-
 class Camera final
 {
 private:

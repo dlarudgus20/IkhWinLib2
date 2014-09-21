@@ -22,9 +22,12 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#include "stdafx.h"
 #include "CMainWindow.h"
 
 #include <IkhWinLib2/CWndClass.h>
+
+#include <boost/algorithm/string.hpp>
 
 BEGIN_MSGMAP(CMainWindow, CForm)
 	MSGMAP_WM_CREATE(OnCreate)
@@ -51,7 +54,8 @@ BOOL CMainWindow::OnCreate(LPCREATESTRUCT lpcs)
 		0, 0, 100, 100, 1, *this);
 	auto chd_RendererCtrl = AddChild(&m_RendererCtrl);
 	m_CmdListEdit.Create(
-		WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL | ES_AUTOVSCROLL | ES_MULTILINE | ES_NOHIDESEL | ES_READONLY,
+		WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_HSCROLL | ES_AUTOHSCROLL | ES_AUTOVSCROLL
+			| ES_MULTILINE | ES_NOHIDESEL | ES_READONLY,
 		0, 0, 100, 150, 2, *this);
 	auto chd_CmdListEdit = AddChild(&m_CmdListEdit);
 	m_CmdInputEdit.Create(
@@ -98,7 +102,44 @@ void CMainWindow::OnDestroy()
 	PostQuitMessage(0);
 }
 
-void CMainWindow::OnCmdInput(CCmdEditCtrl *pCtrl, std::wstring input)
+void CMainWindow::OnCmdInput(CCmdEditCtrl *pCtrl, const std::wstring &input)
 {
+	try
+	{
+		WriteLine(L"> " + input);
+		m_Scripter.ExecuteLine(input);
+	}
+	catch (ScripterException &e)
+	{
+		WriteLine(L"<err> " + e.Message());
+	}
+}
 
+void CMainWindow::WriteLine(const std::wstring &str)
+{
+	DWORD size = GetWindowTextLength(m_CmdListEdit);
+
+	DWORD beg, end;
+	SendMessage(m_CmdListEdit, EM_GETSEL, reinterpret_cast<WPARAM>(&beg), reinterpret_cast<LPARAM>(&end));
+
+	SendMessage(m_CmdListEdit, EM_SETSEL, -1, 0);
+	SendMessage(m_CmdListEdit, EM_REPLACESEL, TRUE, reinterpret_cast<LPARAM>(str.c_str()));
+
+	SendMessage(m_CmdListEdit, EM_SETSEL, -1, 0);
+	SendMessage(m_CmdListEdit, EM_REPLACESEL, TRUE, reinterpret_cast<LPARAM>(L"\r\n"));
+
+	if (!(size == beg && beg == end))
+	{
+		SendMessage(m_CmdListEdit, EM_SETSEL, beg, end);
+	}
+}
+
+void CMainWindow::WriteMultiLine(const std::wstring &str)
+{
+	WriteLine(boost::algorithm::replace_all_copy(str, L"\n", L"\r\n"));
+}
+
+void CMainWindow::CreateSphere(const Sphere &sp)
+{
+	m_SphereManager.AddSphere(sp);
 }

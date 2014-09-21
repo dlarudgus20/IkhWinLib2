@@ -22,13 +22,11 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#include "stdafx.h"
 #include "CRendererCtrl.h"
 #include "CMyApp.h"
 
 #include <IkhWinLib2/CWndClass.h>
-
-#include <gl/gl.h>
-#include <gl/glu.h>
 
 #include "SphereManager.h"
 #include "Camera.h"
@@ -56,6 +54,19 @@ BOOL CRendererCtrl::OnCreate(LPCREATESTRUCT lpcs)
 {
 	if (!MSG_FORWARD_WM_CREATE(CIdleOpenGLWnd, lpcs))
 		return FALSE;
+
+	if (glewInit() != GLEW_OK)
+	{
+		MessageBox(NULL, L"glew 초기화에 실패했습니다.", L"에러", MB_OK | MB_ICONERROR);
+		return FALSE;
+	}
+	if (!GLEW_VERSION_2_0)
+	{
+		MessageBox(NULL, L"이 프로그램은 opengl 2.0 이상을 요구합니다.", L"에러", MB_OK | MB_ICONERROR);
+		return FALSE;
+	}
+
+	m_pShader = std::make_unique<Shader>();
 
 	IWLGetApp()->evtIdle += m_efpIdle.set(std::bind(&CRendererCtrl::OnIdle, this));
 
@@ -128,8 +139,5 @@ void CRendererCtrl::OnIdle()
 
 	SwapBuf();
 
-	unsigned fps = CalcFPS();
-
-	//if (fps >= 300)
-	//	Sleep(1);
+	CalcFPS();
 }

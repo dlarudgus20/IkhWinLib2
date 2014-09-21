@@ -23,53 +23,47 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "stdafx.h"
-#include "CTextBoxCtrl.h"
+#include "Shader.h"
+#include "resource.h"
 
-#include <IkhWinLib2/CWndClass.h>
-#include <IkhWinLib2/CDbBufDC.h>
-
-BEGIN_MSGMAP(CTextBoxCtrl, CWindow)
-	MSGMAP_WM_CREATE(OnCreate)
-	MSGMAP_WM_PAINT(OnPaint)
-END_MSGMAP(CTextBoxCtrl, CWindow)
-
-void CTextBoxCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle,
-	int x, int y, int nWidth, int nHeight, int id, HWND hWndParent)
+Shader::Shader()
 {
-	CWindow::CreateEx(
-		dwExStyle,
-		CWndClass(nullptr, CS_HREDRAW | CS_VREDRAW, nullptr),
-		nullptr, dwStyle,
-		x, y, nWidth, nHeight, hWndParent, (HMENU)id
-		);
+	m_vertex = glCreateShader(GL_VERTEX_SHADER);
+	m_fragment = glCreateShader(GL_FRAGMENT_SHADER);
+
+	auto vs = ReadFromResource(IDR_VERT_SHADER);
+	auto fs = ReadFromResource(IDR_FRAG_SHADER);
+	glShaderSource(m_vertex, 1, &vs.first, &vs.second);
+	glShaderSource(m_fragment, 1, &fs.first, &fs.second);
+
+	glCompileShader(m_vertex);
+	glCompileShader(m_fragment);
+
+	m_program = glCreateProgram();
+
+	glAttachShader(m_program, m_vertex);
+	glAttachShader(m_program, m_fragment);
+
+	glLinkProgram(m_program);
+	glUseProgram(m_program);
 }
 
-BOOL CTextBoxCtrl::OnCreate(LPCREATESTRUCT lpcs)
+Shader::~Shader()
 {
-	if (!MSG_FORWARD_WM_CREATE(CWindow, lpcs))
-		return FALSE;
+	glDetachShader(m_program, m_fragment);
+	glDetachShader(m_program, m_vertex);
 
-	return TRUE;
+	glDeleteShader(m_fragment);
+	glDeleteShader(m_vertex);
+	glDeleteProgram(m_program);
 }
 
-void CTextBoxCtrl::OnPaint()
+std::pair<const char *, GLint> Shader::ReadFromResource(UINT id)
 {
-	PAINTSTRUCT ps;
-	BeginPaint(*this, &ps);
-	TextOut(ps.hdc, 0, 0, m_str);
-	EndPaint(*this, &ps);
-}
-
-void CTextBoxCtrl::SetString(const std::wstring &str)
-{
-	m_str = str;
-
-	HDC hdc = GetDC(*this);
-	RECT rt = { 0, 0, 0, 0 };
-	DrawText(hdc, m_str.c_str(), -1, &rt, DT_LEFT | DT_TOP | DT_CALCRECT);
-	ReleaseDC(*this, hdc);
-
-	SetWindowPos(*this, nullptr, 0, 0, rt.right, rt.bottom,
-		SWP_NOMOVE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOACTIVATE);
-	InvalidateRect(*this, nullptr, FALSE);
+	HINSTANCE hInst = GetModuleHandle(NULL);
+	HRSRC hRSrc = FindResource(hInst, MAKEINTRESOURCE(id), L"SHADER");
+	DWORD size = SizeofResource(hInst, hRSrc);
+	HGLOBAL hMem = LoadResource(hInst, hRSrc);
+	const char *ptr = reinterpret_cast<const char *>(LockResource(hMem));
+	return { ptr, size };
 }

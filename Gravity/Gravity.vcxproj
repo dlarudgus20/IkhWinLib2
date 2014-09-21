@@ -68,23 +68,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(BOEHMGC_INCLUDE);$(BOOST_DIRECTORY);$(SolutionDir)IkhWinLib2;$(IncludePath)</IncludePath>
-    <LibraryPath>$(BOOST_STAGE_32)lib;$(BOEHMGC_INSTALL)prefix\Debug;$(OutDir);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(GLEW_INSTALL)include;$(BOEHMGC_INCLUDE);$(BOOST_DIRECTORY);$(SolutionDir)IkhWinLib2;$(IncludePath)</IncludePath>
+    <LibraryPath>$(GLEW_INSTALL)lib\Release\Win32;$(BOOST_STAGE_32)lib;$(BOEHMGC_INSTALL)prefix\Debug;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(BOEHMGC_INCLUDE);$(BOOST_DIRECTORY);$(SolutionDir)IkhWinLib2;$(IncludePath)</IncludePath>
-    <LibraryPath>$(BOOST_STAGE_64)lib;$(BOEHMGC_INSTALL)prefix64\Debug;$(OutDir);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(GLEW_INSTALL)include;$(BOEHMGC_INCLUDE);$(BOOST_DIRECTORY);$(SolutionDir)IkhWinLib2;$(IncludePath)</IncludePath>
+    <LibraryPath>$(GLEW_INSTALL)lib\Release\x64;$(BOOST_STAGE_64)lib;$(BOEHMGC_INSTALL)prefix64\Debug;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(BOEHMGC_INCLUDE);$(BOOST_DIRECTORY);$(SolutionDir)IkhWinLib2;$(IncludePath)</IncludePath>
-    <LibraryPath>$(BOOST_STAGE_32)lib;$(BOEHMGC_INSTALL)prefix\Release;$(OutDir);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(GLEW_INSTALL)include;$(BOEHMGC_INCLUDE);$(BOOST_DIRECTORY);$(SolutionDir)IkhWinLib2;$(IncludePath)</IncludePath>
+    <LibraryPath>$(GLEW_INSTALL)lib\Release\Win32;$(BOOST_STAGE_32)lib;$(BOEHMGC_INSTALL)prefix\Release;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(BOEHMGC_INCLUDE);$(BOOST_DIRECTORY);$(SolutionDir)IkhWinLib2;$(IncludePath)</IncludePath>
-    <LibraryPath>$(BOOST_STAGE_64)lib;$(BOEHMGC_INSTALL)prefix64\Release;$(OutDir);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(GLEW_INSTALL)include;$(BOEHMGC_INCLUDE);$(BOOST_DIRECTORY);$(SolutionDir)IkhWinLib2;$(IncludePath)</IncludePath>
+    <LibraryPath>$(GLEW_INSTALL)lib\Release\x64;$(BOOST_STAGE_64)lib;$(BOEHMGC_INSTALL)prefix64\Release;$(OutDir);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -103,7 +103,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>IkhWinLib2.lib;gcmt-lib.lib;comctl32.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>IkhWinLib2.lib;gcmt-lib.lib;comctl32.lib;opengl32.lib;glu32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -124,7 +124,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>IkhWinLib2.lib;gcmt-lib.lib;comctl32.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>IkhWinLib2.lib;gcmt-lib.lib;comctl32.lib;opengl32.lib;glu32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -148,7 +148,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>IkhWinLib2.lib;gcmt-lib.lib;comctl32.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>IkhWinLib2.lib;gcmt-lib.lib;comctl32.lib;opengl32.lib;glu32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -173,7 +173,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>IkhWinLib2.lib;gcmt-lib.lib;comctl32.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>IkhWinLib2.lib;gcmt-lib.lib;comctl32.lib;opengl32.lib;glu32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -183,6 +183,9 @@
     <ClCompile Include="CMyApp.cpp" />
     <ClCompile Include="CRendererCtrl.cpp" />
     <ClCompile Include="CTextBoxCtrl.cpp" />
+    <ClCompile Include="parse_utils.cpp" />
+    <ClCompile Include="Scripter.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SphereManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -192,10 +195,36 @@
     <ClInclude Include="CMyApp.h" />
     <ClInclude Include="CRendererCtrl.h" />
     <ClInclude Include="CTextBoxCtrl.h" />
+    <ClInclude Include="parse_utils.h" />
+    <ClInclude Include="parse_utils_detail.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Scripter.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="Sphere.h" />
     <ClInclude Include="SphereManager.h" />
+    <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="단위계.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="fragment.frag">
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </Text>
+    <Text Include="vertex.vs">
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Gravity.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

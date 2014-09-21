@@ -31,28 +31,28 @@ BEGIN_IKHWINLIB2()
 class CException : public CObject
 {
 private:
-	stlgc::wstring m_str;
+	std::wstring m_str;
 
 public:
-	explicit CException(const stlgc::wstring &str);
-	explicit CException(stlgc::wstring &&str = L"");
+	explicit CException(const std::wstring &str);
+	explicit CException(std::wstring &&str = L"");
 
-	virtual const stlgc::wstring &Message() const NOEXCEPT;
+	virtual const std::wstring &Message() const NOEXCEPT;
 };
 
 #define IKHWINLIB2_MAKE_EXCEPTION(cls, base, defmsg) \
 	class cls : public base \
 	{ \
 	public: \
-		explicit cls(const stlgc::wstring &str) : base(str) { } \
-		explicit cls(stlgc::wstring &&str = defmsg) : base(std::forward<stlgc::wstring>(str)) { } \
+		explicit cls(const std::wstring &str) : base(str) { } \
+		explicit cls(std::wstring &&str = defmsg) : base(std::forward<std::wstring>(str)) { } \
 	};
 
-inline CException::CException(const stlgc::wstring &str)
+inline CException::CException(const std::wstring &str)
 	: m_str(str) { }
-inline CException::CException(stlgc::wstring &&str)
-	: m_str(std::forward<stlgc::wstring>(str)) { }
+inline CException::CException(std::wstring &&str)
+	: m_str(std::forward<std::wstring>(str)) { }
 
-inline const stlgc::wstring &CException::Message() const { return m_str; }
+inline const std::wstring &CException::Message() const { return m_str; }
 
 END_IKHWINLIB2()

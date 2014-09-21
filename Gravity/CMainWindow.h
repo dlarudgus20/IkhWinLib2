@@ -33,8 +33,9 @@ using namespace IkhProgram::IkhWinLib2;
 #include "CRendererCtrl.h"
 #include "SphereManager.h"
 #include "Camera.h"
+#include "Scripter.h"
 
-class CMainWindow final : public CForm
+class CMainWindow final : public CForm, public virtual IScriptHost
 {
 	DECLARE_MSGMAP();
 public:
@@ -45,18 +46,26 @@ private:
 	CEditCtrl m_CmdListEdit;
 	CCmdEditCtrl m_CmdInputEdit;
 
-	EventFnPtr<void(CCmdEditCtrl *, std::wstring)> m_efpCmdInput;
+	EventFnPtr<void(CCmdEditCtrl *, const std::wstring &)> m_efpCmdInput;
 
 	SphereManager m_SphereManager;
 	Camera m_Camera;
 
+	Scripter m_Scripter;
+
 public:
-	CMainWindow() : m_RendererCtrl(&m_SphereManager, &m_Camera) { }
+	CMainWindow() : m_RendererCtrl(&m_SphereManager, &m_Camera), m_Scripter(this) { }
 
 protected:
 	BOOL OnCreate(LPCREATESTRUCT lpcs);
 	void OnTimer(UINT id);
 	void OnDestroy();
 
-	void OnCmdInput(CCmdEditCtrl *pCtrl, std::wstring input);
+	void OnCmdInput(CCmdEditCtrl *pCtrl, const std::wstring &input);
+
+public:
+	// IScriptHost
+	virtual void WriteLine(const std::wstring &str) override;
+	virtual void WriteMultiLine(const std::wstring &str) override;
+	virtual void CreateSphere(const Sphere &sp) override;
 };

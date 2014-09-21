@@ -30,6 +30,7 @@
 using namespace IkhProgram::IkhWinLib2;
 
 #include "CTextBoxCtrl.h"
+#include "Shader.h"
 
 class SphereManager;
 class Camera;
@@ -49,6 +50,8 @@ private:
 
 	SphereManager *m_pSphereManager;
 	Camera *m_pCamera;
+
+	std::unique_ptr<Shader> m_pShader;
 
 public:
 	explicit CRendererCtrl(SphereManager *psm, Camera *pc) : m_pSphereManager(psm), m_pCamera(pc) { }

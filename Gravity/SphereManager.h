@@ -24,12 +24,6 @@
 
 #pragma once
 
-#include <IkhWinLib2/Defines.h>
-using namespace IkhProgram::IkhWinLib2;
-
-#include <gl/gl.h>
-#include <gl/glu.h>
-
 inline double square(double d)
 {
 	return d * d;
@@ -66,22 +60,7 @@ inline void negativen(double (&data)[3])
 	data[2] = -data[2];
 }
 
-struct Sphere
-{
-	double coord[3];
-	double radius, mass;
-	float color[4];
-
-	double velocity[3];
-
-	double angle[3];
-	double AngularVelocity[3];
-
-	GLuint DisplayList;
-
-	void CompileDisplayList(GLUquadric *quadric);
-	void DeleteDisplayList();
-};
+#include "Sphere.h"
 
 class SphereManager final
 {

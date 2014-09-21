@@ -22,54 +22,48 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "stdafx.h"
-#include "CTextBoxCtrl.h"
+#pragma once
 
-#include <IkhWinLib2/CWndClass.h>
-#include <IkhWinLib2/CDbBufDC.h>
+#include <IkhWinLib2/CLogicError.h>
+using namespace IkhProgram::IkhWinLib2;
 
-BEGIN_MSGMAP(CTextBoxCtrl, CWindow)
-	MSGMAP_WM_CREATE(OnCreate)
-	MSGMAP_WM_PAINT(OnPaint)
-END_MSGMAP(CTextBoxCtrl, CWindow)
+#include <boost/tokenizer.hpp>
+#include "SphereManager.h"
 
-void CTextBoxCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle,
-	int x, int y, int nWidth, int nHeight, int id, HWND hWndParent)
+IKHWINLIB2_MAKE_EXCEPTION(ScripterException, CLogicError, L"스크립트 처리에 오류가 발생했습니다.")
+
+class IScriptHost
 {
-	CWindow::CreateEx(
-		dwExStyle,
-		CWndClass(nullptr, CS_HREDRAW | CS_VREDRAW, nullptr),
-		nullptr, dwStyle,
-		x, y, nWidth, nHeight, hWndParent, (HMENU)id
-		);
-}
+public:
+	virtual void WriteLine(const std::wstring &str) = 0;
+	virtual void WriteMultiLine(const std::wstring &str) = 0;
 
-BOOL CTextBoxCtrl::OnCreate(LPCREATESTRUCT lpcs)
+	virtual void CreateSphere(const Sphere &sp) = 0;
+};
+
+class Scripter final
 {
-	if (!MSG_FORWARD_WM_CREATE(CWindow, lpcs))
-		return FALSE;
+private:
+	typedef boost::escaped_list_separator<wchar_t> separator;
+	typedef boost::tokenizer<separator, std::wstring::const_iterator, std::wstring> tokenizer;
+	separator m_separator;
 
-	return TRUE;
-}
+	typedef std::function<void(const std::vector<std::wstring> &)> cmd_handler_t;
+	typedef std::unordered_map<std::wstring, std::pair<cmd_handler_t, std::wstring> > cmd_map_t;
+	cmd_map_t m_cmd_map;
 
-void CTextBoxCtrl::OnPaint()
-{
-	PAINTSTRUCT ps;
-	BeginPaint(*this, &ps);
-	TextOut(ps.hdc, 0, 0, m_str);
-	EndPaint(*this, &ps);
-}
+	typedef boost::char_separator<wchar_t> punct_separator;
+	typedef boost::tokenizer<punct_separator, std::wstring::const_iterator, std::wstring> punct_tokenizer;
+	punct_separator m_PunctSeparator;
 
-void CTextBoxCtrl::SetString(const std::wstring &str)
-{
-	m_str = str;
+	IScriptHost *m_pHost;
 
-	HDC hdc = GetDC(*this);
-	RECT rt = { 0, 0, 0, 0 };
-	DrawText(hdc, m_str.c_str(), -1, &rt, DT_LEFT | DT_TOP | DT_CALCRECT);
-	ReleaseDC(*this, hdc);
+public:
+	explicit Scripter(IScriptHost *pHost);
 
-	SetWindowPos(*this, nullptr, 0, 0, rt.right, rt.bottom,
-		SWP_NOMOVE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOACTIVATE);
-	InvalidateRect(*this, nullptr, FALSE);
-}
+	void ExecuteLine(const std::wstring &line);
+
+private:
+	void CommandHelp(const std::vector<std::wstring> &vttok);
+	void CommandCreate(const std::vector<std::wstring> &vttok);
+};
