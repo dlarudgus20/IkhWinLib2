@@ -28,9 +28,7 @@
 #define LOGICAL_TIME_SPAN (0.5)
 #define UPDATE_TIME_SPAN (50)
 
-// double 비교에 사용될 무한소값
-#define EPSILON (1e-20)
-
+#define EPSILON (1e-13)
 
 SphereManager::SphereManager()
 	: m_PrevUpdateTime(GetTickCount()), m_day(0)
@@ -58,7 +56,9 @@ void SphereManager::UpdateIfExpired()
 		DWORD count = span / UPDATE_TIME_SPAN;
 		m_PrevUpdateTime += count * UPDATE_TIME_SPAN;
 
+#ifndef _DEBUG
 		for (DWORD q = 0; q < count; q++)
+#endif
 		{
 			Run();
 		}
@@ -78,7 +78,7 @@ void SphereManager::Run()
 
 void SphereManager::RunForce(std::vector<Sphere> &NewSpheres)
 {
-	// 만유인력 상수 (단위계.txt 참조)
+	// 만유인력 상수 (SystemOfUnits.md 참조)
 	const double G = 0.49813678080;
 
 	#pragma omp parallel for
@@ -88,6 +88,9 @@ void SphereManager::RunForce(std::vector<Sphere> &NewSpheres)
 
 		// 합력
 		double sum_f[3] = { 0, 0, 0 };
+
+		// 접촉 물체 리스트
+		std::vector<int> ContactingSpheres;
 
 		for (int j = 0; static_cast<size_t>(j) < m_Spheres.size(); j++)
 		{
@@ -101,6 +104,17 @@ void SphereManager::RunForce(std::vector<Sphere> &NewSpheres)
 				sp2.coord[1] - newsp.coord[1],
 				sp2.coord[2] - newsp.coord[2],
 			};
+
+			// 물체가 접촉하고 있을 경우
+			// 겹쳐진 경우(원점 사이 거리가 반지름 합보다 작을 때)도 처리해야 하기 떄문에 abs()를 사용하지 않음
+			if (/*abs*/(get_length(f) - (newsp.radius + sp2.radius)) < EPSILON)
+			{
+				// 접촉했다는 표시를 함
+				ContactingSpheres.push_back(j);
+
+				// 수직항력에 의해 만유인력이 상쇄됨
+				continue;
+			}
 
 			double length_2 = dot_product(f, f);
 			// 중력 상수는 합력에 한꺼번에 곱해줌
@@ -116,10 +130,40 @@ void SphereManager::RunForce(std::vector<Sphere> &NewSpheres)
 			sum_f[1] += f[1];
 			sum_f[2] += f[2];
 		}
-
 		sum_f[0] *= G;
 		sum_f[1] *= G;
 		sum_f[2] *= G;
+
+		// 수직항력 처리
+		// 접촉한 물체 방향의 힘을 0으로 만듬
+		for (int j : ContactingSpheres)
+		{
+			Sphere &sp2 = m_Spheres[j];
+
+			// 수직항력 = -F0 = - (|F|cosθ) * (r/|r|) = - ((F dot r)/|r|) * (r/|r|)
+			// NormalForce.md 참조
+
+			double r[3] = {
+				sp2.coord[0] - newsp.coord[0],
+				sp2.coord[1] - newsp.coord[1],
+				sp2.coord[2] - newsp.coord[2]
+			};
+			double r_length = get_length(r);
+
+			// 단위벡터로 만듬 -> |r| = 1
+			r[0] /= r_length;
+			r[1] /= r_length;
+			r[2] /= r_length;
+
+			double f_dot_r = dot_product(sum_f, r);
+			r[0] *= f_dot_r;
+			r[1] *= f_dot_r;
+			r[2] *= f_dot_r;
+
+			sum_f[0] -= r[0];
+			sum_f[0] -= r[1];
+			sum_f[0] -= r[2];
+		}
 
 		// F = ma
 		// F/m = a = dv/dt
@@ -208,7 +252,7 @@ void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 			}
 			else
 			{
-				if (it->second.first->t - ptr->t < EPSILON)
+				if (abs(it->second.first->t - ptr->t) < EPSILON)
 				{
 					// 충돌이 동시에 일어남
 					col_map.emplace(key, std::make_pair(ptr, key_is_j));
@@ -315,7 +359,7 @@ void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 					std::array<double, 3> i_A, j_A;
 
 					cross_product(i_A.data(), i_moment_arm, J); // i_A = i_r x i_J
-					cross_product(i_A.data(), j_moment_arm, J); // j_A = j_r x j_J = j_r x (-i_J) = -(j_r x i_J)
+					cross_product(j_A.data(), J, j_moment_arm); // j_A = j_r x j_J = j_r x (-i_J) = -(j_r x i_J) = i_J x j_r
 
 					i_sum_I->second[0] += i_I[0];
 					i_sum_I->second[1] += i_I[1];
@@ -465,9 +509,17 @@ std::shared_ptr<SphereManager::CollisionInfo> SphereManager::DetectCollision(
 		return std::shared_ptr<CollisionInfo>();
 
 	// 처음 충돌의 시각
+
+	// (|v|^2)t^2 + 2(p.v) t + |p|^2 - k^2 < 0 인 경우(Sphere 두 개가 겹친 경우)는 충돌로 인정
+	// 2차항의 계수 |v|^2가 양수 ==> t2 < RemainTime < t1 이여야 함
+	// t2가 양수이고 RemainTime보다 작다면 t2에서 만남 (겹치지 않음)
+	// t2가 음수라면 겹칠 가능성이 있음.
+	bool possibly_overlapped = false;
+
 	if (t2 < 0)
 	{
 		info.t = t1;
+		possibly_overlapped = true;
 	}
 	else
 	{
@@ -477,7 +529,18 @@ std::shared_ptr<SphereManager::CollisionInfo> SphereManager::DetectCollision(
 
 	// ...이 RemainTime보다 작아야 함
 	if (info.t > RemainTime)
-		return std::shared_ptr<CollisionInfo>();
+	{
+		if (possibly_overlapped)
+		{
+			// 겹쳤음 -> 0초에서 충돌한 것으로 처리
+			info.t = 0;
+		}
+		else
+		{
+			// 겹치지 않았음
+			return std::shared_ptr<CollisionInfo>();
+		}
+	}
 
 	return std::make_shared<CollisionInfo>(info);
 }

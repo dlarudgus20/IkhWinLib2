@@ -67,5 +67,5 @@ public:
 	// IScriptHost
 	virtual void WriteLine(const std::wstring &str) override;
 	virtual void WriteMultiLine(const std::wstring &str) override;
-	virtual void CreateSphere(const Sphere &sp) override;
+	virtual SphereManager *GetSphereManager() override;
 };

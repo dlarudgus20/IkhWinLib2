@@ -24,8 +24,11 @@
 
 #include "stdafx.h"
 #include "Scripter.h"
+#include "SphereManager.h"
 #include "parse_utils.h"
 using namespace parse_utils;
+
+#include <boost/algorithm/string.hpp>
 
 namespace
 {
@@ -50,13 +53,16 @@ Scripter::Scripter(IScriptHost *pHost)
 	m_cmd_map.insert(
 	{
 		{ L"create", { std::bind(&Scripter::CommandCreate, this, _1), L"create new sphere" } },
-		{ L"help", { std::bind(&Scripter::CommandHelp, this, _1), L"view help" } }
+		{ L"help", { std::bind(&Scripter::CommandHelp, this, _1), L"view help" } },
+		{ L"ls", { std::bind(&Scripter::CommandLs, this, _1), L"view list of spheres" } },
+		{ L"sum-momentum", { std::bind(&Scripter::CommandSumMomentum, this, _1), L"view sum of momentum & angular momentum" } }
 	});
 }
 
 void Scripter::ExecuteLine(const std::wstring &line)
 {
-	tokenizer tok(line, m_separator);
+	std::wstring buf = boost::algorithm::trim_copy(line); // tokenizer는 wstring의 레퍼런스를 받습니다.
+	tokenizer tok(buf, m_separator);
 
 	if (tok.begin() == tok.end())
 		return; // 라인이 텅 비었음
@@ -65,6 +71,9 @@ void Scripter::ExecuteLine(const std::wstring &line)
 		return;	// 주석
 
 	std::vector<std::wstring> vttok(tok.begin(), tok.end());
+
+	for (auto &str : vttok)
+		boost::algorithm::trim(str);
 
 	auto it = m_cmd_map.find(vttok[0]);
 	if (it != m_cmd_map.end())
@@ -95,6 +104,7 @@ void Scripter::CommandHelp(const std::vector<std::wstring> &vttok)
 				L"명령어 도움말은 다음과 같은 형태입니다.\n"
 				L"    명령어 [필수인수1:타입] [필수인수2:타입] ... (선택인수1:타입) (선택인수2:타입) ...\n"
 				L"필수인수는 반드시 입력해야 하는 인수를 말합니다. 선택인수는 반드시 입력하지 않아도 되는 인수이고, 입력하지 않을 시 디폴트값이 사용됩니다."
+				L"인수 목록이 <<<no param>>> 인 명령어들은 인를 받지 않습니다.\n"
 				L"타입은 인수의 형태를 말합니다. 이 프로그램엔 다음과 같은 타입이 있습니다.\n"
 				L" vec3: 3차원 벡터입니다. 예: (1.1,2.5,3.99)\n"
 				L" real: 실수입니다. 예: 2.3\n"
@@ -152,5 +162,80 @@ void Scripter::CommandCreate(const std::vector<std::wstring> &vttok)
 	if (vttok.size() >= 7)
 		sp.AngularVelocity = parse_vec3(vttok[6], error_handler(L"vec3"));
 
-	m_pHost->CreateSphere(sp);
+	m_pHost->GetSphereManager()->AddSphere(sp);
+}
+
+void Scripter::CommandLs(const std::vector<std::wstring> &vttok)
+{
+	const std::wstring usage = L"ls <<<no param>>>";
+
+	if (vttok.size() == 2 && vttok[1] == L"--help")
+	{
+		m_pHost->WriteLine(usage);
+		return;
+	}
+
+	if (vttok.size() != 1)
+		throw ScripterException(usage);
+
+	auto spheres = m_pHost->GetSphereManager()->GetSpheres();
+
+	m_pHost->WriteLine(L"[num] / [coord] / [radius] / [mass] / [color] / [velocity] / [AngularVelocity]");
+	for (int i = 0; i < spheres.size(); ++i)
+	{
+		Sphere &sp = spheres[i];
+
+		m_pHost->WriteLine((
+			boost::wformat(L"%d / (%.3f,%.3f,%.3f) / %.3f / %.3f / (%.3f,%.3f,%.3f,%.3f)"
+				L" / (%.3f,%.3f,%.3f) [%.3f] / (%.3f,%.3f,%.3f) [%.3f]"
+				)
+			% i % sp.coord[0] % sp.coord[1] % sp.coord[2]
+			% sp.radius % sp.mass
+			% sp.color[0] % sp.color[1] % sp.color[2] % sp.color[3]
+			% sp.velocity[0] % sp.velocity[1] % sp.velocity[2] % get_length(sp.velocity.data())
+			% sp.AngularVelocity[0] % sp.AngularVelocity[1] % sp.AngularVelocity[2] % get_length(sp.AngularVelocity.data())
+			).str());
+	}
+}
+
+void Scripter::CommandSumMomentum(const std::vector<std::wstring> &vttok)
+{
+	const std::wstring usage = L"sum-momentum <<<no param>>>";
+
+	if (vttok.size() == 2 && vttok[1] == L"--help")
+	{
+		m_pHost->WriteLine(usage);
+		return;
+	}
+
+	if (vttok.size() != 1)
+		throw ScripterException(usage);
+
+	auto spheres = m_pHost->GetSphereManager()->GetSpheres();
+
+	double p[3] = { }, ap[3] = { };
+
+	#pragma omp parallel for
+	for (int i = 0; i < spheres.size(); ++i)
+	{
+		Sphere &sp = spheres[i];
+
+		p[0] += sp.mass * sp.velocity[0];
+		p[1] += sp.mass * sp.velocity[1];
+		p[2] += sp.mass * sp.velocity[2];
+
+		double moment_of_inertia = 2 * sp.mass * square(sp.radius) / 5;
+		ap[0] += moment_of_inertia * sp.AngularVelocity[0];
+		ap[1] += moment_of_inertia * sp.AngularVelocity[1];
+		ap[2] += moment_of_inertia * sp.AngularVelocity[2];
+	}
+
+	m_pHost->WriteLine((
+		boost::wformat(L"momentum: (%.3f,%.3f,%.3f) [%.3f]")
+		% p[0] % p[1] % p[2] % get_length(p)
+		).str());
+	m_pHost->WriteLine((
+		boost::wformat(L"angular-momentum: (%.3f,%.3f,%.3f) [%.3f]")
+		% ap[0] % ap[1] % ap[2] % get_length(ap)
+		).str());
 }

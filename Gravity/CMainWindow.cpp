@@ -122,10 +122,11 @@ void CMainWindow::WriteLine(const std::wstring &str)
 	DWORD beg, end;
 	SendMessage(m_CmdListEdit, EM_GETSEL, reinterpret_cast<WPARAM>(&beg), reinterpret_cast<LPARAM>(&end));
 
-	SendMessage(m_CmdListEdit, EM_SETSEL, -1, 0);
+	SendMessage(m_CmdListEdit, EM_SETSEL, size, size);
 	SendMessage(m_CmdListEdit, EM_REPLACESEL, TRUE, reinterpret_cast<LPARAM>(str.c_str()));
+	size = GetWindowTextLength(m_CmdListEdit);
 
-	SendMessage(m_CmdListEdit, EM_SETSEL, -1, 0);
+	SendMessage(m_CmdListEdit, EM_SETSEL, size, size);
 	SendMessage(m_CmdListEdit, EM_REPLACESEL, TRUE, reinterpret_cast<LPARAM>(L"\r\n"));
 
 	if (!(size == beg && beg == end))
@@ -139,7 +140,7 @@ void CMainWindow::WriteMultiLine(const std::wstring &str)
 	WriteLine(boost::algorithm::replace_all_copy(str, L"\n", L"\r\n"));
 }
 
-void CMainWindow::CreateSphere(const Sphere &sp)
+SphereManager *CMainWindow::GetSphereManager()
 {
-	m_SphereManager.AddSphere(sp);
+	return &m_SphereManager;
 }

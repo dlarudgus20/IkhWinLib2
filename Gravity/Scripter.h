@@ -28,7 +28,8 @@
 using namespace IkhProgram::IkhWinLib2;
 
 #include <boost/tokenizer.hpp>
-#include "SphereManager.h"
+
+class SphereManager;
 
 IKHWINLIB2_MAKE_EXCEPTION(ScripterException, CLogicError, L"스크립트 처리에 오류가 발생했습니다.")
 
@@ -38,7 +39,7 @@ public:
 	virtual void WriteLine(const std::wstring &str) = 0;
 	virtual void WriteMultiLine(const std::wstring &str) = 0;
 
-	virtual void CreateSphere(const Sphere &sp) = 0;
+	virtual SphereManager *GetSphereManager() = 0;
 };
 
 class Scripter final
@@ -66,4 +67,6 @@ public:
 private:
 	void CommandHelp(const std::vector<std::wstring> &vttok);
 	void CommandCreate(const std::vector<std::wstring> &vttok);
+	void CommandLs(const std::vector<std::wstring> &vttok);
+	void CommandSumMomentum(const std::vector<std::wstring> &vttok);
 };

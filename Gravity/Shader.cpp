@@ -50,6 +50,7 @@ Shader::Shader()
 
 Shader::~Shader()
 {
+	glUseProgram(0);
 	glDetachShader(m_program, m_fragment);
 	glDetachShader(m_program, m_vertex);
 

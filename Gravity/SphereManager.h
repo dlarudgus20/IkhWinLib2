@@ -28,21 +28,21 @@ inline double square(double d)
 {
 	return d * d;
 }
-inline void cross_product(double dest[3], const double (&lhs)[3], const double (&rhs)[3])
+inline void cross_product(double dest[3], const double lhs[3], const double rhs[3])
 {
 	dest[0] = rhs[1] * lhs[2] - lhs[1] * rhs[2];
 	dest[1] = rhs[2] * lhs[0] - lhs[2] * rhs[0];
 	dest[2] = rhs[0] * lhs[1] - lhs[0] * rhs[1];
 }
-inline double dot_product(const double (&lhs)[3], const double (&rhs)[3])
+inline double dot_product(const double lhs[3], const double rhs[3])
 {
 	return lhs[0] * rhs[0] + lhs[1] * rhs[1] + lhs[2] * rhs[2];
 }
-inline double get_length_2(const double (&lhs)[3])
+inline double get_length_2(const double lhs[3])
 {
 	return dot_product(lhs, lhs);
 }
-inline double get_length(const double (&lhs)[3])
+inline double get_length(const double lhs[3])
 {
 	return sqrt(get_length_2(lhs));
 }
@@ -99,6 +99,7 @@ public:
 	~SphereManager();
 
 	double GetDay() const { return m_day; }
+	std::vector<Sphere> &GetSpheres() { return m_Spheres; }
 
 	void AddSphere(const Sphere &s);
 
