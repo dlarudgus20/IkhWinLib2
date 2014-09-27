@@ -224,10 +224,10 @@
     <ResourceCompile Include="Gravity.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="docs\NormalForce.md" />
-    <None Include="docs\SystemOfUnits.md" />
+    <None Include="docs\docs.md" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="docs\Impulse(translation).png" />
     <Image Include="docs\NormalForce.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

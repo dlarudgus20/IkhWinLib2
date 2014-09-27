@@ -192,8 +192,8 @@ void Scripter::CommandLs(const std::vector<std::wstring> &vttok)
 			% i % sp.coord[0] % sp.coord[1] % sp.coord[2]
 			% sp.radius % sp.mass
 			% sp.color[0] % sp.color[1] % sp.color[2] % sp.color[3]
-			% sp.velocity[0] % sp.velocity[1] % sp.velocity[2] % get_length(sp.velocity.data())
-			% sp.AngularVelocity[0] % sp.AngularVelocity[1] % sp.AngularVelocity[2] % get_length(sp.AngularVelocity.data())
+			% sp.velocity[0] % sp.velocity[1] % sp.velocity[2] % get_length(sp.velocity)
+			% sp.AngularVelocity[0] % sp.AngularVelocity[1] % sp.AngularVelocity[2] % get_length(sp.AngularVelocity)
 			).str());
 	}
 }
@@ -213,7 +213,7 @@ void Scripter::CommandSumMomentum(const std::vector<std::wstring> &vttok)
 
 	auto spheres = m_pHost->GetSphereManager()->GetSpheres();
 
-	double p[3] = { }, ap[3] = { };
+	std::array<double, 3> p = { 0, 0, 0 }, ap = { 0, 0, 0 };
 
 	#pragma omp parallel for
 	for (int i = 0; i < spheres.size(); ++i)
@@ -234,8 +234,8 @@ void Scripter::CommandSumMomentum(const std::vector<std::wstring> &vttok)
 		boost::wformat(L"momentum: (%.3f,%.3f,%.3f) [%.3f]")
 		% p[0] % p[1] % p[2] % get_length(p)
 		).str());
-	m_pHost->WriteLine((
+	/*m_pHost->WriteLine((
 		boost::wformat(L"angular-momentum: (%.3f,%.3f,%.3f) [%.3f]")
 		% ap[0] % ap[1] % ap[2] % get_length(ap)
-		).str());
+		).str());*/
 }

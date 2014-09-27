@@ -87,7 +87,7 @@ void SphereManager::RunForce(std::vector<Sphere> &NewSpheres)
 		Sphere &newsp = NewSpheres[i];
 
 		// 합력
-		double sum_f[3] = { 0, 0, 0 };
+		std::array<double, 3> sum_f = { 0, 0, 0 };
 
 		// 접촉 물체 리스트
 		std::vector<int> ContactingSpheres;
@@ -99,7 +99,7 @@ void SphereManager::RunForce(std::vector<Sphere> &NewSpheres)
 
 			Sphere &sp2 = m_Spheres[j];
 
-			double f[3] = {
+			std::array<double, 3> f = {
 				sp2.coord[0] - newsp.coord[0],
 				sp2.coord[1] - newsp.coord[1],
 				sp2.coord[2] - newsp.coord[2],
@@ -143,7 +143,7 @@ void SphereManager::RunForce(std::vector<Sphere> &NewSpheres)
 			// 수직항력 = -F0 = - (|F|cosθ) * (r/|r|) = - ((F dot r)/|r|) * (r/|r|)
 			// NormalForce.md 참조
 
-			double r[3] = {
+			std::array<double, 3> r = {
 				sp2.coord[0] - newsp.coord[0],
 				sp2.coord[1] - newsp.coord[1],
 				sp2.coord[2] - newsp.coord[2]
@@ -168,7 +168,7 @@ void SphereManager::RunForce(std::vector<Sphere> &NewSpheres)
 		// F = ma
 		// F/m = a = dv/dt
 		// dt * F/m = dv
-		double dv[3] = {
+		std::array<double, 3> dv = {
 			LOGICAL_TIME_SPAN * sum_f[0] / newsp.mass,
 			LOGICAL_TIME_SPAN * sum_f[1] / newsp.mass,
 			LOGICAL_TIME_SPAN * sum_f[2] / newsp.mass
@@ -302,64 +302,69 @@ void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 						negativen(ptr->v);
 					}
 
-					auto j_sum_I = map_sum_I.emplace(ptr->j, std::array<double, 3>{ { 0.0, 0.0, 0.0 } }).first;
-					auto j_sum_A = map_sum_A.emplace(ptr->j, std::array<double, 3>{ { 0.0, 0.0, 0.0 } }).first;
+					// docs.md#충격량 참조
+
+					// 진행 방향과 충격량의 방향이 평행하지 않은 경우
+					if (ptr->p_dot_v > EPSILON)	// 충돌이 일어나지 않음 (docs.md#충격량#2 참조)
+						return;
+
+					auto j_sum_I = map_sum_I.emplace(ptr->j, std::array<double, 3> { { 0.0, 0.0, 0.0 } }).first;
+					auto j_sum_A = map_sum_A.emplace(ptr->j, std::array<double, 3> { { 0.0, 0.0, 0.0 } }).first;
 
 					double v_length = sqrt(ptr->v_length_2);
-
+	
 					double cos_theta_2 = square(ptr->p_dot_v) / ptr->p_length_2 / ptr->v_length_2;
 					double sin_theta_2 = 1 - cos_theta_2;
-
+	
 					double sum_inverse_mass = (1 / NewSpheres[ptr->i].mass)
 						+ (1 / NewSpheres[ptr->j].mass);
-
+	
 					double sum_inverse_moment = (1 / (NewSpheres[ptr->i].mass * 2 / 5))
 						+ (1 / (NewSpheres[ptr->i].mass * 2 / 5));
-
+	
 					double J_length = (2 * v_length * cos_theta_2)
 						/ (sum_inverse_mass * cos_theta_2 + sum_inverse_moment * sin_theta_2);
-
-					double J[3];
-					memcpy(J, ptr->v, sizeof(J));
+	
+					std::array<double, 3> J = ptr->v;
 					J[0] *= J_length / v_length;
 					J[1] *= J_length / v_length;
 					J[2] *= J_length / v_length;
-
+	
 					double I_length = J_length * sqrt(cos_theta_2);
-
-					double i_moment_arm[3], j_moment_arm[3];
+	
 					std::array<double, 3> i_I, j_I;
-
-					memcpy(i_moment_arm, ptr->p, sizeof(i_moment_arm));
+					std::array<double, 3> i_moment_arm;
+					std::array<double, 3> j_moment_arm;
 
 					double p_length = sqrt(ptr->p_length_2);
+					i_moment_arm = ptr->p;
 					i_moment_arm[0] /= p_length;
 					i_moment_arm[1] /= p_length;
 					i_moment_arm[2] /= p_length;
-					memcpy(j_moment_arm, i_moment_arm, sizeof(j_moment_arm));
-					memcpy(i_I.data(), i_moment_arm, sizeof(i_I));
-					memcpy(j_I.data(), i_moment_arm, sizeof(j_I));
 
+					j_moment_arm = i_moment_arm;
+					i_I = i_moment_arm;
+					j_I = i_moment_arm;
+	
 					i_I[0] *= I_length;
 					i_I[1] *= I_length;
 					i_I[2] *= I_length;
-
+	
 					j_I[0] *= -I_length;
 					j_I[1] *= -I_length;
 					j_I[2] *= -I_length;
-
+	
 					i_moment_arm[0] *= NewSpheres[ptr->i].radius;
 					i_moment_arm[1] *= NewSpheres[ptr->i].radius;
 					i_moment_arm[2] *= NewSpheres[ptr->i].radius;
-
+	
 					j_moment_arm[0] *= -NewSpheres[ptr->j].radius;
 					j_moment_arm[1] *= -NewSpheres[ptr->j].radius;
 					j_moment_arm[2] *= -NewSpheres[ptr->j].radius;
-
+	
 					std::array<double, 3> i_A, j_A;
-
-					cross_product(i_A.data(), i_moment_arm, J); // i_A = i_r x i_J
-					cross_product(j_A.data(), J, j_moment_arm); // j_A = j_r x j_J = j_r x (-i_J) = -(j_r x i_J) = i_J x j_r
+					cross_product(i_A, i_moment_arm, J); // i_A = i_r x i_J
+					cross_product(j_A, J, j_moment_arm); // j_A = j_r x j_J = j_r x (-i_J) = -(j_r x i_J) = i_J x j_r
 
 					i_sum_I->second[0] += i_I[0];
 					i_sum_I->second[1] += i_I[1];
@@ -399,14 +404,14 @@ void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 		const std::array<double, 3> &pr_I = it_sum_I->second;
 		const std::array<double, 3> &pr_A = it_sum_A->second;
 
-		double dv[3] = {
+		std::array<double, 3> dv = {
 			pr_I[0] / oldsp.mass,
 			pr_I[1] / oldsp.mass,
 			pr_I[2] / oldsp.mass
 		};
 
 		double moment_of_inerita = 2 * oldsp.mass * square(oldsp.radius) / 5;
-		double dw[3] = {
+		std::array<double, 3> dw = {
 			pr_A[0] / moment_of_inerita,
 			pr_A[1] / moment_of_inerita,
 			pr_A[2] / moment_of_inerita
@@ -418,7 +423,7 @@ void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 		// 충돌 지점까지 계산
 		// v = (v0 + v1)/2
 		// RunForce() 참조
-		double old_v[3] = {
+		std::array<double, 3> old_v = {
 			(oldsp.velocity[0] + newsp.velocity[0]) / 2,
 			(oldsp.velocity[1] + newsp.velocity[1]) / 2,
 			(oldsp.velocity[2] + newsp.velocity[2]) / 2,
@@ -437,7 +442,7 @@ void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 		newsp.coord[2] += newsp.velocity[2] * after_time;
 
 		// 각속도에 대해서도 동일한 처리
-		double old_w[3] = {
+		std::array<double, 3> old_w = {
 			(oldsp.AngularVelocity[0] + newsp.AngularVelocity[0]) / 2,
 			(oldsp.AngularVelocity[1] + newsp.AngularVelocity[1]) / 2,
 			(oldsp.AngularVelocity[2] + newsp.AngularVelocity[2]) / 2,
@@ -488,16 +493,21 @@ std::shared_ptr<SphereManager::CollisionInfo> SphereManager::DetectCollision(
 	info.v[1] = ((oldsp_1.velocity[1] + newsp_1.velocity[1]) - (oldsp_2.velocity[1] + newsp_2.velocity[1])) / 2;
 	info.v[2] = ((oldsp_1.velocity[2] + newsp_1.velocity[2]) - (oldsp_2.velocity[2] + newsp_2.velocity[2])) / 2;
 
-	info.p_dot_v = dot_product(info.p, info.v);
 	info.p_length_2 = get_length_2(info.p);
 	info.v_length_2 = get_length_2(info.v);
+	info.p_dot_v = dot_product(info.p, info.v);
+
+	//// 진행 방향과 충격량의 방향이 평행하지 않은 경우
+	//if (info.p_dot_v > EPSILON)	// 충돌이 일어나지 않음 (docs.md#충격량#2 참조)
+	//	return std::shared_ptr<CollisionInfo>();
 
 	// 두 원의 반지름 합
 	double k = oldsp_1.radius + oldsp_2.radius;
 
 	// 판별식 < 0 이면 충돌 ㄴㄴ
+	// 판별식 < epsilon (스쳤을 때) 도 충돌 ㄴㄴ (docs.md#충격량#2 참조)
 	double D = info.p_dot_v * info.p_dot_v - info.p_length_2 * info.v_length_2 + square(k) * info.v_length_2;
-	if (D < 0)
+	if (D < EPSILON)
 		return std::shared_ptr<CollisionInfo>();
 
 	double sqrt_D = sqrt(D);

@@ -14,7 +14,7 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="docs">
-      <UniqueIdentifier>{560240a3-c69e-40a1-a61d-efe3a8b13c48}</UniqueIdentifier>
+      <UniqueIdentifier>{9752208e-8b31-4a8e-8e66-929c8ea63755}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -103,14 +103,14 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="docs\NormalForce.md">
-      <Filter>docs</Filter>
-    </None>
-    <None Include="docs\SystemOfUnits.md">
+    <None Include="docs\docs.md">
       <Filter>docs</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="docs\Impulse(translation).png">
+      <Filter>docs</Filter>
+    </Image>
     <Image Include="docs\NormalForce.png">
       <Filter>docs</Filter>
     </Image>

@@ -28,21 +28,21 @@ inline double square(double d)
 {
 	return d * d;
 }
-inline void cross_product(double dest[3], const double lhs[3], const double rhs[3])
+inline void cross_product(std::array<double, 3> &dest, const std::array<double, 3> &lhs, const std::array<double, 3> &rhs)
 {
 	dest[0] = rhs[1] * lhs[2] - lhs[1] * rhs[2];
 	dest[1] = rhs[2] * lhs[0] - lhs[2] * rhs[0];
 	dest[2] = rhs[0] * lhs[1] - lhs[0] * rhs[1];
 }
-inline double dot_product(const double lhs[3], const double rhs[3])
+inline double dot_product(const std::array<double, 3> &lhs, const std::array<double, 3> &rhs)
 {
 	return lhs[0] * rhs[0] + lhs[1] * rhs[1] + lhs[2] * rhs[2];
 }
-inline double get_length_2(const double lhs[3])
+inline double get_length_2(const std::array<double, 3> &lhs)
 {
 	return dot_product(lhs, lhs);
 }
-inline double get_length(const double lhs[3])
+inline double get_length(const std::array<double, 3> &lhs)
 {
 	return sqrt(get_length_2(lhs));
 }
@@ -52,8 +52,7 @@ inline void negativen(T &data)
 {
 	data = -data;
 }
-
-inline void negativen(double (&data)[3])
+inline void negativen(std::array<double, 3> &data)
 {
 	data[0] = -data[0];
 	data[1] = -data[1];
@@ -84,7 +83,7 @@ public:
 		// 충돌 발생 시각
 		double t;
 		// i번 Sphere에서 본 j번 Sphere의 위치와 속도
-		double p[3], v[3];
+		std::array<double, 3> p, v;
 		// pre-calculated values
 		double p_dot_v, p_length_2, v_length_2;
 
