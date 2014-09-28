@@ -100,7 +100,7 @@ void CMyWindow::OnDestroy()
 	SetFullscreen(false);
 	PostQuitMessage(0);
 
-	MSG_FORWARD_WM_DESTROY(COpenGLWnd);
+	MSG_FORWARD_WM_DESTROY(CIdleOpenGLWnd);
 }
 
 void CMyWindow::OnIdle()

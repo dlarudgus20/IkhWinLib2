@@ -34,12 +34,21 @@
 #include <windowsx.h>
 #include <commctrl.h>
 #include <commdlg.h>
+#include <mmsystem.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <memory.h>
 #include <assert.h>
+
+#include <iostream>
+#include <iomanip>
+#include <istream>
+#include <ostream>
+#include <sstream>
+#include <fstream>
 
 #include <algorithm>
 #include <functional>
@@ -53,7 +62,9 @@
 #include <thread>
 #include <mutex>
 #include <chrono>
+#include <random>
 #include <new>
+using std::swap;
 
 #ifndef GC_THREADS
 # define GC_THREADS
@@ -62,11 +73,19 @@
 #include <gc_cpp.h>
 #include <gc_allocator.h>
 
+#ifndef IKHWINLIB2_USE_BOOST_PLACEHOLDER
+using namespace std::placeholders;
+#define BOOST_BIND_NO_PLACEHOLDERS
+#endif
+
 #define BOOST_THREAD_VERSION 4
 #define BOOST_RESULT_OF_USE_DECLTYPE
 #include <boost/thread/future.hpp>
 #include <boost/scope_exit.hpp>
 #include <boost/optional.hpp>
+#include <boost/format.hpp>
+#include <boost/scope_exit.hpp>
+#include <boost/bind.hpp>
 
 #include "stlgc.h"
 

@@ -30,10 +30,14 @@ BEGIN_IKHWINLIB2()
 
 IKHWINLIB2_MAKE_EXCEPTION(CSystemError, CException, L"IkhProgram::IkhWinLib2::CSystemError")
 
-IKHWINLIB2_MAKE_EXCEPTION(CRegisterClassError, CSystemError, L"윈도우 클래스를 등록하지 못했습니다.")
-IKHWINLIB2_MAKE_EXCEPTION(CWindowCreationError, CSystemError, L"창을 생성하지 못했습니다.")
-IKHWINLIB2_MAKE_EXCEPTION(CEventCreationError, CSystemError, L"이벤트 동기화 객체를 생성하지 못했습니다.")
-IKHWINLIB2_MAKE_EXCEPTION(CThreadCreationError, CSystemError, L"스레드를 생성하지 못했습니다.")
+IKHWINLIB2_MAKE_EXCEPTION(CCreationError, CSystemError, L"IkhProgram::IkhWinLib2::CCreationError")
+
+IKHWINLIB2_MAKE_EXCEPTION(CRegisterClassError, CCreationError, L"윈도우 클래스를 등록하지 못했습니다.")
+IKHWINLIB2_MAKE_EXCEPTION(CWindowCreationError, CCreationError, L"창을 생성하지 못했습니다.")
+IKHWINLIB2_MAKE_EXCEPTION(CEventCreationError, CCreationError, L"이벤트 동기화 객체를 생성하지 못했습니다.")
+IKHWINLIB2_MAKE_EXCEPTION(CThreadCreationError, CCreationError, L"스레드를 생성하지 못했습니다.")
+IKHWINLIB2_MAKE_EXCEPTION(CImageListCreationError, CCreationError, L"이미지 리스트를 생성하지 못했습니다.")
+
 IKHWINLIB2_MAKE_EXCEPTION(CValidWin32ThreadDestroyError, CSystemError, L"스레드에 연결된 CWin32Thread 객체가 파괴되고 있습니다.")
 
 IKHWINLIB2_MAKE_EXCEPTION(CPostMsgError, CSystemError, L"메시지를 붙힐 수 없습니다.")

@@ -46,6 +46,12 @@ private:
 
 public:
 	/**
+	 * @brief 윈도우 클래스 이름으로 사용될 문자열을 생성해 리턴합니다.
+	 * @return 생성된 문자열입니다.
+	 */
+	static std::wstring Generate();
+
+	/**
 	 * @brief 생성자입니다.
 	 * @param[in] lpszClassName 윈도우 클래스의 이름입니다. <c>nullptr</c>일 경우 라이브러리가 알아서 결정합니다.
 	 * @param[in] style 윈도우 클래스의 스타일입니다.

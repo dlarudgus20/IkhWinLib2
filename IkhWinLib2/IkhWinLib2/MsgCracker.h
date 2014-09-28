@@ -202,6 +202,12 @@
 #define MSG_FORWARD_WM_SIZE(base, state, cx, cy) \
 	(void)(base::MessageProc)(WM_SIZE, (WPARAM)(UINT)(state), MAKELPARAM((cx), (cy)))
 
+/* void OnSizing(UINT flags, LPRECT lpRect) */
+#define MSGMAP_WM_SIZING(fn) \
+	case WM_SIZING: return ((fn)((UINT)(wParam), (LPRECT)(lParam)), 0);
+#define MSG_FORWARD_WM_SIZING(base, flags, lpRect) \
+	(void)(base::MessageProc)(WM_SIZING, (WPARAM)(UINT)(flags), (LPARAM)(LPRECT)(lParam))
+
 /* void OnClose() */
 #define MSGMAP_WM_CLOSE(fn) \
 	case WM_CLOSE: return ((fn)(), 0L);

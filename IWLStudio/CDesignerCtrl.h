@@ -24,6 +24,7 @@
 
 #include <IkhWinLib2/CForm.h>
 #include <IkhWinLib2/IControl.h>
+#include <IkhWinLib2/CListBoxCtrl.h>
 using namespace IkhProgram::IkhWinLib2;
 
 class CDesignerCtrl final : public CForm, public virtual IControl
@@ -37,8 +38,23 @@ public:
 		int x, int y, int nWidth, int nHeight, int id, HWND hWndParent) override;
 
 private:
+	typedef std::shared_ptr<IControl> (*CtrlCtor)();
+	static stlgc::vector<CtrlCtor> m_vtCtrlCtor;
+	CtrlCtor m_NowCtrlCtor;
+
+	RECT m_SelRect;
+
+public:
+	CDesignerCtrl();
+
+	void InitToolList(CListBoxCtrl &ToolList);
+	void OnToolListSelChange(int idx);
 
 protected:
 	BOOL OnCreate(LPCREATESTRUCT lpcs);
+	void OnLButtonDown(BOOL fDoubleClick, int x, int y, UINT keyFlags);
+	void OnMouseMove(int x, int y, UINT keyFlags);
+	void OnLButtonUp(int x, int y, UINT keyFlags);
+	void ChangeSelRect(int x, int y);
 	void OnDestroy();
 };

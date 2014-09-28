@@ -82,7 +82,8 @@ public:
 	 * @brief 창을 생성합니다. 인수의 의미는 <c>CreateWindowEx</c> API 함수와 같습니다.
 	 * @example CWindow_CreateEx.cpp
 	 */
-	void CreateEx(DWORD dwExStyle, LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle,
+	void CreateEx(DWORD dwExStyle,
+		LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle = WS_OVERLAPPEDWINDOW,
 		int x = CW_USEDEFAULT, int y = CW_USEDEFAULT,
 		int nWidth = CW_USEDEFAULT, int nHeight = CW_USEDEFAULT,
 		HWND hWndParent = NULL, HMENU hMenu = NULL);
@@ -90,7 +91,7 @@ public:
 	 * @brief 창을 생성합니다. 인수의 의미는 <c>CreateWindow</c> API 함수와 같습니다.
 	 * @example CWindow_Create.cpp
 	 */
-	void Create(LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle,
+	void Create(LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle = WS_OVERLAPPEDWINDOW,
 		int x = CW_USEDEFAULT, int y = CW_USEDEFAULT,
 		int nWidth = CW_USEDEFAULT, int nHeight = CW_USEDEFAULT,
 		HWND hWndParent = NULL, HMENU hMenu = NULL);
@@ -125,8 +126,7 @@ public:
 	 */
 	void PostMsg(UINT iMessage, WPARAM wParam, LPARAM lParam);
 
-protected:
-	virtual LRESULT MessageProc(UINT iMessage, WPARAM wParam, LPARAM lParam) override;
+	virtual LRESULT MessageProc(UINT iMessage, WPARAM wParam, LPARAM lParam, bool *pbProc = nullptr) override;
 
 private:
 	/**

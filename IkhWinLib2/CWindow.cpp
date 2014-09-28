@@ -205,8 +205,10 @@ LRESULT CALLBACK CWindow::WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARA
 	return result;
 }
 
-LRESULT CWindow::MessageProc(UINT iMessage, WPARAM wParam, LPARAM lParam)
+LRESULT CWindow::MessageProc(UINT iMessage, WPARAM wParam, LPARAM lParam, bool *pbProc)
 {
+	if (pbProc != nullptr)
+		*pbProc = true;
 	return CallWindowProc(m_OldProc, *this, iMessage, wParam, lParam);
 }
 

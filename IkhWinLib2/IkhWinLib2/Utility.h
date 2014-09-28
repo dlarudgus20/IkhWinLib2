@@ -33,27 +33,44 @@
 
 BEGIN_IKHWINLIB2()
 
-/**
- * @brief <c>TextOut<c> API 함수의 래퍼입니다.
- */
+/** @brief <c>TextOut</c> API 함수의 래퍼입니다. */
 inline BOOL TextOut(HDC hdc, int x, int y, LPCTSTR lpString)
 {
 	return ::TextOut(hdc, x, y, lpString, lstrlen(lpString));
 }
+/** @brief <c>TextOut</c> API 함수의 래퍼입니다. */
+inline BOOL TextOut(HDC hdc, int x, int y, const std::wstring &str)
+{
+	assert(str.size() <= INT_MAX);
+	return ::TextOut(hdc, x, y, str.c_str(), (int)str.size());
+}
 
-/**
- * @brief <c>GetWindowText<c> API 함수의 래퍼입니다.
- */
-inline stlgc::wstring GetWindowText(HWND hWnd)
+/** @brief <c>SetWindowText</c> API 함수의 래퍼입니다. */
+inline BOOL SetWindowText(HWND hWnd, const std::wstring &str)
+{
+	return ::SetWindowText(hWnd, str.c_str());
+}
+
+/** @brief <c>GetWindowText</c> API 함수의 래퍼입니다. */
+inline std::wstring GetWindowText(HWND hWnd)
 {
 	stlgc::vector<wchar_t> vt(::GetWindowTextLength(hWnd) + 1);
 	::GetWindowText(hWnd, vt.data(), (int)vt.size());
-	return stlgc::wstring(vt.begin(), std::prev(vt.end()));
+	return std::wstring(vt.begin(), std::prev(vt.end()));
 }
 
-/**
- * @brief <c>std::lock_guard</c> 표준 클래스의 래퍼입니다.
- */
+/** @brief <c>OutputDebugStringW</c> API 함수의 래퍼입니다. */
+inline void OutputDebugStringW(const std::wstring &str)
+{
+	::OutputDebugStringW(str.c_str());
+}
+/** @brief <c>OutputDebugStringA</c> API 함수의 래퍼입니다. */
+inline void OutputDebugStringA(const std::string &str)
+{
+	::OutputDebugStringA(str.c_str());
+}
+
+/** @brief <c>std::lock_guard</c> 표준 클래스의 래퍼입니다. */
 #define SYN_LOCK_GUARD(obj) std::lock_guard<decltype(obj)> _l_g_(obj)
 
 END_IKHWINLIB2()

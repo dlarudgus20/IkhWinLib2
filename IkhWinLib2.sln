@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IkhWinLib2", "IkhWinLib2\IkhWinLib2.vcxproj", "{58E8A6A5-5036-4DF7-BDE0-842F77974464}"
 EndProject
@@ -19,6 +19,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		LICENSE = LICENSE
 		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Hello-World!", "Hello-World!\Hello-World!.vcxproj", "{F714BB35-4C6F-47C1-8C45-BE3593571C01}"
+	ProjectSection(ProjectDependencies) = postProject
+		{58E8A6A5-5036-4DF7-BDE0-842F77974464} = {58E8A6A5-5036-4DF7-BDE0-842F77974464}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{B7667512-D029-499E-8EA4-2645935AF578}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Gravity", "Gravity\Gravity.vcxproj", "{C828A56C-03B3-40DC-9FBC-602BD7C0525E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{58E8A6A5-5036-4DF7-BDE0-842F77974464} = {58E8A6A5-5036-4DF7-BDE0-842F77974464}
 	EndProjectSection
 EndProject
 Global
@@ -75,8 +87,40 @@ Global
 		{B1840A0F-C450-4050-B17E-A131F2AA8CD6}.Release|Win32.Build.0 = Release|Win32
 		{B1840A0F-C450-4050-B17E-A131F2AA8CD6}.Release|x64.ActiveCfg = Release|x64
 		{B1840A0F-C450-4050-B17E-A131F2AA8CD6}.Release|x64.Build.0 = Release|x64
+		{F714BB35-4C6F-47C1-8C45-BE3593571C01}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{F714BB35-4C6F-47C1-8C45-BE3593571C01}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{F714BB35-4C6F-47C1-8C45-BE3593571C01}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{F714BB35-4C6F-47C1-8C45-BE3593571C01}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F714BB35-4C6F-47C1-8C45-BE3593571C01}.Debug|Win32.Build.0 = Debug|Win32
+		{F714BB35-4C6F-47C1-8C45-BE3593571C01}.Debug|x64.ActiveCfg = Debug|x64
+		{F714BB35-4C6F-47C1-8C45-BE3593571C01}.Debug|x64.Build.0 = Debug|x64
+		{F714BB35-4C6F-47C1-8C45-BE3593571C01}.Release|Any CPU.ActiveCfg = Release|Win32
+		{F714BB35-4C6F-47C1-8C45-BE3593571C01}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{F714BB35-4C6F-47C1-8C45-BE3593571C01}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{F714BB35-4C6F-47C1-8C45-BE3593571C01}.Release|Win32.ActiveCfg = Release|Win32
+		{F714BB35-4C6F-47C1-8C45-BE3593571C01}.Release|Win32.Build.0 = Release|Win32
+		{F714BB35-4C6F-47C1-8C45-BE3593571C01}.Release|x64.ActiveCfg = Release|x64
+		{F714BB35-4C6F-47C1-8C45-BE3593571C01}.Release|x64.Build.0 = Release|x64
+		{C828A56C-03B3-40DC-9FBC-602BD7C0525E}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{C828A56C-03B3-40DC-9FBC-602BD7C0525E}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{C828A56C-03B3-40DC-9FBC-602BD7C0525E}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{C828A56C-03B3-40DC-9FBC-602BD7C0525E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C828A56C-03B3-40DC-9FBC-602BD7C0525E}.Debug|Win32.Build.0 = Debug|Win32
+		{C828A56C-03B3-40DC-9FBC-602BD7C0525E}.Debug|x64.ActiveCfg = Debug|x64
+		{C828A56C-03B3-40DC-9FBC-602BD7C0525E}.Debug|x64.Build.0 = Debug|x64
+		{C828A56C-03B3-40DC-9FBC-602BD7C0525E}.Release|Any CPU.ActiveCfg = Release|Win32
+		{C828A56C-03B3-40DC-9FBC-602BD7C0525E}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{C828A56C-03B3-40DC-9FBC-602BD7C0525E}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{C828A56C-03B3-40DC-9FBC-602BD7C0525E}.Release|Win32.ActiveCfg = Release|Win32
+		{C828A56C-03B3-40DC-9FBC-602BD7C0525E}.Release|Win32.Build.0 = Release|Win32
+		{C828A56C-03B3-40DC-9FBC-602BD7C0525E}.Release|x64.ActiveCfg = Release|x64
+		{C828A56C-03B3-40DC-9FBC-602BD7C0525E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F714BB35-4C6F-47C1-8C45-BE3593571C01} = {B7667512-D029-499E-8EA4-2645935AF578}
+		{C828A56C-03B3-40DC-9FBC-602BD7C0525E} = {B7667512-D029-499E-8EA4-2645935AF578}
 	EndGlobalSection
 EndGlobal

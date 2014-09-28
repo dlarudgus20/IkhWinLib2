@@ -30,14 +30,23 @@
 #include <windowsx.h>
 #include <commctrl.h>
 #include <commdlg.h>
+#include <mmsystem.h>
 
 #include <gl/gl.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <memory.h>
 #include <assert.h>
+
+#include <iostream>
+#include <iomanip>
+#include <istream>
+#include <ostream>
+#include <sstream>
+#include <fstream>
 
 #include <algorithm>
 #include <functional>
@@ -48,6 +57,11 @@
 #include <string>
 #include <memory>
 #include <utility>
+#include <future>
+#include <thread>
+#include <mutex>
+#include <chrono>
+#include <random>
 #include <new>
 
 #include <deque>
@@ -61,10 +75,6 @@
 #include <queue>
 #include <stack>
 #include <string>
-#include <future>
-#include <thread>
-#include <mutex>
-#include <chrono>
 
 #define GC_THREADS
 #include <gc.h>
@@ -73,6 +83,10 @@
 
 #define BOOST_THREAD_VERSION 4
 #define BOOST_RESULT_OF_USE_DECLTYPE
+#define BOOST_BIND_NO_PLACEHOLDERS
 #include <boost/thread/future.hpp>
 #include <boost/scope_exit.hpp>
 #include <boost/optional.hpp>
+#include <boost/format.hpp>
+#include <boost/scope_exit.hpp>
+#include <boost/bind.hpp>

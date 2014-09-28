@@ -35,8 +35,14 @@ BEGIN_MSGMAP(CMainWnd, CForm)
 		CMDMAP_ID(ID_FILE_SAVE, OnFileSave)
 		CMDMAP_ID(ID_FILE_ALLSAVE, OnFileAllSave)
 		CMDMAP_ID(ID_FILE_EXIT, OnFileExit)
+
+		CMDMAP_CTRL(LBN_SELCHANGE, TOOLLIST_ID, OnToolListSelChange)
 	END_CMDMAP()
+	MSGMAP_WM_CLOSE(OnClose)
 	MSGMAP_WM_DESTROY(OnDestroy)
+	BEGIN_CHAIN()
+		MSG_CHAIN(m_pProject.get())
+	END_CHAIN()
 END_MSGMAP(CMainWnd, CForm)
 
 void CMainWnd::Create()
@@ -47,6 +53,11 @@ void CMainWnd::Create()
 		);
 }
 
+CMainWnd::CMainWnd()
+{
+
+}
+
 BOOL CMainWnd::OnCreate(LPCREATESTRUCT lpcs)
 {
 	if (!MSG_FORWARD_WM_CREATE(CForm, lpcs))
@@ -54,13 +65,17 @@ BOOL CMainWnd::OnCreate(LPCREATESTRUCT lpcs)
 
 	SuspendLayout();
 	// Create
-	m_ToolList.Create(WS_CHILD | WS_VISIBLE | WS_BORDER, 0, 0, 100, 100, 0, *this);
+	m_ToolList.Create(WS_CHILD | WS_VISIBLE | WS_BORDER | LBS_NOINTEGRALHEIGHT,
+		0, 0, 100, 100, TOOLLIST_ID, *this);
 	auto chd_ToolList = AddChild(&m_ToolList);
-	m_DesignerCtrl.Create(WS_CHILD | WS_VISIBLE | WS_BORDER, 0, 0, 100, 100, 1, *this);
+	m_DesignerCtrl.Create(WS_CHILD | WS_VISIBLE | WS_BORDER,
+		0, 0, 100, 100, DESIGNERCTRL_ID, *this);
 	auto chd_DesignerCtrl = AddChild(&m_DesignerCtrl);
-	m_ProjTree.Create(WS_CHILD | WS_VISIBLE | WS_BORDER, 0, 0, 100, 100, 2, *this);
+	m_ProjTree.Create(WS_CHILD | WS_VISIBLE | WS_BORDER,
+		0, 0, 100, 100, PROJTREE_ID, *this);
 	auto chd_ProjTree = AddChild(&m_ProjTree);
-	m_PropView.Create(WS_CHILD | WS_VISIBLE | WS_BORDER, 0, 0, 100, 100, 3, *this);
+	m_PropView.Create(WS_CHILD | WS_VISIBLE | WS_BORDER,
+		0, 0, 100, 100, PROPVIEW_ID, *this);
 	auto chd_PropView = AddChild(&m_PropView);
 	// m_ToolList
 	DockChild(chd_ToolList, CForm::NoTargetOpt(), CForm::DockLeft, 10);
@@ -80,7 +95,19 @@ BOOL CMainWnd::OnCreate(LPCREATESTRUCT lpcs)
 	DockChild(chd_PropView, CForm::NoTargetOpt(), CForm::DockRight, 10);
 	ResumeLayout();
 
+	m_DesignerCtrl.InitToolList(m_ToolList);
+
 	return TRUE;
+}
+
+void CMainWnd::OnToolListSelChange(int id, HWND hCtl, UINT codeNotify)
+{
+	m_DesignerCtrl.OnToolListSelChange(ListBox_GetCurSel(m_ToolList));
+}
+
+void CMainWnd::OnClose()
+{
+	DestroyWindow(*this);
 }
 
 void CMainWnd::OnDestroy()
