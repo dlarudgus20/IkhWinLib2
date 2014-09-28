@@ -105,17 +105,6 @@ void SphereManager::RunForce(std::vector<Sphere> &NewSpheres)
 				sp2.coord[2] - newsp.coord[2],
 			};
 
-			// 물체가 접촉하고 있을 경우
-			// 겹쳐진 경우(원점 사이 거리가 반지름 합보다 작을 때)도 처리해야 하기 떄문에 abs()를 사용하지 않음
-			if (/*abs*/(get_length(f) - (newsp.radius + sp2.radius)) < EPSILON)
-			{
-				// 접촉했다는 표시를 함
-				ContactingSpheres.push_back(j);
-
-				// 수직항력에 의해 만유인력이 상쇄됨
-				continue;
-			}
-
 			double length_2 = dot_product(f, f);
 			// 중력 상수는 합력에 한꺼번에 곱해줌
 			// G*F1 + G*F2 + ... = G*(F1 + F2 + ...)
@@ -133,37 +122,6 @@ void SphereManager::RunForce(std::vector<Sphere> &NewSpheres)
 		sum_f[0] *= G;
 		sum_f[1] *= G;
 		sum_f[2] *= G;
-
-		// 수직항력 처리
-		// 접촉한 물체 방향의 힘을 0으로 만듬
-		for (int j : ContactingSpheres)
-		{
-			Sphere &sp2 = m_Spheres[j];
-
-			// 수직항력 = -F0 = - (|F|cosθ) * (r/|r|) = - ((F dot r)/|r|) * (r/|r|)
-			// NormalForce.md 참조
-
-			std::array<double, 3> r = {
-				sp2.coord[0] - newsp.coord[0],
-				sp2.coord[1] - newsp.coord[1],
-				sp2.coord[2] - newsp.coord[2]
-			};
-			double r_length = get_length(r);
-
-			// 단위벡터로 만듬 -> |r| = 1
-			r[0] /= r_length;
-			r[1] /= r_length;
-			r[2] /= r_length;
-
-			double f_dot_r = dot_product(sum_f, r);
-			r[0] *= f_dot_r;
-			r[1] *= f_dot_r;
-			r[2] *= f_dot_r;
-
-			sum_f[0] -= r[0];
-			sum_f[0] -= r[1];
-			sum_f[0] -= r[2];
-		}
 
 		// F = ma
 		// F/m = a = dv/dt
@@ -305,8 +263,8 @@ void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 					// docs.md#충격량 참조
 
 					// 진행 방향과 충격량의 방향이 평행하지 않은 경우
-					if (ptr->p_dot_v > EPSILON)	// 충돌이 일어나지 않음 (docs.md#충격량#2 참조)
-						return;
+					// DetectCollision() 함수에서 이미 처리했기 때문에 있어서는 안됌.
+					assert(!(ptr->p_dot_v > EPSILON));
 
 					auto j_sum_I = map_sum_I.emplace(ptr->j, std::array<double, 3> { { 0.0, 0.0, 0.0 } }).first;
 					auto j_sum_A = map_sum_A.emplace(ptr->j, std::array<double, 3> { { 0.0, 0.0, 0.0 } }).first;
@@ -434,7 +392,7 @@ void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 
 		// 속도를 변화시킨 후 남은 시간을 동안 다시 움직임
 		newsp.velocity[0] += dv[0];
-		newsp.velocity[1] += dv[0];
+		newsp.velocity[1] += dv[1];
 		newsp.velocity[2] += dv[2];
 
 		newsp.coord[0] += newsp.velocity[0] * after_time;
@@ -497,9 +455,9 @@ std::shared_ptr<SphereManager::CollisionInfo> SphereManager::DetectCollision(
 	info.v_length_2 = get_length_2(info.v);
 	info.p_dot_v = dot_product(info.p, info.v);
 
-	//// 진행 방향과 충격량의 방향이 평행하지 않은 경우
-	//if (info.p_dot_v > EPSILON)	// 충돌이 일어나지 않음 (docs.md#충격량#2 참조)
-	//	return std::shared_ptr<CollisionInfo>();
+	// 진행 방향과 충격량의 방향이 평행하지 않은 경우
+	if (info.p_dot_v > EPSILON)	// 충돌이 일어나지 않음 (docs.md#충격량#2 참조)
+		return std::shared_ptr<CollisionInfo>();
 
 	// 두 원의 반지름 합
 	double k = oldsp_1.radius + oldsp_2.radius;
@@ -580,3 +538,30 @@ void Sphere::DeleteDisplayList()
 {
 	glDeleteLists(DisplayList, 1);
 }
+
+
+#ifdef _DEBUG
+
+// 디버깅 도우미 함수
+std::pair<std::array<double, 3>, double> sum_momentum(const std::vector<Sphere> &spheres)
+{
+	std::array<double, 3> p = { 0, 0, 0 }, ap = { 0, 0, 0 };
+
+	for (int i = 0; i < spheres.size(); ++i)
+	{
+		const Sphere &sp = spheres[i];
+
+		p[0] += sp.mass * sp.velocity[0];
+		p[1] += sp.mass * sp.velocity[1];
+		p[2] += sp.mass * sp.velocity[2];
+
+		double moment_of_inertia = 2 * sp.mass * square(sp.radius) / 5;
+		ap[0] += moment_of_inertia * sp.AngularVelocity[0];
+		ap[1] += moment_of_inertia * sp.AngularVelocity[1];
+		ap[2] += moment_of_inertia * sp.AngularVelocity[2];
+	}
+
+	return { p, get_length(p) };
+}
+
+#endif

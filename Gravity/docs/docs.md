@@ -42,6 +42,7 @@ k : 관성모멘트
 r : 반지름
 &alpha; : 각충격량
 w : 각속도
+&beta; : 돌림힘을 발생시키는 힘
 
 # 단위계
 ---
@@ -62,57 +63,78 @@ Mm - Pt - day 단위계
 = 49813678080 \* 10^(-11) \* [*Pt^(-1) \* Mm^3 \* day^(-2)*]
 = **0.49813678080 \* [*f \* Pt^(-2) \* Mm^2*]**
 
-# 충격량 (병진 운동)
+# 충격량
 ---
 
-![](https://lh6.googleusercontent.com/-6SsQg6-F33U/VCYrR2gMVnI/AAAAAAAAAA8/CdKLQkqLGSA/s0/Impulse%252528translation%252529.png "Impulse&#40;translation&#41;.png")
+### 충격량 (병진 운동)
 
-(단, $\vec{v}$의 $\overline{AB}$방향 선분이 $A$를 향하고 있어야 $\vec{v}$와 $\vec{J}$가 평행합니다. 그렇지 않을 경우, $\vec{v}$의 수직 방향 선분만이 충돌에 관여해 각운동량에만 변화가 일어나게 됩니다.)
+1. 진행방향과 충격량의 방향이 평행한 경우
 
-역학적 에너지 보존 법칙에 따르면,
+    ![](https://lh6.googleusercontent.com/-6SsQg6-F33U/VCYrR2gMVnI/AAAAAAAAAA8/CdKLQkqLGSA/s0/Impulse%252528translation%252529.png "Impulse&#40;translation&#41;.png")
+
+    *$\vec{v}$의 $\overline{AB}$방향 선분이 $A$를 향하고 있어야 $\vec{v}$와 $\vec{J}$가 평행합니다. 그렇지 않을 경우, $\vec{v}$의 수직 방향 선분만이 충돌에 관여해 각운동량에만 변화가 일어나게 됩니다. (2번째 소단락.)*
+
+    역학적 에너지 보존 법칙에 따르면,
+
+    $$
+    \frac{1}{2}{m_B}{\left|\vec{v}\right|^2} = \frac{\left|\vec{I_A}\right|^2}{2 m_A} + \frac{\left|\vec{\alpha_A}\right|^2}{2 k_A} + \frac{\left|{m_B}\vec{v} + \vec{I_B}\right|^2}{2 m_B} + \frac{\left|\vec{\alpha_B}\right|^2}{2 k_B}
+    $$
+
+    정리하면,
+
+    $$
+    {m_B}{\left|\vec{v}\right|^2} = \frac{\left|\vec{I_A}\right|^2}{m_A} + \frac{\left|\vec{\alpha_A}\right|^2}{k_A} + \left\{ {m_B}\left|v\right|^2 + 2\left(\vec{v} \cdot \vec{I_B}\right) + \frac{\left|\vec{I_B}\right|^2}{m_B} \right\} + \frac{\left|\vec{\alpha_B}\right|^2}{k_B}
+    $$
+
+    $\vec{e} := \frac{\vec{BA}}{\left|\vec{BA}\right|}$ 이라고 하면
+
+    $$
+    {m_B}{\left|\vec{v}\right|^2} =  \frac{\left(\vec{e} \cdot \vec{J}\right)^2}{m_A} + \frac{\left|\vec{r_A} \times \vec{J}\right|^2}{k_A} +  \left\{ {m_B}\left|v\right|^2 + 2\left(\vec{v} \cdot \vec{I_B}\right) + \frac{\left| \left(-\vec{e}\right) \cdot \left(-\vec{J}\right) \right|^2}{m_B} \right\} + \frac{\left|\vec{r_B} \times \left(-\vec{J}\right) \right|^2}{k_B}
+    $$
+
+    정리하면,
+
+    $$
+    0 =  \frac{\left|\vec{J}\right|^2 \cos^2 \theta}{m_A} + \frac{{r_A}^2 \left|\vec{J}\right|^2 \sin^2 \theta}{k_A} + 2\left|\vec{v}\right| \left|\vec{I_B}\right| \cos \left(180^\circ - \theta \right) + \frac{\left|\vec{J}\right|^2 \cos^2 \theta}{m_B} + \frac{{r_B}^2 \left|\vec{J}\right|^2 \sin^2 \left(180^\circ - \theta \right)}{k_B} \\
+    0 =  \frac{\left|\vec{J}\right|^2 \cos^2 \theta}{m_A} + \frac{{r_A}^2 \left|\vec{J}\right|^2 \sin^2 \theta}{k_A} - 2\left|\vec{v}\right| \left|\left(-\vec{J} \cos \theta \right)\right| \cos \theta + \frac{\left|\vec{J}\right|^2 \cos^2 \theta}{m_B} + \frac{{r_B}^2 \left|\vec{J}\right|^2 \sin^2 \theta}{k_B} \\
+    0 =  \left\{ \frac{\cos^2 \theta}{m_A} + \frac{{r_A}^2 \sin^2 \theta}{k_A} + \frac{\cos^2 \theta}{m_B} + \frac{{r_B}^2 \sin^2 \theta}{k_B} \right\} \left|\vec{J}\right|^2 - 2\left|\vec{v}\right| \left|\vec{J}\right| \cos^2 \theta
+    $$
+
+    충돌이 발생했을 경우, $\vec{J}$은 $\vec{0}$이 될 수 없습니다. 따라서,
+
+    $$
+    |\vec{J}| = \frac{2|\vec{v}|\cos^2 \theta} {(\frac{1}{{m_a}^2} + \frac{1}{{m_b}^2})\cos^2 \theta + (\frac{{r_a}^2}{{m_a}^2} + \frac{{r_b}^2}{{k_b}^2})\sin^2 \theta}
+    $$
+
+2. 진행 방향과 충격량의 방향이 평행하지 않은 경우.
+
+    ![](https://lh3.googleusercontent.com/-VTEcA6fmWEo/VCZGxphKyZI/AAAAAAAAABk/ScRpH904O_E/s0/Impulse%252528translation-2%252529.png "Impulse&#40;translation-2&#41;.png")
+
+    ($\vec{\beta} = \vec{J}$, $\vec{I} = \vec{0}$)
+
+    역학적 에너지 보존 법칙에 따르면,
+
+    $$
+    \frac{1}{2}{m_B}{\left|\vec{v}\right|^2} = \frac{\left|\vec{\alpha_A}\right|^2}{2 k_A} + \frac{1}{2}{m_B}{\left|\vec{v}\right|^2} + \frac{\left|\vec{\alpha_B}\right|^2}{2 k_B}
+    $$
+
+    $\vec{\alpha} = \vec{r} \times \vec{I}$ 이므로 정리하면,
+
+    $$
+    0 = \frac{{r_A}^2 \left|\vec{J}\right|^2}{kA} + \frac{{r_A}^2 \left|\vec{J}\right|^2}{k_B} \\
+    0 = \left\{ \frac{{r_A}^2}{kA} + \frac{{r_A}^2}{k_B} \right\} \left|\vec{J}\right|^2 \\
+    \therefore \vec{J} = \vec{0}
+    $$
+
+    따라서 충돌이 일어나지 않는다.
+
+    => **스칠 때는 충돌이 일어나지 않는다.**
+
+### 충격량 (회전 운동 포함)
 
 $$
-\frac{1}{2}{m_B}{\left|\vec{v}\right|^2} = \frac{\left|\vec{I_A}\right|^2}{2 m_A} + \frac{\left|\vec{\alpha_A}\right|^2}{2 k_A} + \frac{\left|{m_B}\vec{v} + \vec{I_B}\right|^2}{2 m_B} + \frac{\left|\vec{\alpha_B}\right|^2}{2 k_B}
 $$
 
-정리하면,
+### 수직항력
 
-$$
-{m_B}{\left|\vec{v}\right|^2} = \frac{\left|\vec{I_A}\right|^2}{m_A} + \frac{\left|\vec{\alpha_A}\right|^2}{k_A} + \left\{ {m_B}\left|v\right|^2 + 2\left(\vec{v} \cdot \vec{I_B}\right) + \frac{\left|\vec{I_B}\right|^2}{m_B} \right\} + \frac{\left|\vec{\alpha_B}\right|^2}{k_B}
-$$
-
-$\vec{e} := \frac{\vec{BA}}{\left|\vec{BA}\right|}$ 이라고 하면
-
-$$
-{m_B}{\left|\vec{v}\right|^2} =  \frac{\left(\vec{e} \cdot \vec{J}\right)^2}{m_A} + \frac{\left|\vec{r_A} \times \vec{J}\right|^2}{k_A} +  \left\{ {m_B}\left|v\right|^2 + 2\left(\vec{v} \cdot \vec{I_B}\right) + \frac{\left| \left(-\vec{e}\right) \cdot \left(-\vec{J}\right) \right|^2}{m_B} \right\} + \frac{\left|\vec{r_B} \times \left(-\vec{J}\right) \right|^2}{k_B}
-$$
-
-정리하면,
-
-$$
-0 =  \frac{\left|\vec{J}\right|^2 \cos^2 \theta}{m_A} + \frac{{r_A}^2 \left|\vec{J}\right|^2 \sin^2 \theta}{k_A} + 2\left|\vec{v}\right| \left|\vec{I_B}\right| \cos \left(180^\circ - \theta \right) + \frac{\left|\vec{J}\right|^2 \cos^2 \theta}{m_B} + \frac{{r_B}^2 \left|\vec{J}\right|^2 \sin^2 \left(180^\circ - \theta \right)}{k_B} \\
-0 =  \frac{\left|\vec{J}\right|^2 \cos^2 \theta}{m_A} + \frac{{r_A}^2 \left|\vec{J}\right|^2 \sin^2 \theta}{k_A} - 2\left|\vec{v}\right| \left|\left(-\vec{J} \cos \theta \right)\right| \cos \theta + \frac{\left|\vec{J}\right|^2 \cos^2 \theta}{m_B} + \frac{{r_B}^2 \left|\vec{J}\right|^2 \sin^2 \theta}{k_B} \\
-0 =  \left\{ \frac{\cos^2 \theta}{m_A} + \frac{{r_A}^2 \sin^2 \theta}{k_A} + \frac{\cos^2 \theta}{m_B} + \frac{{r_B}^2 \sin^2 \theta}{k_B} \right\} \left|\vec{J}\right|^2 - 2\left|\vec{v}\right| \left|\vec{J}\right| \cos^2 \theta
-$$
-
-충돌이 발생했을 경우, $\vec{J}$은 $\vec{0}$이 될 수 없습니다. 따라서,
-
-$$
-|\vec{J}| = \frac{2|\vec{v}|\cos^2 \theta} {(\frac{1}{{m_a}^2} + \frac{1}{{m_b}^2})\cos^2 \theta + (\frac{{r_a}^2}{{m_a}^2} + \frac{{r_b}^2}{{k_b}^2})\sin^2 \theta}
-$$
-
-# 충격량 (회전 운동)
----
-
-$$
-$$
-
-# 수직항력
----
-
-![](https://lh3.googleusercontent.com/-NMuWvnl879I/VCYih1i98bI/AAAAAAAAAAk/djELgK3RY9s/s0/NormalForce.png "NormalForce.png")
-
-
-$$
-수직항력 = -\vec{F0} = - |\vec{F}|cos \theta \frac{\vec{r}}{|\vec{r}|} = - \frac{\vec{F} \cdot \vec{r}}{|\vec{r}|} \frac{\vec{r}}{|\vec{r}|}
-$$
+수직항력은 본디 물체 사이의 충돌과 그 반발력에 의해 발생하는 힘. 따라서 따로 처리해줄 필요 없이 충돌 처리를 수행하면 자연스레 구현됨.

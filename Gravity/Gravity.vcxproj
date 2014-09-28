@@ -228,6 +228,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="docs\Impulse(translation).png" />
+    <Image Include="docs\Impulse(translation-2).png" />
     <Image Include="docs\NormalForce.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
