@@ -516,8 +516,22 @@ void SphereManager::Render()
 	{
 		glPushMatrix();
 		glTranslated(s.coord[0], s.coord[1], s.coord[2]);
-		//glRotated(get_length(s.angle), s.angle[0], s.angle[1], s.angle[2]); // 버그 있는듯
+		glRotated(get_length(s.angle), s.angle[0], s.angle[1], s.angle[2]);
 		glCallList(s.DisplayList);
+
+		/* 회전이 잘 되는지 보기 위한 디버깅용 코드
+		glBegin(GL_TRIANGLES);
+		{
+			glColor3fv(s.color.data());
+			glVertex3d(0, s.radius, 0);
+			glColor3fv(s.color.data());
+			glVertex3d(-(s.radius * 0.866), -(s.radius / 2), 0);
+			glColor3fv(s.color.data());
+			glVertex3d(s.radius * 0.866, -(s.radius / 2), 0);
+		}
+		*/
+
+		glEnd();
 		glPopMatrix();
 	}
 }
