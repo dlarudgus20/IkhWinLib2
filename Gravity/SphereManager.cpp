@@ -89,9 +89,6 @@ void SphereManager::RunForce(std::vector<Sphere> &NewSpheres)
 		// 합력
 		std::array<double, 3> sum_f = { 0, 0, 0 };
 
-		// 접촉 물체 리스트
-		std::vector<int> ContactingSpheres;
-
 		for (int j = 0; static_cast<size_t>(j) < m_Spheres.size(); j++)
 		{
 			if (i == j)
