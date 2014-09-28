@@ -89,7 +89,12 @@ void CMainWindow::OnTimer(UINT id)
 	switch (id)
 	{
 		case 0:
-			SetWindowText(*this, L"Gravity (day:" + std::to_wstring(m_SphereManager.GetDay()) + L")");
+			unsigned fps = m_RendererCtrl.GetFPS();
+			double frametime = (fps == 0 ? 0. : (1. / fps));
+			SetWindowText(*this,
+				L"Gravity (day:" + std::to_wstring(m_SphereManager.GetDay())
+				+ L", FPS:" + std::to_wstring(fps) + L", frametime:" + std::to_wstring(frametime) + L")"
+				);
 			break;
 	}
 }

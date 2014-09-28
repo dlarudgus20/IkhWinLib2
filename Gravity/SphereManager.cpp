@@ -160,35 +160,22 @@ void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 
 	// 충돌 감지
 
-	// 중복 판정 방지
-	std::vector<std::unordered_set<int> > DetectedCollisions;
-	DetectedCollisions.resize(m_Spheres.size());
-
+	//#pragma omp parallel for
 	for (int i = 0; static_cast<size_t>(i) < m_Spheres.size() - 1; i++)
 	{
 		#pragma omp parallel for
-		for (int j = 0; static_cast<size_t>(j) < m_Spheres.size(); j++)
+		for (int j = i + 1; static_cast<size_t>(j) < m_Spheres.size(); j++)
 		{
-			if (i == j)
-				continue;
-
-			auto &detected_set = DetectedCollisions[i];
-			if (detected_set.find(j) != detected_set.end())
-				continue;
-
 			auto ptr = DetectCollision(NewSpheres, i, j, LOGICAL_TIME_SPAN);
 			if (!ptr)
 				continue;
 
 			#pragma omp critical
 			{
-				DetectedCollisions[j].insert(i);
 				collisions.push_back(std::move(ptr));
 			}
 		}
 	}
-
-	decltype(DetectedCollisions)().swap(DetectedCollisions);
 
 	std::unordered_map<int, double> map_time;
 
