@@ -45,7 +45,7 @@
 #include "CIdleOpenGLWnd.h"
 #include "CThreadOpenGLWnd.h"
 
-#include "CControlWnd.h"
+#include "IControl.h"
 #include "CButtonCtrl.h"
 #include "CComboBoxCtrl.h"
 #include "CEditCtrl.h"
@@ -83,7 +83,6 @@ using namespace IkhProgram::IkhWinLib2;
 
 #ifndef IKHWINLIB2_NO_AUTOMATICALLY_LINK
 # pragma comment(lib, "IkhWinLib2.lib")
-# pragma comment(lib, "gcmt-lib.lib")
 # pragma comment(lib, "comctl32.lib")
 # pragma comment(lib, "msimg32.lib")
 # pragma comment(lib, "winmm.lib")

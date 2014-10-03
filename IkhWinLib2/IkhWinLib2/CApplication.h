@@ -64,7 +64,7 @@ public:
 	 * @param[in] bCollectOnIdle 이 값이 true이면 아이들 타임에 쓰레기를 조금 수집합니다.
 	 * @see OnIdle
 	 */
-	explicit CApplication(bool bCollectOnIdle = true) NOEXCEPT;
+	explicit CApplication() NOEXCEPT;
 
 	~CApplication() NOEXCEPT;
 

@@ -54,7 +54,7 @@ inline BOOL SetWindowText(HWND hWnd, const std::wstring &str)
 /** @brief <c>GetWindowText</c> API 함수의 래퍼입니다. */
 inline std::wstring GetWindowText(HWND hWnd)
 {
-	stlgc::vector<wchar_t> vt(::GetWindowTextLength(hWnd) + 1);
+	std::vector<wchar_t> vt(::GetWindowTextLength(hWnd) + 1);
 	::GetWindowText(hWnd, vt.data(), (int)vt.size());
 	return std::wstring(vt.begin(), std::prev(vt.end()));
 }

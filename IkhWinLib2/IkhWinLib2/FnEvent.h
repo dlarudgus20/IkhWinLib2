@@ -56,8 +56,8 @@ public:
 	typedef std::function<FnType> FnObjType;
 
 private:
-	stlgc::vector<FnObjType> _m_lstFunc;
-	stlgc::vector<std::weak_ptr<FnObjType> > _m_lstFuncPtr;
+	std::vector<FnObjType> _m_lstFunc;
+	std::vector<std::weak_ptr<FnObjType> > _m_lstFuncPtr;
 	std::shared_ptr<std::recursive_mutex> _m_pmu;
 
 public:

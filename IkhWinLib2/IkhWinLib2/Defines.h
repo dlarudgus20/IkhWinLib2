@@ -35,6 +35,7 @@
 #include <commctrl.h>
 #include <commdlg.h>
 #include <mmsystem.h>
+#include <process.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,6 +50,19 @@
 #include <ostream>
 #include <sstream>
 #include <fstream>
+
+#include <string>
+#include <vector>
+#include <deque>
+#include <list>
+#include <forward_list>
+#include <map>
+#include <set>
+#include <unordered_map>
+#include <unordered_set>
+
+#include <stack>
+#include <queue>
 
 #include <algorithm>
 #include <functional>
@@ -66,13 +80,6 @@
 #include <new>
 using std::swap;
 
-#ifndef GC_THREADS
-# define GC_THREADS
-#endif
-#include <gc.h>
-#include <gc_cpp.h>
-#include <gc_allocator.h>
-
 #ifndef IKHWINLIB2_USE_BOOST_PLACEHOLDER
 using namespace std::placeholders;
 #define BOOST_BIND_NO_PLACEHOLDERS
@@ -86,8 +93,6 @@ using namespace std::placeholders;
 #include <boost/format.hpp>
 #include <boost/scope_exit.hpp>
 #include <boost/bind.hpp>
-
-#include "stlgc.h"
 
 #ifdef _MSC_VER
 # define NOEXCEPT throw()
@@ -110,4 +115,3 @@ using namespace std::placeholders;
  */
 
 #include "Utility.h"
-#include "BoehmGC.h"

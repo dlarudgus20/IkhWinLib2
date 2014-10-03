@@ -77,7 +77,7 @@ void CThreadOpenGLWnd::implThreadRun()
 		m_hStopEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 		if (m_hUpdateEvent != nullptr)
 		{
-			m_hThread = (HANDLE)GC_beginthreadex(nullptr, 0, ThreadFunc, this, 0, &id);
+			m_hThread = (HANDLE)_beginthreadex(nullptr, 0, ThreadFunc, this, 0, &id);
 			if (m_hThread != nullptr)
 			{
 				return;

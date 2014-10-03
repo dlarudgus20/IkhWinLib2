@@ -33,7 +33,9 @@ UINT CWin32Thread::ms_WM_POST;
 
 void CWin32Thread::StaticCtor() NOEXCEPT
 {
-	ms_WM_POST = RegisterWindowMessage(L"IkhWinLib2 CWin32Thread StaticCtor ms_WM_POST");
+	ms_WM_POST = RegisterWindowMessage((
+		L"IkhWinLib2 CWin32Thread StaticCtor ms_WM_POST " + std::to_wstring((intptr_t)GetModuleHandle(NULL))
+		).c_str());
 }
 
 CWin32Thread::~CWin32Thread() NOEXCEPT
@@ -181,8 +183,6 @@ void CWin32Thread::OnIdle()
 
 	if (evtIdle.IsEmpty())
 	{
-		if (m_bCollectOnIdle)
-			GC_collect_a_little();
 		WaitMessage();
 	}
 	else
@@ -195,12 +195,6 @@ void CWin32Thread::OnGlobalMsg(const MSG &msg)
 {
 	assert(this != nullptr);
 	evtGlobalMsg(msg);
-}
-
-
-CWin32AttachThread::~CWin32AttachThread() NOEXCEPT
-{
-	Deattach();
 }
 
 END_IKHWINLIB2()

@@ -29,6 +29,7 @@
 using namespace parse_utils;
 
 #include <boost/algorithm/string.hpp>
+#include <boost/locale.hpp>
 
 namespace
 {
@@ -54,7 +55,7 @@ Scripter::Scripter(IScriptHost *pHost)
 	{
 		{ L"create", { std::bind(&Scripter::CommandCreate, this, _1), L"create new sphere" } },
 		{ L"help", { std::bind(&Scripter::CommandHelp, this, _1), L"view help" } },
-		{ L"ls", { std::bind(&Scripter::CommandLs, this, _1), L"view list of spheres" } },
+		{ L"list", { std::bind(&Scripter::CommandList, this, _1), L"view list of spheres" } },
 		{ L"sum-momentum", { std::bind(&Scripter::CommandSumMomentum, this, _1), L"view sum of momentum & angular momentum" } }
 	});
 }
@@ -62,27 +63,34 @@ Scripter::Scripter(IScriptHost *pHost)
 void Scripter::ExecuteLine(const std::wstring &line)
 {
 	std::wstring buf = boost::algorithm::trim_copy(line); // tokenizer는 wstring의 레퍼런스를 받습니다.
-	tokenizer tok(buf, m_separator);
-
-	if (tok.begin() == tok.end())
-		return; // 라인이 텅 비었음
-
-	if (tok.begin()->compare(0, 1, L"#") == 0)
-		return;	// 주석
-
-	std::vector<std::wstring> vttok(tok.begin(), tok.end());
-
-	for (auto &str : vttok)
-		boost::algorithm::trim(str);
-
-	auto it = m_cmd_map.find(vttok[0]);
-	if (it != m_cmd_map.end())
+	try
 	{
-		it->second.first(vttok);
+		tokenizer tok(buf, m_separator);
+
+		if (tok.begin() == tok.end())
+			return; // 라인이 텅 비었음
+
+		if (tok.begin()->compare(0, 1, L"#") == 0)
+			return;	// 주석
+
+		std::vector<std::wstring> vttok(tok.begin(), tok.end());
+
+		for (auto &str : vttok)
+			boost::algorithm::trim(str);
+
+		auto it = m_cmd_map.find(vttok[0]);
+		if (it != m_cmd_map.end())
+		{
+			it->second.first(vttok);
+		}
+		else
+		{
+			throw ScripterException(L"'" + vttok[0] + L"': 알 수 없는 명령어입니다.");
+		}
 	}
-	else
+	catch (boost::escaped_list_error &)
 	{
-		throw ScripterException(L"'" + vttok[0] + L"': 알 수 없는 명령어입니다.");
+		throw ScripterException(L"'" + buf + L"' : syntax error.");
 	}
 }
 
@@ -165,9 +173,9 @@ void Scripter::CommandCreate(const std::vector<std::wstring> &vttok)
 	m_pHost->GetSphereManager()->AddSphere(sp);
 }
 
-void Scripter::CommandLs(const std::vector<std::wstring> &vttok)
+void Scripter::CommandList(const std::vector<std::wstring> &vttok)
 {
-	const std::wstring usage = L"ls <<<no param>>>";
+	const std::wstring usage = L"list <<<no param>>>";
 
 	if (vttok.size() == 2 && vttok[1] == L"--help")
 	{
@@ -181,7 +189,7 @@ void Scripter::CommandLs(const std::vector<std::wstring> &vttok)
 	auto spheres = m_pHost->GetSphereManager()->GetSpheres();
 
 	m_pHost->WriteLine(L"[num] / [coord] / [radius] / [mass] / [color] / [velocity] / [AngularVelocity]");
-	for (int i = 0; i < spheres.size(); ++i)
+	for (int i = 0; static_cast<size_t>(i) < spheres.size(); ++i)
 	{
 		Sphere &sp = spheres[i];
 
@@ -213,29 +221,20 @@ void Scripter::CommandSumMomentum(const std::vector<std::wstring> &vttok)
 
 	auto spheres = m_pHost->GetSphereManager()->GetSpheres();
 
-	std::array<double, 3> p = { 0, 0, 0 }, ap = { 0, 0, 0 };
+	std::array<double, 3> p = { 0, 0, 0 };
 
 	#pragma omp parallel for
-	for (int i = 0; i < spheres.size(); ++i)
+	for (int i = 0; static_cast<size_t>(i) < spheres.size(); ++i)
 	{
 		Sphere &sp = spheres[i];
 
 		p[0] += sp.mass * sp.velocity[0];
 		p[1] += sp.mass * sp.velocity[1];
 		p[2] += sp.mass * sp.velocity[2];
-
-		double moment_of_inertia = 2 * sp.mass * square(sp.radius) / 5;
-		ap[0] += moment_of_inertia * sp.AngularVelocity[0];
-		ap[1] += moment_of_inertia * sp.AngularVelocity[1];
-		ap[2] += moment_of_inertia * sp.AngularVelocity[2];
 	}
 
 	m_pHost->WriteLine((
 		boost::wformat(L"momentum: (%.3f,%.3f,%.3f) [%.3f]")
 		% p[0] % p[1] % p[2] % get_length(p)
 		).str());
-	/*m_pHost->WriteLine((
-		boost::wformat(L"angular-momentum: (%.3f,%.3f,%.3f) [%.3f]")
-		% ap[0] % ap[1] % ap[2] % get_length(ap)
-		).str());*/
 }

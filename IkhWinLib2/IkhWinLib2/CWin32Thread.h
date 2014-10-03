@@ -53,14 +53,15 @@ class CWin32Thread : public CObject, private NonCopyable
 private:
 	HANDLE m_hThread;
 	DWORD m_id;
-	bool m_bCollectOnIdle;
 
 	HACCEL m_hAccel = nullptr;
 
-	explicit CWin32Thread(bool bCollectOnIdle = false) NOEXCEPT;
+	explicit CWin32Thread() NOEXCEPT;
 public:
-	explicit CWin32Thread(unsigned(__stdcall *fn)(void *param), void *lpParam = nullptr,
-		bool bCollectOnIdle = false);
+	explicit CWin32Thread(unsigned(__stdcall *fn)(void *param), void *lpParam = nullptr);
+
+	template <typename F, typename ...Args>
+	explicit CWin32Thread(F&& f, Args&&... args);
 
 	template <typename F, typename ...Args>
 	static CWin32Thread FromFunction(F f, Args&&... args)
@@ -70,7 +71,7 @@ public:
 
 	virtual ~CWin32Thread() NOEXCEPT;
 
-	void Attach(HANDLE hThread) NOEXCEPT;
+	CWin32Thread &Attach(HANDLE hThread) NOEXCEPT;
 	void Deattach() NOEXCEPT;
 
 	HANDLE GetHandle() const NOEXCEPT;
@@ -197,40 +198,41 @@ protected:
 	virtual void OnGlobalMsg(const MSG &msg);
 };
 
-class CWin32AttachThread : public CWin32Thread
-{
-public:
-	explicit CWin32AttachThread(HANDLE hThread = nullptr, bool bCollectOnIdle = false) NOEXCEPT;
-	virtual ~CWin32AttachThread() NOEXCEPT;
-};
-inline CWin32AttachThread::CWin32AttachThread(HANDLE hThread /* = nullptr*/,
-	bool bCollectOnIdle /* = false*/) NOEXCEPT
-	: CWin32Thread(bCollectOnIdle)
-{
-	Attach(hThread);
-}
-
-inline CWin32Thread::CWin32Thread(bool bCollectOnIdle /* = false*/) NOEXCEPT
-	: m_bCollectOnIdle(bCollectOnIdle)
-	, m_hThread(GetCurrentThread()), m_id(GetCurrentThreadId())
+inline CWin32Thread::CWin32Thread() NOEXCEPT
+	: m_hThread(GetCurrentThread()), m_id(GetCurrentThreadId())
 {
 
 }
-inline CWin32Thread::CWin32Thread(unsigned (__stdcall *fn)(void *param),
-	void *lpParam /* = nullptr*/, bool bCollectOnIdle /* = false*/)
-	: m_bCollectOnIdle(bCollectOnIdle)
+inline CWin32Thread::CWin32Thread(unsigned (__stdcall *fn)(void *param), void *lpParam /* = nullptr*/)
 {
 	unsigned id;
-	m_hThread = (HANDLE)GC_beginthreadex(nullptr, 0, fn, lpParam, 0, &id);
+	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, fn, lpParam, 0, &id);
 	if (m_hThread == nullptr)
 		throw CThreadCreationError();
 
 	m_id = (DWORD)id;
 }
 
-inline void CWin32Thread::Attach(HANDLE hThread) NOEXCEPT
+template <typename F, typename ...Args>
+inline CWin32Thread::CWin32Thread(F&& f, Args&&... args)
+{
+	try
+	{
+		std::thread thrd(std::bind(std::forward<F>(f), std::forward<Args>(args)...));
+		m_hThread = static_cast<HANDLE>(thrd.native_handle());
+		m_id = GetThreadId(m_hThread);
+		thrd.detach();
+	}
+	catch (std::system_error &)
+	{
+		throw CThreadCreationError();
+	}
+}
+
+inline CWin32Thread &CWin32Thread::Attach(HANDLE hThread) NOEXCEPT
 {
 	m_hThread = hThread;
+	return *this;
 }
 inline void CWin32Thread::Deattach() NOEXCEPT
 {

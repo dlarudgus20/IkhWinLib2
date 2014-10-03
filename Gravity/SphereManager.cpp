@@ -160,35 +160,22 @@ void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 
 	// 충돌 감지
 
-	// 중복 판정 방지
-	std::vector<std::unordered_set<int> > DetectedCollisions;
-	DetectedCollisions.resize(m_Spheres.size());
-
+	//#pragma omp parallel for
 	for (int i = 0; static_cast<size_t>(i) < m_Spheres.size() - 1; i++)
 	{
 		#pragma omp parallel for
-		for (int j = 0; static_cast<size_t>(j) < m_Spheres.size(); j++)
+		for (int j = i + 1; static_cast<size_t>(j) < m_Spheres.size(); j++)
 		{
-			if (i == j)
-				continue;
-
-			auto &detected_set = DetectedCollisions[i];
-			if (detected_set.find(j) != detected_set.end())
-				continue;
-
 			auto ptr = DetectCollision(NewSpheres, i, j, LOGICAL_TIME_SPAN);
 			if (!ptr)
 				continue;
 
 			#pragma omp critical
 			{
-				DetectedCollisions[j].insert(i);
 				collisions.push_back(std::move(ptr));
 			}
 		}
 	}
-
-	decltype(DetectedCollisions)().swap(DetectedCollisions);
 
 	std::unordered_map<int, double> map_time;
 
@@ -558,7 +545,7 @@ std::pair<std::array<double, 3>, double> sum_momentum(const std::vector<Sphere> 
 {
 	std::array<double, 3> p = { 0, 0, 0 }, ap = { 0, 0, 0 };
 
-	for (int i = 0; i < spheres.size(); ++i)
+	for (int i = 0; static_cast<size_t>(i) < spheres.size(); ++i)
 	{
 		const Sphere &sp = spheres[i];
 

@@ -65,9 +65,9 @@ boost::future<LRESULT> CMsgTarget::PostMsgEx(UINT iMessage, WPARAM wParam, LPARA
 
 	auto f = [iMessage, wParam, lParam, this] { return MessageProc(iMessage, wParam, lParam); };
 
-	return CWin32AttachThread(m_MyThread).Post(
-		WrapGCThread(f)
-		);
+	return CWin32Thread()
+		.Attach(m_MyThread)
+		.Post(f);
 }
 
 LRESULT CMsgTarget::MessageProc(UINT iMessage, WPARAM wParam, LPARAM lParam, bool *pbProc)

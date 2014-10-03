@@ -67,6 +67,6 @@ public:
 private:
 	void CommandHelp(const std::vector<std::wstring> &vttok);
 	void CommandCreate(const std::vector<std::wstring> &vttok);
-	void CommandLs(const std::vector<std::wstring> &vttok);
+	void CommandList(const std::vector<std::wstring> &vttok);
 	void CommandSumMomentum(const std::vector<std::wstring> &vttok);
 };

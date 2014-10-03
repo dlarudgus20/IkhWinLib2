@@ -132,7 +132,7 @@ void CForm::MoveChild(CForm::Child child, RECT pos)
 	RECT ClientRt;
 	GetClientRect(*this, &ClientRt);
 
-	stlgc::set<std::shared_ptr<ChildInfo> > ModifiedList;
+	std::set<std::shared_ptr<ChildInfo> > ModifiedList;
 	RecursiveLayout(*child.m_it, ClientRt, ModifiedList);
 
 	m_bLayouting = true;
@@ -155,7 +155,7 @@ void CForm::PerformLayout()
 	RECT ClientRt;
 	GetClientRect(*this, &ClientRt);
 
-	stlgc::set<std::shared_ptr<ChildInfo> > unused;
+	std::set<std::shared_ptr<ChildInfo> > unused;
 	for (const auto &sp : m_ChildList)
 	{
 		if (!sp->fProcessed)
@@ -192,7 +192,7 @@ void CForm::DeferMoveChild(HDWP hDefer, const std::shared_ptr<CForm::ChildInfo> 
 }
 
 void CForm::RecursiveLayout(const std::shared_ptr<CForm::ChildInfo> &pci, const RECT &ClientRt,
-	stlgc::set<std::shared_ptr<CForm::ChildInfo> > &ModifiedList)
+	std::set<std::shared_ptr<CForm::ChildInfo> > &ModifiedList)
 {
 	if (pci->fProcessed)
 		return;
@@ -321,7 +321,7 @@ void CForm::ApplyMovedChild(const std::shared_ptr<CForm::ChildInfo> &pci)
 	RECT ClientRt;
 	GetClientRect(*this, &ClientRt);
 
-	stlgc::set<std::shared_ptr<ChildInfo> > ModifiedList;
+	std::set<std::shared_ptr<ChildInfo> > ModifiedList;
 	RecursiveLayout(pci, ClientRt, ModifiedList);
 
 	m_bLayouting = true;
