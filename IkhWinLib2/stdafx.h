@@ -31,6 +31,7 @@
 #include <commctrl.h>
 #include <commdlg.h>
 #include <mmsystem.h>
+#include <process.h>
 
 #include <gl/gl.h>
 
@@ -63,23 +64,21 @@
 #include <chrono>
 #include <random>
 #include <new>
+using std::swap;
 
+#include <string>
+#include <vector>
 #include <deque>
-#include <forward_list>
 #include <list>
+#include <forward_list>
 #include <map>
 #include <set>
 #include <unordered_map>
 #include <unordered_set>
-#include <vector>
-#include <queue>
-#include <stack>
-#include <string>
 
-#define GC_THREADS
-#include <gc.h>
-#include <gc_cpp.h>
-#include <gc_allocator.h>
+#include <stack>
+#include <queue>
+
 
 #define BOOST_THREAD_VERSION 4
 #define BOOST_RESULT_OF_USE_DECLTYPE

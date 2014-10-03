@@ -67,19 +67,19 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(BOEHMGC_INCLUDE);$(BOOST_DIRECTORY);$(IncludePath)</IncludePath>
+    <IncludePath>$(BOOST_DIRECTORY);$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(BOEHMGC_INCLUDE);$(BOOST_DIRECTORY);$(IncludePath)</IncludePath>
+    <IncludePath>$(BOOST_DIRECTORY);$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(BOEHMGC_INCLUDE);$(BOOST_DIRECTORY);$(IncludePath)</IncludePath>
+    <IncludePath>$(BOOST_DIRECTORY);$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(BOEHMGC_INCLUDE);$(BOOST_DIRECTORY);$(IncludePath)</IncludePath>
+    <IncludePath>$(BOOST_DIRECTORY);$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -168,7 +168,6 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IkhWinLib2\BoehmGC.h" />
     <ClInclude Include="IkhWinLib2\CApplication.h" />
     <ClInclude Include="IkhWinLib2\CButtonCtrl.h" />
     <ClInclude Include="IkhWinLib2\CColorDialog.h" />
@@ -213,7 +212,6 @@
     <ClInclude Include="IkhWinLib2\IkhWinLib2.h" />
     <ClInclude Include="IkhWinLib2\MsgCracker.h" />
     <ClInclude Include="IkhWinLib2\NonCopyable.h" />
-    <ClInclude Include="IkhWinLib2\stlgc.h" />
     <ClInclude Include="IkhWinLib2\Utility.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />

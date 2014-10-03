@@ -35,9 +35,9 @@ BEGIN_IKHWINLIB2()
 
 /**
  * @brief IkhWinLib2의 최상위 부모 클래스입니다.
- * @remarks 몇몇 클래스들을 제외하고, 대부분의 IkhWinLib2 클래스들은 이 클래스를 상속받습니다. 이 클래스를 상속받은 클래스들은 new로 동적 할당 시 쓰레기 수집됩니다.
+ * @remarks 몇몇 클래스들을 제외하고, 대부분의 IkhWinLib2 클래스들은 이 클래스를 상속받습니다.
  */
-class CObject : public gc_cleanup
+class CObject
 {
 public:
 	/**

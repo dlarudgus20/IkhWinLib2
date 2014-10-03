@@ -41,7 +41,7 @@ public:
 private:
 	struct ChildInfo;
 
-	typedef stlgc::list<std::shared_ptr<ChildInfo> > ChildList;
+	typedef std::list<std::shared_ptr<ChildInfo> > ChildList;
 	typedef ChildList::iterator ChildIterator;
 
 	struct ChildInfo
@@ -131,10 +131,10 @@ private:
 			return lhs->get() < rhs->get();
 		}
 	};
-	typedef stlgc::set<std::shared_ptr<ChildInfo>, value_less<ChildInfo> > ModifiedList_t;
+	typedef std::set<std::shared_ptr<ChildInfo>, value_less<ChildInfo> > ModifiedList_t;
 
 	void RecursiveLayout(const std::shared_ptr<ChildInfo> &pci, const RECT &ClientRt,
-		stlgc::set<std::shared_ptr<ChildInfo> > &ModifiedList);
+		std::set<std::shared_ptr<ChildInfo> > &ModifiedList);
 
 	ChildIterator _findChildInfo(CWindow *pChild);
 

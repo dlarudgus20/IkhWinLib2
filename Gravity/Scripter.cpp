@@ -189,7 +189,7 @@ void Scripter::CommandList(const std::vector<std::wstring> &vttok)
 	auto spheres = m_pHost->GetSphereManager()->GetSpheres();
 
 	m_pHost->WriteLine(L"[num] / [coord] / [radius] / [mass] / [color] / [velocity] / [AngularVelocity]");
-	for (int i = 0; i < spheres.size(); ++i)
+	for (int i = 0; static_cast<size_t>(i) < spheres.size(); ++i)
 	{
 		Sphere &sp = spheres[i];
 
@@ -224,7 +224,7 @@ void Scripter::CommandSumMomentum(const std::vector<std::wstring> &vttok)
 	std::array<double, 3> p = { 0, 0, 0 };
 
 	#pragma omp parallel for
-	for (int i = 0; i < spheres.size(); ++i)
+	for (int i = 0; static_cast<size_t>(i) < spheres.size(); ++i)
 	{
 		Sphere &sp = spheres[i];
 

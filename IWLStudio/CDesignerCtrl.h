@@ -39,7 +39,7 @@ public:
 
 private:
 	typedef std::shared_ptr<IControl> (*CtrlCtor)();
-	static stlgc::vector<CtrlCtor> m_vtCtrlCtor;
+	static std::vector<CtrlCtor> m_vtCtrlCtor;
 	CtrlCtor m_NowCtrlCtor;
 
 	RECT m_SelRect;

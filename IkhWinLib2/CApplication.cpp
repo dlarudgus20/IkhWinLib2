@@ -28,24 +28,6 @@
 
 using namespace IkhProgram::IkhWinLib2;
 
-namespace
-{
-	struct GCMainInitor
-	{
-		GCMainInitor()
-		{
-			GC_INIT();
-			GC_allow_register_threads();
-			GC_set_finalize_on_demand(FALSE);
-			GC_enable_incremental();
-		}
-		~GCMainInitor()
-		{
-			GC_gcollect_and_unmap();
-		}
-	};
-}
-
 BEGIN_IKHWINLIB2()
 
 std::unique_ptr<CApplication> CApplication::ms_pApp;
@@ -53,31 +35,27 @@ DWORD CApplication::ms_TlsModeless;
 
 int CApplication::IWLMain()
 {
-	GCMainInitor _gc_main_initor;
+	CWin32Thread::StaticCtor();
+
+	struct Initor
 	{
-		CWin32Thread::StaticCtor();
-
-		struct Initor
+		Initor()
 		{
-			Initor()
-			{
-				ms_TlsModeless = TlsAlloc();
-				InitCommonControls();
-				ms_pApp.reset(::CreateApplication());
-			}
-			~Initor()
-			{
-				ms_pApp.reset();
-				TlsFree(ms_TlsModeless);
-			}
-		} _initor;
+			ms_TlsModeless = TlsAlloc();
+			InitCommonControls();
+			ms_pApp.reset(::CreateApplication());
+		}
+		~Initor()
+		{
+			ms_pApp.reset();
+			TlsFree(ms_TlsModeless);
+		}
+	} _initor;
 
-		return ms_pApp->Main(__argc, __wargv);
-	}
+	return ms_pApp->Main(__argc, __wargv);
 }
 
-CApplication::CApplication(bool bNoCollectOnIdle /* = false */) NOEXCEPT
-	: CWin32Thread(bNoCollectOnIdle)
+CApplication::CApplication() NOEXCEPT
 {
 	Attach(GetCurrentThread());
 }

@@ -62,7 +62,7 @@ CDesignerCtrl::CDesignerCtrl()
 
 }
 
-stlgc::vector<CDesignerCtrl::CtrlCtor> CDesignerCtrl::m_vtCtrlCtor = {
+std::vector<CDesignerCtrl::CtrlCtor> CDesignerCtrl::m_vtCtrlCtor = {
 	[] { return std::shared_ptr<IControl>(); },
 	[] { return std::shared_ptr<IControl>(new CStaticCtrl); },
 	[] { return std::shared_ptr<IControl>(new CEditCtrl); },

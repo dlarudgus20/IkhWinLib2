@@ -545,7 +545,7 @@ std::pair<std::array<double, 3>, double> sum_momentum(const std::vector<Sphere> 
 {
 	std::array<double, 3> p = { 0, 0, 0 }, ap = { 0, 0, 0 };
 
-	for (int i = 0; i < spheres.size(); ++i)
+	for (int i = 0; static_cast<size_t>(i) < spheres.size(); ++i)
 	{
 		const Sphere &sp = spheres[i];
 
