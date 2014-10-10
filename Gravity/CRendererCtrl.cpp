@@ -78,7 +78,7 @@ BOOL CRendererCtrl::OnCreate(LPCREATESTRUCT lpcs)
 	//m_pSphereManager->AddSphere({ { 0, 0, 0 }, 125, 1200000, { 1, 0, 0, 1 } });
 	m_pSphereManager->AddSphere({ { 1000, 0, 0 }, 75, 30, { 0, 1, 0, 0.8 }, { 0, 24.449215467167857, 0 } });
 	m_pSphereManager->AddSphere({ { 2000, 0, 0 }, 75, 20, { 0.3, 0.3, 1, 0.8 }, { 0, 12.28820605152542, 0 } });
-	m_pSphereManager->AddSphere({ { 3200, 0, 0 }, 75, 8, { 1, 1, 1, 0.8 }, { 0, 12, 0 } });
+	m_pSphereManager->AddSphere({ { 3200, 0, 0 }, 75, 8, { 0, 1, 1, 0.8 }, { 0, 12, 0 } });
 
 	//m_pSphereManager->AddSphere({ { -75, 0, 0 }, 75, 30, { 1, 0, 0, 0.8 } });
 	//m_pSphereManager->AddSphere({ { 150, 0, 0 }, 150, 600000, { 1, 0, 0, 0.8 }, { -50, 0, 0 } });
@@ -112,11 +112,9 @@ void CRendererCtrl::OnDestroy()
 
 void CRendererCtrl::OnIdle()
 {
-	static float rotate = 0.0f;
-
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-	glCullFace(GL_CW);
+	glCullFace(GL_CCW);
 	glEnable(GL_BLEND);
 	glEnable(GL_POLYGON_SMOOTH);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -131,6 +129,13 @@ void CRendererCtrl::OnIdle()
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
+	/*glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	static float lightpos[] = { 0, 0, 0, 0 };
+	glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
+	static float diffuse[] = { 1, 1, 1, 1 };
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);*/
 
 	m_pCamera->Apply();
 

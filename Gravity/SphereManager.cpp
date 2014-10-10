@@ -254,19 +254,19 @@ void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 					auto j_sum_A = map_sum_A.emplace(ptr->j, std::array<double, 3> { { 0.0, 0.0, 0.0 } }).first;
 
 					double v_length = sqrt(ptr->v_length_2);
-	
+
 					double cos_theta_2 = square(ptr->p_dot_v) / ptr->p_length_2 / ptr->v_length_2;
 					double sin_theta_2 = 1 - cos_theta_2;
-	
+
 					double sum_inverse_mass = (1 / NewSpheres[ptr->i].mass)
 						+ (1 / NewSpheres[ptr->j].mass);
-	
+
 					double sum_inverse_moment = (1 / (NewSpheres[ptr->i].mass * 2 / 5))
 						+ (1 / (NewSpheres[ptr->i].mass * 2 / 5));
-	
+
 					double J_length = (2 * v_length * cos_theta_2)
 						/ (sum_inverse_mass * cos_theta_2 + sum_inverse_moment * sin_theta_2);
-	
+
 					std::array<double, 3> J = ptr->v;
 					J[0] *= J_length / v_length;
 					J[1] *= J_length / v_length;
@@ -528,6 +528,7 @@ void Sphere::CompileDisplayList(GLUquadric *quadric)
 	DisplayList = glGenLists(1);
 	glNewList(DisplayList, GL_COMPILE);
 	glColor4fv(color.data());
+	//glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color.data());
 	gluSphere(quadric, radius, GLint(radius * 100), GLint(radius * 100));
 	glEndList();
 }

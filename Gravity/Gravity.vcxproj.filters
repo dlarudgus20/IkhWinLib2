@@ -16,6 +16,9 @@
     <Filter Include="docs">
       <UniqueIdentifier>{9752208e-8b31-4a8e-8e66-929c8ea63755}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{cd213bae-9ca3-416e-b54c-843bf42d173f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CMyApp.cpp">
@@ -94,8 +97,12 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="fragment.frag" />
-    <Text Include="vertex.vs" />
+    <Text Include="fragment.frag">
+      <Filter>Shader</Filter>
+    </Text>
+    <Text Include="vertex.vs">
+      <Filter>Shader</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Gravity.rc">
