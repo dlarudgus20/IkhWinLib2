@@ -38,15 +38,20 @@ Projection::Projection()
 
 void Projection::SizeChanged(int cx, int cy)
 {
-	memcpy(m_OrthoRect, m_OriOrthoRect, sizeof(m_OrthoRect));
-	m_OrthoNear = m_OriOrthoNear;
-	m_OrthoFar = m_OriOrthoFar;
+	m_cx = cx;
+	m_cy = cy;
 }
 
 void Projection::Apply() const
 {
+	static const double inch = 10.0;
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
+
+	if (m_cx != 0 && m_cy != 0)
+		glScaled(inch / m_cx, inch / m_cy, 1);
+
 	glOrtho(m_OrthoRect[0], m_OrthoRect[1], m_OrthoRect[2], m_OrthoRect[3],
 		m_OrthoNear, m_OrthoFar);
 }

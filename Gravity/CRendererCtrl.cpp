@@ -36,6 +36,7 @@ BEGIN_MSGMAP(CRendererCtrl, CIdleOpenGLWnd)
 	MSGMAP_WM_LBUTTONDOWN(OnLButtonDown)
 	MSGMAP_WM_LBUTTONDBLCLK(OnLButtonDown)
 	MSGMAP_WM_RBUTTONDOWN(OnRButtonDown)
+	MSGMAP_WM_SIZE(OnSize)
 	MSGMAP_WM_DESTROY(OnDestroy)
 END_MSGMAP(CRendererCtrl, CIdleOpenGLWnd)
 
@@ -105,13 +106,13 @@ void CRendererCtrl::OnRButtonDown(BOOL fDoubleClick, int x, int y, UINT keyflags
 
 void CRendererCtrl::OnSize(UINT state, int cx, int cy)
 {
-	const int size_inch = 10;
+	MSG_FORWARD_WM_SIZE(CIdleOpenGLWnd, state, cx, cy);
 
 	HDC hdc = GetDC(*this);
 	int dpix = GetDeviceCaps(hdc, LOGPIXELSX);
 	int dpiy = GetDeviceCaps(hdc, LOGPIXELSY);
 
-	glViewport(0, 0, size_inch * dpix, size_inch * dpiy);
+	m_projection.SizeChanged(cx / dpix, cy / dpiy);
 }
 
 void CRendererCtrl::OnDestroy()
@@ -129,7 +130,6 @@ void CRendererCtrl::OnIdle()
 	glEnable(GL_BLEND);
 	glEnable(GL_POLYGON_SMOOTH);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_NORMALIZE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0, 0, 0, 1);
 
@@ -138,10 +138,10 @@ void CRendererCtrl::OnIdle()
 	m_projection.Apply();
 	m_pCamera->Apply();
 
-	GLfloat light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	GLfloat light_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-	GLfloat light_diffuse[] = { 0.9f, 0.9f, 0.9f, 1.0f };
-	GLfloat light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	static GLfloat light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	static GLfloat light_ambient[] = { 0.4f, 0.4f, 0.4f, 1.0f };
+	static GLfloat light_diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	static GLfloat light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);

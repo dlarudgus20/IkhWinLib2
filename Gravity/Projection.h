@@ -30,6 +30,8 @@ private:
 	static const double m_OriOrthoRect[4], m_OriOrthoNear, m_OriOrthoFar;
 	double m_OrthoRect[4], m_OrthoNear, m_OrthoFar;
 
+	int m_cx, m_cy;
+
 public:
 	Projection();
 
