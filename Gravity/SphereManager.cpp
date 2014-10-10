@@ -527,8 +527,8 @@ void Sphere::CompileDisplayList(GLUquadric *quadric)
 {
 	DisplayList = glGenLists(1);
 	glNewList(DisplayList, GL_COMPILE);
-	glColor4fv(color.data());
-	//glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color.data());
+	//glColor4fv(color.data());
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color.data());
 	gluSphere(quadric, radius, GLint(radius * 100), GLint(radius * 100));
 	glEndList();
 }

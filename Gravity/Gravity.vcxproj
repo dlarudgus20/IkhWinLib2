@@ -184,6 +184,7 @@
     <ClCompile Include="CRendererCtrl.cpp" />
     <ClCompile Include="CTextBoxCtrl.cpp" />
     <ClCompile Include="parse_utils.cpp" />
+    <ClCompile Include="Projection.cpp" />
     <ClCompile Include="Scripter.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SphereManager.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="CTextBoxCtrl.h" />
     <ClInclude Include="parse_utils.h" />
     <ClInclude Include="parse_utils_detail.h" />
+    <ClInclude Include="Projection.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scripter.h" />
     <ClInclude Include="Shader.h" />

@@ -139,7 +139,6 @@ void Scripter::CommandHelp(const std::vector<std::wstring> &vttok)
 		for (auto it = m_cmd_map.begin(); it != m_cmd_map.end(); ++it)
 		{
 			print_help(it);
-			it->second.first({ std::wstring(), L"--help" });
 		}
 	}
 }

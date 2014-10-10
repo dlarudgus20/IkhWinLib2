@@ -103,6 +103,17 @@ void CRendererCtrl::OnRButtonDown(BOOL fDoubleClick, int x, int y, UINT keyflags
 
 }
 
+void CRendererCtrl::OnSize(UINT state, int cx, int cy)
+{
+	const int size_inch = 10;
+
+	HDC hdc = GetDC(*this);
+	int dpix = GetDeviceCaps(hdc, LOGPIXELSX);
+	int dpiy = GetDeviceCaps(hdc, LOGPIXELSY);
+
+	glViewport(0, 0, size_inch * dpix, size_inch * dpiy);
+}
+
 void CRendererCtrl::OnDestroy()
 {
 	m_pSphereManager = nullptr;
@@ -118,26 +129,25 @@ void CRendererCtrl::OnIdle()
 	glEnable(GL_BLEND);
 	glEnable(GL_POLYGON_SMOOTH);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+	glEnable(GL_NORMALIZE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0, 0, 0, 1);
 
-	glShadeModel(GL_SMOOTH);
+	glShadeModel(GL_FLAT);
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
+	m_projection.Apply();
+	m_pCamera->Apply();
+
+	GLfloat light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	GLfloat light_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+	GLfloat light_diffuse[] = { 0.9f, 0.9f, 0.9f, 1.0f };
+	GLfloat light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
 
 	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	/*glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	static float lightpos[] = { 0, 0, 0, 0 };
-	glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
-	static float diffuse[] = { 1, 1, 1, 1 };
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);*/
-
-	m_pCamera->Apply();
 
 	m_pSphereManager->UpdateIfExpired();
 	m_pSphereManager->Render();

@@ -31,6 +31,7 @@ using namespace IkhProgram::IkhWinLib2;
 
 #include "CTextBoxCtrl.h"
 #include "Shader.h"
+#include "Projection.h"
 
 class SphereManager;
 class Camera;
@@ -50,6 +51,7 @@ private:
 
 	SphereManager *m_pSphereManager;
 	Camera *m_pCamera;
+	Projection m_projection;
 
 	std::unique_ptr<Shader> m_pShader;
 
@@ -60,6 +62,7 @@ protected:
 	BOOL OnCreate(LPCREATESTRUCT lpcs);
 	void OnLButtonDown(BOOL fDoubleClick, int x, int y, UINT keyflags);
 	void OnRButtonDown(BOOL fDoubleClick, int x, int y, UINT keyflags);
+	void OnSize(UINT state, int cx, int cy);
 	void OnDestroy();
 
 	void OnIdle();

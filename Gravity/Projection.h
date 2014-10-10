@@ -22,31 +22,18 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "stdafx.h"
-#include "Camera.h"
+#pragma once
 
-const double Camera::m_OriEye[3] = { 0, 0, 2000 };
-const double Camera::m_OriCenter[3] = { 0, 0, 0 };
-const double Camera::m_OriUp[3] = { 0, 1, 0 };
-
-Camera::Camera()
+class Projection final
 {
-	memcpy(m_eye, m_OriEye, sizeof(m_eye));
-	memcpy(m_center, m_OriCenter, sizeof(m_center));
-	memcpy(m_up, m_OriUp, sizeof(m_up));
-	m_angle = 0;
-}
+private:
+	static const double m_OriOrthoRect[4], m_OriOrthoNear, m_OriOrthoFar;
+	double m_OrthoRect[4], m_OrthoNear, m_OrthoFar;
 
-void Camera::Rotate(double angle)
-{
-	throw "not implemented";
-}
+public:
+	Projection();
 
-void Camera::Apply() const
-{
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	gluLookAt(m_eye[0], m_eye[1], m_eye[2],
-		m_center[0], m_center[1], m_center[2],
-		m_up[0], m_up[1], m_up[2]);
-}
+	void SizeChanged(int cx, int cy);
+
+	void Apply() const;
+};

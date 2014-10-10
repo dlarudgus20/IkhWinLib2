@@ -29,15 +29,16 @@
 Shader::Shader()
 {
 	m_vertex = glCreateShader(GL_VERTEX_SHADER);
-	m_fragment = glCreateShader(GL_FRAGMENT_SHADER);
-
 	auto vs = ReadFromResource(IDR_VERT_SHADER);
-	auto fs = ReadFromResource(IDR_FRAG_SHADER);
 	glShaderSource(m_vertex, 1, &vs.first, &vs.second);
-	glShaderSource(m_fragment, 1, &fs.first, &fs.second);
-
 	glCompileShader(m_vertex);
+	ShaderCompileErrorCheck(m_vertex, "GL_VERTEX_SHADER");
+
+	m_fragment = glCreateShader(GL_FRAGMENT_SHADER);
+	auto fs = ReadFromResource(IDR_FRAG_SHADER);
+	glShaderSource(m_fragment, 1, &fs.first, &fs.second);
 	glCompileShader(m_fragment);
+	ShaderCompileErrorCheck(m_fragment, "GL_FRAGMENT_SHADER");
 
 	m_program = glCreateProgram();
 
@@ -67,4 +68,30 @@ std::pair<const char *, GLint> Shader::ReadFromResource(UINT id)
 	HGLOBAL hMem = LoadResource(hInst, hRSrc);
 	const char *ptr = reinterpret_cast<const char *>(LockResource(hMem));
 	return { ptr, size };
+}
+
+void Shader::ShaderCompileErrorCheck(GLuint shader, const std::string &name)
+{
+	GLint len;
+	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
+
+	if (len > 1) // '\0' character
+	{
+		std::string str(len, '\0');
+		GLsizei cWritten;
+		glGetShaderInfoLog(shader, len, &cWritten, &str[0]);
+
+		GLint bCompiled;
+		glGetShaderiv(shader, GL_COMPILE_STATUS, &bCompiled);
+
+		OutputDebugStringA(name + ": " + (bCompiled == GL_TRUE ? "info\n" : "error\n"));
+		OutputDebugStringA("========\n");
+		OutputDebugStringA(str);
+		OutputDebugStringA("\n========\n");
+
+		if (bCompiled == GL_FALSE)
+		{
+			throw std::runtime_error("shader compilation is failed in '" + name + "'");
+		}
+	}
 }
