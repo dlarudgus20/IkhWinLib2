@@ -110,4 +110,43 @@ namespace parse_utils
 
 		error_handler(str);
 	}
+
+	template <typename F>
+	bool parse_bool(const std::wstring &str, F error_handler)
+	{
+		bool ret;
+
+		const wchar_t *endptr = str.c_str();
+		detail::find_first_letter(&endptr);
+
+		if (*endptr == L'1')
+		{
+			ret = true;
+			endptr++;
+		}
+		else if (*endptr == L'0')
+		{
+			ret = false;
+			endptr++;
+		}
+		else if (wcsncmp(endptr, L"true", 4) == 0)
+		{
+			ret = true;
+			endptr += 4;
+		}
+		else if (wcsncmp(endptr, L"false", 5) == 0)
+		{
+			ret = false;
+			endptr += 5;
+		}
+		else
+		{
+			error_handler(str);
+		}
+
+		if (detail::find_first_letter(&endptr) != '\0')
+			error_handler(str);
+
+		return ret;
+	}
 }

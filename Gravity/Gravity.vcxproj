@@ -183,6 +183,7 @@
     <ClCompile Include="CMyApp.cpp" />
     <ClCompile Include="CRendererCtrl.cpp" />
     <ClCompile Include="CTextBoxCtrl.cpp" />
+    <ClCompile Include="file_util.cpp" />
     <ClCompile Include="parse_utils.cpp" />
     <ClCompile Include="Projection.cpp" />
     <ClCompile Include="Scripter.cpp" />
@@ -196,6 +197,7 @@
     <ClInclude Include="CMyApp.h" />
     <ClInclude Include="CRendererCtrl.h" />
     <ClInclude Include="CTextBoxCtrl.h" />
+    <ClInclude Include="file_util.h" />
     <ClInclude Include="parse_utils.h" />
     <ClInclude Include="parse_utils_detail.h" />
     <ClInclude Include="Projection.h" />
@@ -227,6 +229,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\docs.md" />
+    <None Include="main.grvs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="docs\Impulse(translation).png" />

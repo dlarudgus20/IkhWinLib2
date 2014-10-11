@@ -53,6 +53,8 @@ private:
 
 	Scripter m_Scripter;
 
+	bool m_bForceScroll = true;
+
 public:
 	CMainWindow() : m_RendererCtrl(&m_SphereManager, &m_Camera), m_Scripter(this) { }
 
@@ -63,9 +65,13 @@ protected:
 
 	void OnCmdInput(CCmdEditCtrl *pCtrl, const std::wstring &input);
 
+private:
+
 public:
 	// IScriptHost
 	virtual void WriteLine(const std::wstring &str) override;
 	virtual void WriteMultiLine(const std::wstring &str) override;
+	virtual void UpdateTitle() override;
+	virtual void ForceScroll(bool bScroll) override;
 	virtual SphereManager *GetSphereManager() override;
 };

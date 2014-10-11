@@ -61,10 +61,12 @@ inline void negativen(std::array<double, 3> &data)
 
 #include "Sphere.h"
 
-class SphereManager final
+class SphereManager final : private boost::noncopyable
 {
 private:
 	DWORD m_PrevUpdateTime;
+
+	bool m_bRunningPaused = true;
 
 	std::vector<Sphere> m_Spheres;
 	double m_day;
@@ -99,6 +101,10 @@ public:
 
 	double GetDay() const { return m_day; }
 	std::vector<Sphere> &GetSpheres() { return m_Spheres; }
+	bool IsPaused() const { return m_bRunningPaused; }
+
+	void PauseRunning();
+	void ResumeRunning();
 
 	void AddSphere(const Sphere &s);
 

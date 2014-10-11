@@ -78,6 +78,7 @@
 #include <chrono>
 #include <random>
 #include <new>
+#include <codecvt>
 using std::swap;
 
 #ifndef IKHWINLIB2_USE_BOOST_PLACEHOLDER

@@ -80,6 +80,20 @@ BOOL CMainWindow::OnCreate(LPCREATESTRUCT lpcs)
 	m_CmdInputEdit.evtInput += m_efpCmdInput.set(std::bind(&CMainWindow::OnCmdInput, this, _1, _2));
 
 	SetTimer(*this, 0, 1000, nullptr);
+	UpdateTitle();
+
+	// print help
+	m_Scripter.ExecuteLine(L"help");
+
+	// main.grvs가 있으면 
+	DWORD attr = GetFileAttributes(L"main.grvs");
+	if (attr != INVALID_FILE_ATTRIBUTES && !(attr & FILE_ATTRIBUTE_DIRECTORY))
+	{
+		m_Scripter.ExecuteLine(L"load main.grvs");
+	}
+
+	// CmdListEdit 스크롤 일회성 타이머
+	SetTimer(*this, 1000, 100, nullptr);
 
 	return TRUE;
 }
@@ -89,14 +103,29 @@ void CMainWindow::OnTimer(UINT id)
 	switch (id)
 	{
 		case 0:
-			unsigned fps = m_RendererCtrl.GetFPS();
-			double frametime = (fps == 0 ? 0. : (1. / fps));
-			SetWindowText(*this,
-				L"Gravity (day:" + std::to_wstring(m_SphereManager.GetDay())
-				+ L", FPS:" + std::to_wstring(fps) + L", frametime:" + std::to_wstring(frametime) + L")"
-				);
+			UpdateTitle();
+			break;
+		case 1000:
+			SendMessage(m_CmdListEdit, EM_SCROLLCARET, 0, 0);
+			KillTimer(*this, 1000);
 			break;
 	}
+}
+
+void CMainWindow::UpdateTitle()
+{
+	unsigned fps = m_RendererCtrl.GetFPS();
+	double frametime = (fps == 0 ? 0. : (1. / fps));
+	SetWindowText(*this,
+		std::wstring(L"Gravity") + (m_SphereManager.IsPaused() ? L" [Paused]" : L"")
+		+ L" (날짜:" + std::to_wstring(m_SphereManager.GetDay())
+		+ L"일 째, FPS:" + std::to_wstring(fps) + L", frametime:" + std::to_wstring(frametime) + L")"
+		);
+}
+
+void CMainWindow::ForceScroll(bool bScroll)
+{
+	m_bForceScroll = bScroll;
 }
 
 void CMainWindow::OnDestroy()
@@ -109,34 +138,32 @@ void CMainWindow::OnDestroy()
 
 void CMainWindow::OnCmdInput(CCmdEditCtrl *pCtrl, const std::wstring &input)
 {
-	try
-	{
-		WriteLine(L"> " + input);
-		m_Scripter.ExecuteLine(input);
-	}
-	catch (ScripterException &e)
-	{
-		WriteLine(L"<err> " + e.Message());
-	}
+	m_Scripter.ExecuteLine(input);
 }
 
 void CMainWindow::WriteLine(const std::wstring &str)
 {
 	DWORD size = GetWindowTextLength(m_CmdListEdit);
 
-	DWORD beg, end;
-	SendMessage(m_CmdListEdit, EM_GETSEL, reinterpret_cast<WPARAM>(&beg), reinterpret_cast<LPARAM>(&end));
+	DWORD sel_beg, sel_end;
+	SendMessage(m_CmdListEdit, EM_GETSEL, reinterpret_cast<WPARAM>(&sel_beg), reinterpret_cast<LPARAM>(&sel_end));
+
+	DWORD scr;
+	scr = static_cast<DWORD>(SendMessage(m_CmdListEdit, EM_GETFIRSTVISIBLELINE, 0, 0));
+	scr = static_cast<DWORD>(SendMessage(m_CmdListEdit, EM_LINEINDEX, scr, 0));
 
 	SendMessage(m_CmdListEdit, EM_SETSEL, size, size);
 	SendMessage(m_CmdListEdit, EM_REPLACESEL, TRUE, reinterpret_cast<LPARAM>(str.c_str()));
-	size = GetWindowTextLength(m_CmdListEdit);
+	DWORD new_size = GetWindowTextLength(m_CmdListEdit);
 
-	SendMessage(m_CmdListEdit, EM_SETSEL, size, size);
+	SendMessage(m_CmdListEdit, EM_SETSEL, new_size, new_size);
 	SendMessage(m_CmdListEdit, EM_REPLACESEL, TRUE, reinterpret_cast<LPARAM>(L"\r\n"));
 
-	if (!(size == beg && beg == end))
+	if (!m_bForceScroll && !(size == sel_beg && sel_beg == sel_end))
 	{
-		SendMessage(m_CmdListEdit, EM_SETSEL, beg, end);
+		SendMessage(m_CmdListEdit, EM_SETSEL, scr, scr);
+		SendMessage(m_CmdListEdit, EM_SCROLLCARET, 0, 0);
+		SendMessage(m_CmdListEdit, EM_SETSEL, sel_beg, sel_end);
 	}
 }
 

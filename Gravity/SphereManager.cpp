@@ -50,6 +50,9 @@ void SphereManager::AddSphere(const Sphere &s)
 
 void SphereManager::UpdateIfExpired()
 {
+	if (m_bRunningPaused)
+		return;
+
 	DWORD span = GetTickCount() - m_PrevUpdateTime;
 	if (span >= UPDATE_TIME_SPAN)
 	{
@@ -63,6 +66,17 @@ void SphereManager::UpdateIfExpired()
 			Run();
 		}
 	}
+}
+
+void SphereManager::PauseRunning()
+{
+	m_bRunningPaused = true;
+}
+
+void SphereManager::ResumeRunning()
+{
+	m_PrevUpdateTime = GetTickCount();
+	m_bRunningPaused = false;
 }
 
 void SphereManager::Run()
@@ -150,6 +164,9 @@ void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 {
 	// 충돌 처리
 	// 복잡한 상황을 처리하지 못함; 코딩이 필요함
+
+	if (m_Spheres.size() < 2)
+		return;
 
 	std::vector<std::shared_ptr<CollisionInfo> > collisions;
 

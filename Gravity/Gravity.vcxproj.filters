@@ -54,6 +54,9 @@
     <ClCompile Include="Projection.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="file_util.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CMyApp.h">
@@ -101,6 +104,9 @@
     <ClInclude Include="Projection.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="file_util.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="fragment.frag">
@@ -119,6 +125,7 @@
     <None Include="docs\docs.md">
       <Filter>docs</Filter>
     </None>
+    <None Include="main.grvs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="docs\Impulse(translation).png">

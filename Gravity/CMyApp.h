@@ -41,3 +41,8 @@ public:
 private:
 	virtual int Main(int argc, TCHAR *argv[]) override;
 };
+
+inline CMyApp *GetMyApp() NOEXCEPT
+{
+	return static_cast<CMyApp *>(IWLGetApp());
+}
