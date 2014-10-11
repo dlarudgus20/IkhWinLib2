@@ -28,9 +28,12 @@ struct Sphere
 {
 	std::array<double, 3> coord;
 	double radius, mass;
+
 	std::array<float, 4> color;
+	float shininess;
 
 	std::array<double, 3> velocity;
+
 
 	std::array<double, 3> angle;
 	std::array<double, 3> AngularVelocity;

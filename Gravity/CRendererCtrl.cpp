@@ -74,15 +74,15 @@ BOOL CRendererCtrl::OnCreate(LPCREATESTRUCT lpcs)
 	m_InfoTextCtrl.Create(WS_CHILD /*| WS_VISIBLE*/ | WS_BORDER, 0, 0, 100, 100, 1, *this);
 
 	// Test Sphere
-	m_pSphereManager->AddSphere({ { -150, 0, 0 }, 100, 600000, { 1, 0, 0, 1 }, { 0, -22.31897804112007, 0 } });
-	m_pSphereManager->AddSphere({ { 150, 0, 0 }, 100, 600000, { 1, 0, 0, 1 }, { 0, 22.31897804112007, 0 } });
-	//m_pSphereManager->AddSphere({ { 0, 0, 0 }, 125, 1200000, { 1, 0, 0, 1 } });
-	m_pSphereManager->AddSphere({ { 1000, 0, 0 }, 75, 30, { 0, 1, 0, 0.8 }, { 0, 24.449215467167857, 0 } });
-	m_pSphereManager->AddSphere({ { 2000, 0, 0 }, 75, 20, { 0.3, 0.3, 1, 0.8 }, { 0, 12.28820605152542, 0 } });
-	m_pSphereManager->AddSphere({ { 3200, 0, 0 }, 75, 8, { 0, 1, 1, 0.8 }, { 0, 12, 0 } });
+	m_pSphereManager->AddSphere({ { -150, 0, 0 }, 100, 600000, { 1, 0, 0, 1 }, 10.0f, { 0, -22.31897804112007, 0 } });
+	m_pSphereManager->AddSphere({ { 150, 0, 0 }, 100, 600000, { 1, 0, 0, 1 }, 10.0f, { 0, 22.31897804112007, 0 } });
+	//m_pSphereManager->AddSphere({ { 0, 0, 0 }, 125, 1200000, { 1, 0, 0, 1 }, 64.0f });
+	m_pSphereManager->AddSphere({ { 1000, 0, 0 }, 75, 30, { 0, 1, 0, 0.8 }, 64.0f, { 0, 24.449215467167857, 0 } });
+	m_pSphereManager->AddSphere({ { 2000, 0, 0 }, 75, 20, { 0.3, 0.3, 1, 0.8 }, 64.0f, { 0, 12.28820605152542, 0 } });
+	m_pSphereManager->AddSphere({ { 3200, 0, 0 }, 75, 8, { 0, 1, 1, 0.8 }, 64.0f, { 0, 12, 0 } });
 
-	//m_pSphereManager->AddSphere({ { -75, 0, 0 }, 75, 30, { 1, 0, 0, 0.8 } });
-	//m_pSphereManager->AddSphere({ { 150, 0, 0 }, 150, 600000, { 1, 0, 0, 0.8 }, { -50, 0, 0 } });
+	//m_pSphereManager->AddSphere({ { -75, 0, 0 }, 75, 30, { 1, 0, 0, 0.8 }, 64.0f });
+	//m_pSphereManager->AddSphere({ { 150, 0, 0 }, 150, 600000, { 1, 0, 0, 0.8 }, 64.0f, { -50, 0, 0 } });
 
 	return TRUE;
 }
@@ -138,8 +138,9 @@ void CRendererCtrl::OnIdle()
 	m_projection.Apply();
 	m_pCamera->Apply();
 
+	// light
 	static GLfloat light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	static GLfloat light_ambient[] = { 0.4f, 0.4f, 0.4f, 1.0f };
+	static GLfloat light_ambient[] = { 0.35f, 0.35f, 0.35f, 1.0f };
 	static GLfloat light_diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	static GLfloat light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);

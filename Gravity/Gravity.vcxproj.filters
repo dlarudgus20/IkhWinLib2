@@ -106,7 +106,7 @@
     <Text Include="fragment.frag">
       <Filter>Shader</Filter>
     </Text>
-    <Text Include="vertex.vs">
+    <Text Include="vertex.vert">
       <Filter>Shader</Filter>
     </Text>
   </ItemGroup>

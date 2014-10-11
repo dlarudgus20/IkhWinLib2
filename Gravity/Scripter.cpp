@@ -145,7 +145,7 @@ void Scripter::CommandHelp(const std::vector<std::wstring> &vttok)
 
 void Scripter::CommandCreate(const std::vector<std::wstring> &vttok)
 {
-	const std::wstring usage = L"create [coord:vec3] [radius:real] [mass:real] [color:rgba] (velocity:vec3) (AngularVelocity:vec3)";
+	const std::wstring usage = L"create [coord:vec3] [radius:real] [mass:real] [color:rgba] (shininess:real) (velocity:vec3) (AngularVelocity:vec3)";
 
 	if (vttok.size() == 2 && vttok[1] == L"--help")
 	{
@@ -164,9 +164,14 @@ void Scripter::CommandCreate(const std::vector<std::wstring> &vttok)
 	sp.color = parse_rgba(vttok[4], error_handler(L"rgba"));
 
 	if (vttok.size() >= 6)
-		sp.velocity = parse_vec3(vttok[5], error_handler(L"vec3"));
+		sp.shininess = static_cast<float>(parse_real(vttok[5], error_handler(L"real")));
+	else
+		sp.shininess = 64.0f;
 
 	if (vttok.size() >= 7)
+		sp.velocity = parse_vec3(vttok[5], error_handler(L"vec3"));
+
+	if (vttok.size() >= 8)
 		sp.AngularVelocity = parse_vec3(vttok[6], error_handler(L"vec3"));
 
 	m_pHost->GetSphereManager()->AddSphere(sp);

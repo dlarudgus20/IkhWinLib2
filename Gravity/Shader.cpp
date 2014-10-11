@@ -46,6 +46,8 @@ Shader::Shader()
 	glAttachShader(m_program, m_fragment);
 
 	glLinkProgram(m_program);
+	ProgramErrorCheck(m_program);
+
 	glUseProgram(m_program);
 }
 
@@ -72,26 +74,72 @@ std::pair<const char *, GLint> Shader::ReadFromResource(UINT id)
 
 void Shader::ShaderCompileErrorCheck(GLuint shader, const std::string &name)
 {
+	GLint bCompiled;
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &bCompiled);
+
 	GLint len;
 	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
 
+	std::string str;
+
 	if (len > 1) // '\0' character
 	{
-		std::string str(len, '\0');
+		str.resize(len);
 		GLsizei cWritten;
 		glGetShaderInfoLog(shader, len, &cWritten, &str[0]);
-
-		GLint bCompiled;
-		glGetShaderiv(shader, GL_COMPILE_STATUS, &bCompiled);
-
-		OutputDebugStringA(name + ": " + (bCompiled == GL_TRUE ? "info\n" : "error\n"));
+	}
+	if (bCompiled == GL_FALSE)
+	{
+		OutputDebugStringA(name + ": error\n");
+		if (len > 1)
+		{
+			OutputDebugStringA("========\n");
+			OutputDebugStringA(str);
+			OutputDebugStringA("========\n");
+		}
+		throw std::runtime_error("shader compilation is failed in '" + name + "'");
+	}
+	else if (len > 1)
+	{
+		OutputDebugStringA(name + ": info\n");
 		OutputDebugStringA("========\n");
 		OutputDebugStringA(str);
-		OutputDebugStringA("\n========\n");
+		OutputDebugStringA("========\n");
+	}
+}
 
-		if (bCompiled == GL_FALSE)
+void Shader::ProgramErrorCheck(GLuint prog)
+{
+	GLint bLinked;
+	glGetProgramiv(prog, GL_LINK_STATUS, &bLinked);
+
+	GLint len;
+	glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &len);
+
+	std::string str;
+
+	if (len > 1) // '\0' character
+	{
+		str.resize(len);
+		GLsizei cWritten;
+		glGetProgramInfoLog(prog, len, &cWritten, &str[0]);
+	}
+	if (bLinked == GL_FALSE)
+	{
+		OutputDebugStringA("shader program linking error\n");
+		if (len > 1)
 		{
-			throw std::runtime_error("shader compilation is failed in '" + name + "'");
+			OutputDebugStringA("========\n");
+			OutputDebugStringA(str);
+			OutputDebugStringA("========\n");
 		}
+		throw std::runtime_error("shader program linking is failed");
+	}
+	else if (len > 1)
+	{
+		OutputDebugStringA("shader program info\n");
+		OutputDebugStringA("========\n");
+		OutputDebugStringA(str);
+		OutputDebugStringA("========\n");
 	}
 }

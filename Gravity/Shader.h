@@ -38,5 +38,7 @@ public:
 
 private:
 	static std::pair<const char *, GLint> ReadFromResource(UINT id);
+
 	static void ShaderCompileErrorCheck(GLuint shader, const std::string &name);
+	static void ProgramErrorCheck(GLuint prog);
 };
