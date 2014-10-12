@@ -25,6 +25,7 @@
 #include "stdafx.h"
 #include "CRendererCtrl.h"
 #include "CMyApp.h"
+#include "resource.h"
 
 #include <IkhWinLib2/CWndClass.h>
 
@@ -33,12 +34,16 @@
 
 BEGIN_MSGMAP(CRendererCtrl, CIdleOpenGLWnd)
 	MSGMAP_WM_CREATE(OnCreate)
-	MSGMAP_WM_LBUTTONDOWN(OnLButtonDown)
-	MSGMAP_WM_LBUTTONDBLCLK(OnLButtonDown)
-	MSGMAP_WM_RBUTTONDOWN(OnRButtonDown)
+	MSGMAP_WM_CONTEXTMENU(OnContextMenu)
 	MSGMAP_WM_SIZE(OnSize)
 	MSGMAP_WM_DESTROY(OnDestroy)
 END_MSGMAP(CRendererCtrl, CIdleOpenGLWnd)
+
+CRendererCtrl::CRendererCtrl(SphereManager *psm, Camera *pc)
+	: m_pSphereManager(psm), m_pCamera(pc)
+	, m_ContextMenu(MAKEINTRESOURCE(IDM_CONTEXT_MENU))
+{
+}
 
 void CRendererCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle,
 	int x, int y, int nWidth, int nHeight, int id, HWND hWndParent)
@@ -76,21 +81,20 @@ BOOL CRendererCtrl::OnCreate(LPCREATESTRUCT lpcs)
 	return TRUE;
 }
 
-void CRendererCtrl::OnLButtonDown(BOOL fDoubleClick, int x, int y, UINT keyflags)
+void CRendererCtrl::OnContextMenu(HWND hContext, UINT xPos, UINT yPos)
 {
-	if (!fDoubleClick)
+	/*UINT id = TrackPopupMenu(
+		GetSubMenu(m_ContextMenu, 0),
+		TPM_LEFTALIGN | TPM_TOPALIGN | TPM_RETURNCMD, xPos, yPos, 0, *this, nullptr
+		);
+
+	switch (id)
 	{
-
-	}
-	else
-	{
-
-	}
-}
-
-void CRendererCtrl::OnRButtonDown(BOOL fDoubleClick, int x, int y, UINT keyflags)
-{
-
+		case ID_NEW_SPHERE:
+			m_pSphereManager->PauseRunning();
+			m_pSphereManager->ResumeRunning();
+			break;
+	}*/
 }
 
 void CRendererCtrl::OnSize(UINT state, int cx, int cy)

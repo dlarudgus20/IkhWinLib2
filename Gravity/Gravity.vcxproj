@@ -181,6 +181,7 @@
     <ClCompile Include="CCmdEditCtrl.cpp" />
     <ClCompile Include="CMainWindow.cpp" />
     <ClCompile Include="CMyApp.cpp" />
+    <ClCompile Include="CNewSphereDialog.cpp" />
     <ClCompile Include="CRendererCtrl.cpp" />
     <ClCompile Include="CTextBoxCtrl.cpp" />
     <ClCompile Include="file_util.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="CCmdEditCtrl.h" />
     <ClInclude Include="CMainWindow.h" />
     <ClInclude Include="CMyApp.h" />
+    <ClInclude Include="CNewSphereDialog.h" />
     <ClInclude Include="CRendererCtrl.h" />
     <ClInclude Include="CTextBoxCtrl.h" />
     <ClInclude Include="file_util.h" />
@@ -235,6 +237,7 @@
     <Image Include="docs\Impulse(translation).png" />
     <Image Include="docs\Impulse(translation-2).png" />
     <Image Include="docs\NormalForce.png" />
+    <Image Include="icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

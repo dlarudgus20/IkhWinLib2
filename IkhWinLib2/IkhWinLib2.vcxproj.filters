@@ -81,13 +81,7 @@
     <ClInclude Include="IkhWinLib2\CWindow.h">
       <Filter>IkhWinLib2</Filter>
     </ClInclude>
-    <ClInclude Include="IkhWinLib2\stlgc.h">
-      <Filter>IkhWinLib2</Filter>
-    </ClInclude>
     <ClInclude Include="IkhWinLib2\Utility.h">
-      <Filter>IkhWinLib2</Filter>
-    </ClInclude>
-    <ClInclude Include="IkhWinLib2\BoehmGC.h">
       <Filter>IkhWinLib2</Filter>
     </ClInclude>
     <ClInclude Include="IkhWinLib2\FnEvent.h">
@@ -189,6 +183,9 @@
     <ClInclude Include="IkhWinLib2\CToolTipCtrl.h">
       <Filter>IkhWinLib2\Controls</Filter>
     </ClInclude>
+    <ClInclude Include="IkhWinLib2\CMenu.h">
+      <Filter>IkhWinLib2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -289,6 +286,9 @@
     </ClCompile>
     <ClCompile Include="CToolTipCtrl.cpp">
       <Filter>소스 파일\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="CMenu.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

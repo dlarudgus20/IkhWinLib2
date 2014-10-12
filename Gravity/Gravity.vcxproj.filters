@@ -19,6 +19,9 @@
     <Filter Include="Shader">
       <UniqueIdentifier>{cd213bae-9ca3-416e-b54c-843bf42d173f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="grvs">
+      <UniqueIdentifier>{fe8d434a-c2d0-4bed-8a5e-54052e7cf0b2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CMyApp.cpp">
@@ -55,6 +58,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="file_util.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CNewSphereDialog.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -107,6 +113,9 @@
     <ClInclude Include="file_util.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="CNewSphereDialog.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="fragment.frag">
@@ -125,7 +134,9 @@
     <None Include="docs\docs.md">
       <Filter>docs</Filter>
     </None>
-    <None Include="main.grvs" />
+    <None Include="main.grvs">
+      <Filter>grvs</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="docs\Impulse(translation).png">
@@ -136,6 +147,9 @@
     </Image>
     <Image Include="docs\Impulse(translation-2).png">
       <Filter>docs</Filter>
+    </Image>
+    <Image Include="icon.ico">
+      <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>
 </Project>

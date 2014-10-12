@@ -85,12 +85,14 @@ BOOL CMainWindow::OnCreate(LPCREATESTRUCT lpcs)
 	// print help
 	m_Scripter.ExecuteLine(L"help");
 
-	// main.grvs가 있으면 
+	// main.grvs가 있으면
+#ifndef _DEBUG
 	DWORD attr = GetFileAttributes(L"main.grvs");
 	if (attr != INVALID_FILE_ATTRIBUTES && !(attr & FILE_ATTRIBUTE_DIRECTORY))
 	{
 		m_Scripter.ExecuteLine(L"load main.grvs");
 	}
+#endif
 
 	// CmdListEdit 스크롤 일회성 타이머
 	SetTimer(*this, 1000, 100, nullptr);

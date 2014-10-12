@@ -426,6 +426,10 @@ void Scripter::CommandSave(const std::wstring &line, const std::vector<std::wstr
 	{
 		throw ScripterException(fname + L": " + e.Message());
 	}
+	catch (std::ios_base::failure &)
+	{
+		throw ScripterException(fname + L": 파일 저장에 실패하였습니다.");
+	}
 
 	m_pHost->WriteLine(fname + L": 스크립트 저장 완료");
 }
@@ -473,12 +477,14 @@ void Scripter::CommandLoad(const std::wstring &line, const std::vector<std::wstr
 		}
 		BOOST_SCOPE_EXIT_END
 
+		file.exceptions(std::ios::badbit);
+
 		while (1)
 		{
 			if (file.eof())
 				break;
-			if (file.bad())
-				throw ScripterException(fname + L": 파일을 읽을 수 없습니다.");
+			else if (file.fail())
+				throw std::ios_base::failure("");
 
 			std::getline(file, strLine);
 			line++;
@@ -496,6 +502,10 @@ void Scripter::CommandLoad(const std::wstring &line, const std::vector<std::wstr
 	catch (file_util::CFileUtilException &e)
 	{
 		throw ScripterException(fname + L": " + e.Message());
+	}
+	catch (std::ios_base::failure &)
+	{
+		throw ScripterException(fname + L": 파일을 읽을 수 없습니다.");
 	}
 
 	m_pHost->WriteLine(fname + L": 스크립트 실행 완료");

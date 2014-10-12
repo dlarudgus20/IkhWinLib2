@@ -27,7 +27,7 @@
 #include <IkhWinLib2/CIdleOpenGLWnd.h>
 #include <IkhWinLib2/IControl.h>
 #include <IkhWinLib2/FnEvent.h>
-using namespace IkhProgram::IkhWinLib2;
+#include <IkhWinLib2/CMenu.h>
 
 #include "CTextBoxCtrl.h"
 #include "Shader.h"
@@ -47,6 +47,7 @@ public:
 
 private:
 	EventFnPtr<void()> m_efpIdle;
+	CMenu m_ContextMenu;
 	CTextBoxCtrl m_InfoTextCtrl;
 
 	SphereManager *m_pSphereManager;
@@ -56,12 +57,11 @@ private:
 	std::unique_ptr<Shader> m_pShader;
 
 public:
-	explicit CRendererCtrl(SphereManager *psm, Camera *pc) : m_pSphereManager(psm), m_pCamera(pc) { }
+	explicit CRendererCtrl(SphereManager *psm, Camera *pc);
 
 protected:
 	BOOL OnCreate(LPCREATESTRUCT lpcs);
-	void OnLButtonDown(BOOL fDoubleClick, int x, int y, UINT keyflags);
-	void OnRButtonDown(BOOL fDoubleClick, int x, int y, UINT keyflags);
+	void OnContextMenu(HWND hContext, UINT xPos, UINT yPos);
 	void OnSize(UINT state, int cx, int cy);
 	void OnDestroy();
 

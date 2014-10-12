@@ -180,6 +180,7 @@
     <ClInclude Include="IkhWinLib2\CFontDialog.h" />
     <ClInclude Include="IkhWinLib2\CGdiObject.h" />
     <ClInclude Include="IkhWinLib2\CImageList.h" />
+    <ClInclude Include="IkhWinLib2\CMenu.h" />
     <ClInclude Include="IkhWinLib2\CModalDialog.h" />
     <ClInclude Include="IkhWinLib2\CModelessDialog.h" />
     <ClInclude Include="IkhWinLib2\CPropViewCtrl.h" />
@@ -233,6 +234,7 @@
     <ClCompile Include="CHotkeyCtrl.cpp" />
     <ClCompile Include="CImageList.cpp" />
     <ClCompile Include="CListBoxCtrl.cpp" />
+    <ClCompile Include="CMenu.cpp" />
     <ClCompile Include="CModalDialog.cpp" />
     <ClCompile Include="CModelessDialog.cpp" />
     <ClCompile Include="CMsgTarget.cpp" />
