@@ -170,254 +170,231 @@ void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 
 	std::vector<std::shared_ptr<CollisionInfo> > collisions;
 
-	// pair.first -> 충돌정보
-	// pair.second -> `true`이면 negative - i와 j를 반대로!
-	typedef std::multimap<int, std::pair<std::shared_ptr<CollisionInfo>, bool> > col_map_t;
-	col_map_t col_map;
-
-	// 충돌 감지
-
-	//#pragma omp parallel for
+#pragma omp parallel for
 	for (int i = 0; static_cast<size_t>(i) < m_Spheres.size() - 1; i++)
 	{
-		#pragma omp parallel for
+#pragma omp parallel for
 		for (int j = i + 1; static_cast<size_t>(j) < m_Spheres.size(); j++)
 		{
 			auto ptr = DetectCollision(NewSpheres, i, j, LOGICAL_TIME_SPAN);
 			if (!ptr)
 				continue;
 
-			#pragma omp critical
+#pragma omp critical
 			{
 				collisions.push_back(std::move(ptr));
 			}
 		}
 	}
 
-	std::unordered_map<int, double> map_time;
-
-	// 맨 먼저 일어난 충돌들을 col_map에 기록
-	for (auto &ptr : collisions)
-	{
-		int arkey[2] = { ptr->i, ptr->j };
-		bool key_is_j = false;
-
-		for (int key : arkey)
-		{
-			auto it = col_map.find(key);
-			if (it == col_map.end())
-			{
-				col_map.emplace(key, std::make_pair(ptr, key_is_j));
-			}
-			else
-			{
-				if (abs(it->second.first->t - ptr->t) < EPSILON)
-				{
-					// 충돌이 동시에 일어남
-					col_map.emplace(key, std::make_pair(ptr, key_is_j));
-				}
-				else if (it->second.first->t > ptr->t)
-				{
-					// `ptr`의 충돌이 `it->second.first`보다 먼저 일어남
-					it->second.first = ptr;
-				}
-				else
-				{
-					goto cont;
-				}
-			}
-
-			map_time[key] = ptr->t;
-
-		cont:
-			key_is_j = true;
-		}
-	}
-
-	// 충격량/각충격량의 총합을 계산해 map에 기록
+	std::sort(collisions.begin(), collisions.end(),
+		[](const std::shared_ptr<CollisionInfo> &p1, const std::shared_ptr<CollisionInfo> &p2) {
+		return p1->t < p2->t;
+	});
 
 	std::unordered_map<int, std::array<double, 3> > map_sum_I, map_sum_A;
+	double RemainTime = LOGICAL_TIME_SPAN;
 
-	std::pair<col_map_t::iterator, col_map_t::iterator> eq_rg;
-
-	for (int idx = 0; ; )
+	while (!collisions.empty())
 	{
-		eq_rg = col_map.equal_range(idx);
-		if (eq_rg.first != eq_rg.second)
+		auto it_col = collisions.begin();
+		double t1 = (*it_col)->t;
+		double before_time = t1;
+
+		map_sum_I.emplace((*it_col)->i, std::array < double, 3 > { { 0.0, 0.0, 0.0 } });
+		map_sum_A.emplace((*it_col)->i, std::array < double, 3 > { { 0.0, 0.0, 0.0 } });
+		map_sum_I.emplace((*it_col)->j, std::array < double, 3 > { { 0.0, 0.0, 0.0 } });
+		map_sum_A.emplace((*it_col)->j, std::array < double, 3 > { { 0.0, 0.0, 0.0 } });
+
+		for (++it_col; it_col != collisions.end(); ++it_col)
 		{
-			auto i_sum_I = map_sum_I.emplace(idx, std::array<double, 3>{ { 0.0, 0.0, 0.0 } }).first;
-			auto i_sum_A = map_sum_A.emplace(idx, std::array<double, 3>{ { 0.0, 0.0, 0.0 } }).first;
+			map_sum_I.emplace((*it_col)->i, std::array < double, 3 > { { 0.0, 0.0, 0.0 } });
+			map_sum_A.emplace((*it_col)->i, std::array < double, 3 > { { 0.0, 0.0, 0.0 } });
+			map_sum_I.emplace((*it_col)->j, std::array < double, 3 > { { 0.0, 0.0, 0.0 } });
+			map_sum_A.emplace((*it_col)->j, std::array < double, 3 > { { 0.0, 0.0, 0.0 } });
 
-			std::for_each(eq_rg.first, eq_rg.second,
-				[&NewSpheres, &map_sum_I, &map_sum_A, i_sum_I, i_sum_A, idx] (col_map_t::value_type &pr) {
-				auto &ptr = pr.second.first;
-				if (!ptr->bProcessed)
-				{
-					if (pr.second.second) // j번 sphere 기준으로 처리해야 한다면
-					{
-						// j번 sphere의 좌표계로 바꿈
-						std::swap(ptr->i, ptr->j);
-						negativen(ptr->p);
-						negativen(ptr->v);
-					}
+			if ((*it_col)->t - t1 >= EPSILON)
+				break;
 
-					// docs.md#충격량 참조
-
-					// 진행 방향과 충격량의 방향이 평행하지 않은 경우
-					// DetectCollision() 함수에서 이미 처리했기 때문에 있어서는 안됌.
-					assert(!(ptr->p_dot_v > EPSILON));
-
-					auto j_sum_I = map_sum_I.emplace(ptr->j, std::array<double, 3> { { 0.0, 0.0, 0.0 } }).first;
-					auto j_sum_A = map_sum_A.emplace(ptr->j, std::array<double, 3> { { 0.0, 0.0, 0.0 } }).first;
-
-					double v_length = sqrt(ptr->v_length_2);
-
-					double cos_theta_2 = square(ptr->p_dot_v) / ptr->p_length_2 / ptr->v_length_2;
-					double sin_theta_2 = 1 - cos_theta_2;
-
-					double sum_inverse_mass = (1 / NewSpheres[ptr->i].mass)
-						+ (1 / NewSpheres[ptr->j].mass);
-
-					double sum_inverse_moment = (1 / (NewSpheres[ptr->i].mass * 2 / 5))
-						+ (1 / (NewSpheres[ptr->i].mass * 2 / 5));
-
-					double J_length = (2 * v_length * cos_theta_2)
-						/ (sum_inverse_mass * cos_theta_2 + sum_inverse_moment * sin_theta_2);
-
-					std::array<double, 3> J = ptr->v;
-					J[0] *= J_length / v_length;
-					J[1] *= J_length / v_length;
-					J[2] *= J_length / v_length;
-	
-					double I_length = J_length * sqrt(cos_theta_2);
-	
-					std::array<double, 3> i_I, j_I;
-					std::array<double, 3> i_moment_arm;
-					std::array<double, 3> j_moment_arm;
-
-					double p_length = sqrt(ptr->p_length_2);
-					i_moment_arm = ptr->p;
-					i_moment_arm[0] /= p_length;
-					i_moment_arm[1] /= p_length;
-					i_moment_arm[2] /= p_length;
-
-					j_moment_arm = i_moment_arm;
-					i_I = i_moment_arm;
-					j_I = i_moment_arm;
-	
-					i_I[0] *= I_length;
-					i_I[1] *= I_length;
-					i_I[2] *= I_length;
-	
-					j_I[0] *= -I_length;
-					j_I[1] *= -I_length;
-					j_I[2] *= -I_length;
-	
-					i_moment_arm[0] *= NewSpheres[ptr->i].radius;
-					i_moment_arm[1] *= NewSpheres[ptr->i].radius;
-					i_moment_arm[2] *= NewSpheres[ptr->i].radius;
-	
-					j_moment_arm[0] *= -NewSpheres[ptr->j].radius;
-					j_moment_arm[1] *= -NewSpheres[ptr->j].radius;
-					j_moment_arm[2] *= -NewSpheres[ptr->j].radius;
-	
-					std::array<double, 3> i_A, j_A;
-					cross_product(i_A, i_moment_arm, J); // i_A = i_r x i_J
-					cross_product(j_A, J, j_moment_arm); // j_A = j_r x j_J = j_r x (-i_J) = -(j_r x i_J) = i_J x j_r
-
-					i_sum_I->second[0] += i_I[0];
-					i_sum_I->second[1] += i_I[1];
-					i_sum_I->second[2] += i_I[2];
-					i_sum_A->second[0] += i_A[0];
-					i_sum_A->second[1] += i_A[1];
-					i_sum_A->second[2] += i_A[2];
-
-					j_sum_I->second[0] += j_I[0];
-					j_sum_I->second[1] += j_I[1];
-					j_sum_I->second[2] += j_I[2];
-					j_sum_A->second[0] += j_A[0];
-					j_sum_A->second[1] += j_A[1];
-					j_sum_A->second[2] += j_A[2];
-
-					ptr->bProcessed = true;
-				}
-			});
+			before_time += (*it_col)->t;
 		}
 
-		if (eq_rg.second == col_map.end())
-			break;
+		int count = it_col - collisions.begin();
+		before_time /= count; // before_time = mean(t, t, t, ...);
 
-		idx = eq_rg.second->first;
-	}
+#pragma omp parallel for
+		for (int idx = 0; idx < count; idx++)
+		{
+			const std::shared_ptr<CollisionInfo> &ptr = collisions[idx];
 
-	// 충격량/각충격량을 토대로 최종 위치/속도/각속도 계산
-	auto it_sum_I = map_sum_I.begin();
-	auto it_sum_A = map_sum_A.begin();
-	for (; it_sum_I != map_sum_I.end(); ++it_sum_I, ++it_sum_A)
-	{
-		int i = it_sum_I->first;
+			double v_length = sqrt(ptr->v_length_2);
 
-		const Sphere &oldsp = m_Spheres[i];
-		Sphere &newsp = NewSpheres[i];
+			double cos_theta_2 = square(ptr->p_dot_v) / ptr->p_length_2 / ptr->v_length_2;
+			double sin_theta_2 = 1 - cos_theta_2;
 
-		const std::array<double, 3> &pr_I = it_sum_I->second;
-		const std::array<double, 3> &pr_A = it_sum_A->second;
+			double sum_inverse_mass = (1 / NewSpheres[ptr->i].mass)
+				+ (1 / NewSpheres[ptr->j].mass);
 
-		std::array<double, 3> dv = {
-			pr_I[0] / oldsp.mass,
-			pr_I[1] / oldsp.mass,
-			pr_I[2] / oldsp.mass
-		};
+			double sum_inverse_moment = (1 / (NewSpheres[ptr->i].mass * 2 / 5))
+				+ (1 / (NewSpheres[ptr->i].mass * 2 / 5));
 
-		double moment_of_inerita = 2 * oldsp.mass * square(oldsp.radius) / 5;
-		std::array<double, 3> dw = {
-			pr_A[0] / moment_of_inerita,
-			pr_A[1] / moment_of_inerita,
-			pr_A[2] / moment_of_inerita
-		};
+			double J_length = (2 * v_length * cos_theta_2)
+				/ (sum_inverse_mass * cos_theta_2 + sum_inverse_moment * sin_theta_2);
 
-		double before_time = map_time[i];
-		double after_time = LOGICAL_TIME_SPAN - before_time;
+			std::array<double, 3> J = ptr->v;
+			J[0] *= J_length / v_length;
+			J[1] *= J_length / v_length;
+			J[2] *= J_length / v_length;
 
-		// 충돌 지점까지 계산
-		// v = (v0 + v1)/2
-		// RunForce() 참조
-		std::array<double, 3> old_v = {
-			(oldsp.velocity[0] + newsp.velocity[0]) / 2,
-			(oldsp.velocity[1] + newsp.velocity[1]) / 2,
-			(oldsp.velocity[2] + newsp.velocity[2]) / 2,
-		};
-		newsp.coord[0] = oldsp.coord[0] + old_v[0] * before_time;
-		newsp.coord[1] = oldsp.coord[1] + old_v[1] * before_time;
-		newsp.coord[2] = oldsp.coord[2] + old_v[2] * before_time;
+			double I_length = J_length * sqrt(cos_theta_2);
 
-		// 속도를 변화시킨 후 남은 시간을 동안 다시 움직임
-		newsp.velocity[0] += dv[0];
-		newsp.velocity[1] += dv[1];
-		newsp.velocity[2] += dv[2];
+			std::array<double, 3> i_I, j_I;
+			std::array<double, 3> i_moment_arm;
+			std::array<double, 3> j_moment_arm;
 
-		newsp.coord[0] += newsp.velocity[0] * after_time;
-		newsp.coord[1] += newsp.velocity[1] * after_time;
-		newsp.coord[2] += newsp.velocity[2] * after_time;
+			double p_length = sqrt(ptr->p_length_2);
+			i_moment_arm = ptr->p;
+			i_moment_arm[0] /= p_length;
+			i_moment_arm[1] /= p_length;
+			i_moment_arm[2] /= p_length;
 
-		// 각속도에 대해서도 동일한 처리
-		std::array<double, 3> old_w = {
-			(oldsp.AngularVelocity[0] + newsp.AngularVelocity[0]) / 2,
-			(oldsp.AngularVelocity[1] + newsp.AngularVelocity[1]) / 2,
-			(oldsp.AngularVelocity[2] + newsp.AngularVelocity[2]) / 2,
-		};
+			j_moment_arm = i_moment_arm;
+			i_I = i_moment_arm;
+			j_I = i_moment_arm;
 
-		newsp.angle[0] = oldsp.angle[0] + old_w[0] * before_time;
-		newsp.angle[1] = oldsp.angle[1] + old_w[1] * before_time;
-		newsp.angle[2] = oldsp.angle[2] + old_w[2] * before_time;
+			i_I[0] *= I_length;
+			i_I[1] *= I_length;
+			i_I[2] *= I_length;
 
-		newsp.AngularVelocity[0] += dw[0];
-		newsp.AngularVelocity[1] += dw[1];
-		newsp.AngularVelocity[2] += dw[2];
+			j_I[0] *= -I_length;
+			j_I[1] *= -I_length;
+			j_I[2] *= -I_length;
 
-		newsp.angle[0] += newsp.AngularVelocity[0] * after_time;
-		newsp.angle[1] += newsp.AngularVelocity[1] * after_time;
-		newsp.angle[2] += newsp.AngularVelocity[2] * after_time;
+			i_moment_arm[0] *= NewSpheres[ptr->i].radius;
+			i_moment_arm[1] *= NewSpheres[ptr->i].radius;
+			i_moment_arm[2] *= NewSpheres[ptr->i].radius;
+
+			j_moment_arm[0] *= -NewSpheres[ptr->j].radius;
+			j_moment_arm[1] *= -NewSpheres[ptr->j].radius;
+			j_moment_arm[2] *= -NewSpheres[ptr->j].radius;
+
+			std::array<double, 3> i_A, j_A;
+			cross_product(i_A, i_moment_arm, J); // i_A = i_r x i_J
+			cross_product(j_A, J, j_moment_arm); // j_A = j_r x j_J = j_r x (-i_J) = -(j_r x i_J) = i_J x j_r
+
+
+			auto i_sum_I = map_sum_I.find(ptr->i);
+			auto i_sum_A = map_sum_A.find(ptr->i);
+			auto j_sum_I = map_sum_I.find(ptr->j);
+			auto j_sum_A = map_sum_A.find(ptr->j);
+
+			i_sum_I->second[0] += i_I[0];
+			i_sum_I->second[1] += i_I[1];
+			i_sum_I->second[2] += i_I[2];
+			i_sum_A->second[0] += i_A[0];
+			i_sum_A->second[1] += i_A[1];
+			i_sum_A->second[2] += i_A[2];
+
+			j_sum_I->second[0] += j_I[0];
+			j_sum_I->second[1] += j_I[1];
+			j_sum_I->second[2] += j_I[2];
+			j_sum_A->second[0] += j_A[0];
+			j_sum_A->second[1] += j_A[1];
+			j_sum_A->second[2] += j_A[2];
+		}
+
+		#pragma omp parallel for
+		for (int i = 0; i < NewSpheres.size(); i++)
+		{
+			Sphere &oldsp = m_Spheres[i];
+			Sphere &newsp = NewSpheres[i];
+
+			std::array<double, 3> old_v = {
+				(oldsp.velocity[0] + newsp.velocity[0]) / 2,
+				(oldsp.velocity[1] + newsp.velocity[1]) / 2,
+				(oldsp.velocity[2] + newsp.velocity[2]) / 2,
+			};
+			oldsp.coord[0] += old_v[0] * before_time;
+			oldsp.coord[1] += old_v[1] * before_time;
+			oldsp.coord[2] += old_v[2] * before_time;
+
+			// 가속도
+			std::array<double, 3> a = {
+				(newsp.velocity[0] - oldsp.velocity[0]) / RemainTime,
+				(newsp.velocity[1] - oldsp.velocity[1]) / RemainTime,
+				(newsp.velocity[2] - oldsp.velocity[2]) / RemainTime
+			};
+			oldsp.velocity[0] += a[0] * before_time;
+			oldsp.velocity[1] += a[1] * before_time;
+			oldsp.velocity[2] += a[2] * before_time;
+
+			std::array<double, 3> old_w = {
+				(oldsp.AngularVelocity[0] + newsp.AngularVelocity[0]) / 2,
+				(oldsp.AngularVelocity[1] + newsp.AngularVelocity[1]) / 2,
+				(oldsp.AngularVelocity[2] + newsp.AngularVelocity[2]) / 2,
+			};
+			oldsp.angle[0] += old_w[0] * before_time;
+			oldsp.angle[1] += old_w[1] * before_time;
+			oldsp.angle[2] += old_w[2] * before_time;
+
+			// 각가속도
+			std::array<double, 3> Aa = {
+				(newsp.AngularVelocity[0] - oldsp.AngularVelocity[0]) / RemainTime,
+				(newsp.AngularVelocity[1] - oldsp.AngularVelocity[1]) / RemainTime,
+				(newsp.AngularVelocity[2] - oldsp.AngularVelocity[2]) / RemainTime
+			};
+			oldsp.AngularVelocity[0] += Aa[0] * before_time;
+			oldsp.AngularVelocity[1] += Aa[1] * before_time;
+			oldsp.AngularVelocity[2] += Aa[2] * before_time;
+
+			// 충돌이 있다면
+			auto it_sum_I = map_sum_I.find(i);
+			if (it_sum_I != map_sum_I.end())
+			{
+				auto it_sum_A = map_sum_A.find(i);
+				double after_time = RemainTime - before_time;
+
+				const std::array<double, 3> &pr_I = it_sum_I->second;
+				const std::array<double, 3> &pr_A = it_sum_A->second;
+
+				std::array<double, 3> dv = {
+					pr_I[0] / oldsp.mass,
+					pr_I[1] / oldsp.mass,
+					pr_I[2] / oldsp.mass
+				};
+				oldsp.velocity[0] += dv[0];
+				oldsp.velocity[1] += dv[1];
+				oldsp.velocity[2] += dv[2];
+				newsp.velocity[0] += dv[0];
+				newsp.velocity[1] += dv[1];
+				newsp.velocity[2] += dv[2];
+				newsp.coord[0] += newsp.velocity[0] * after_time;
+				newsp.coord[1] += newsp.velocity[1] * after_time;
+				newsp.coord[2] += newsp.velocity[2] * after_time;
+
+				double moment_of_inerita = 2 * oldsp.mass * square(oldsp.radius) / 5;
+				std::array<double, 3> dw = {
+					pr_A[0] / moment_of_inerita,
+					pr_A[1] / moment_of_inerita,
+					pr_A[2] / moment_of_inerita
+				};
+				oldsp.AngularVelocity[0] += dw[0];
+				oldsp.AngularVelocity[1] += dw[1];
+				oldsp.AngularVelocity[2] += dw[2];
+				newsp.AngularVelocity[0] += dw[0];
+				newsp.AngularVelocity[1] += dw[1];
+				newsp.AngularVelocity[2] += dw[2];
+				newsp.angle[0] += newsp.AngularVelocity[0] * after_time;
+				newsp.angle[1] += newsp.AngularVelocity[1] * after_time;
+				newsp.angle[2] += newsp.AngularVelocity[2] * after_time;
+			}
+		}
+
+		RemainTime -= before_time;
+
+		collisions.erase(collisions.begin(), it_col);
+		map_sum_I.clear();
+		map_sum_A.clear();
 	}
 }
 
