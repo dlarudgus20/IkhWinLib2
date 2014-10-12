@@ -25,7 +25,6 @@
 #pragma once
 
 #include <IkhWinLib2/CApplication.h>
-using namespace IkhProgram::IkhWinLib2;
 
 #include "CMainWindow.h"
 

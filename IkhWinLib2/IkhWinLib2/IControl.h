@@ -31,6 +31,8 @@ BEGIN_IKHWINLIB2()
 class IControl
 {
 public:
+	virtual ~IControl() = default;
+
 	void Create(DWORD dwStyle, int x, int y, int nWidth, int nHeight, int id, HWND hWndParent);
 
 	virtual void CreateEx(DWORD dwExStyle, DWORD dwStyle,

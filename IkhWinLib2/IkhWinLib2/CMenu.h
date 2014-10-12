@@ -24,53 +24,51 @@
 
 #pragma once
 
-#include <IkhWinLib2/CForm.h>
-#include <IkhWinLib2/CEditCtrl.h>
-#include <IkhWinLib2/FnEvent.h>
+#include "CObject.h"
+#include "CLogicError.h"
 
-#include "CCmdEditCtrl.h"
-#include "CRendererCtrl.h"
-#include "SphereManager.h"
-#include "Camera.h"
-#include "Scripter.h"
+BEGIN_IKHWINLIB2()
 
-class CMainWindow final : public CForm, public virtual IScriptHost
+class CMenu : public CObject, private boost::noncopyable
 {
-	DECLARE_MSGMAP();
-public:
-	void Create();
-
 private:
-	CRendererCtrl m_RendererCtrl;
-	CEditCtrl m_CmdListEdit;
-	CCmdEditCtrl m_CmdInputEdit;
-
-	EventFnPtr<void(CCmdEditCtrl *, const std::wstring &)> m_efpCmdInput;
-
-	SphereManager m_SphereManager;
-	Camera m_Camera;
-
-	Scripter m_Scripter;
-
-	bool m_bForceScroll = true;
+	HMENU m_hMenu;
+	bool m_bRequireDestroy;
 
 public:
-	CMainWindow() : m_RendererCtrl(&m_SphereManager, &m_Camera), m_Scripter(this) { }
+	explicit CMenu(HMENU hMenu);
+	explicit CMenu(LPCTSTR lpMenu);
+	virtual ~CMenu();
 
-protected:
-	BOOL OnCreate(LPCREATESTRUCT lpcs);
-	void OnTimer(UINT id);
-	void OnDestroy();
+	void Attach(HMENU hMenu);
 
-	void OnCmdInput(CCmdEditCtrl *pCtrl, const std::wstring &input);
-
-private:
-
-public:
-	// IScriptHost
-	virtual void WriteLine(const std::wstring &str) override;
-	virtual void WriteMultiLine(const std::wstring &str) override;
-	virtual void UpdateTitle() override;
-	virtual void ForceScroll(bool bScroll) override;
-	virtual SphereManager *GetSphereManager() override;
+	operator HMENU() const NOEXCEPT;
 };
+
+inline CMenu::CMenu(HMENU hMenu)
+	: m_bRequireDestroy(false)
+{
+	Attach(hMenu);
+}
+
+inline CMenu::CMenu(LPCTSTR lpMenu)
+	: m_bRequireDestroy(true)
+{
+	HMENU hMenu = LoadMenu(GetModuleHandle(nullptr), lpMenu);
+	if (hMenu == nullptr)
+		throw CInvalidArgError(L"유효한 메뉴 리소스가 아닙니다.");
+
+	Attach(hMenu);
+}
+
+inline void CMenu::Attach(HMENU hMenu)
+{
+	m_hMenu = hMenu;
+}
+
+inline CMenu::operator HMENU() const NOEXCEPT
+{
+	return m_hMenu;
+}
+
+END_IKHWINLIB2()
