@@ -170,33 +170,36 @@ void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 
 	std::vector<std::shared_ptr<CollisionInfo> > collisions;
 
-#pragma omp parallel for
-	for (int i = 0; static_cast<size_t>(i) < m_Spheres.size() - 1; i++)
-	{
-#pragma omp parallel for
-		for (int j = i + 1; static_cast<size_t>(j) < m_Spheres.size(); j++)
-		{
-			auto ptr = DetectCollision(NewSpheres, i, j, LOGICAL_TIME_SPAN);
-			if (!ptr)
-				continue;
-
-#pragma omp critical
-			{
-				collisions.push_back(std::move(ptr));
-			}
-		}
-	}
-
-	std::sort(collisions.begin(), collisions.end(),
-		[](const std::shared_ptr<CollisionInfo> &p1, const std::shared_ptr<CollisionInfo> &p2) {
-		return p1->t < p2->t;
-	});
-
 	std::unordered_map<int, std::array<double, 3> > map_sum_I, map_sum_A;
 	double RemainTime = LOGICAL_TIME_SPAN;
-
-	while (!collisions.empty())
+int _ = 0;
+	while (1)
 	{
+		#pragma omp parallel for
+		for (int i = 0; static_cast<size_t>(i) < m_Spheres.size() - 1; i++)
+		{
+			#pragma omp parallel for
+			for (int j = i + 1; static_cast<size_t>(j) < m_Spheres.size(); j++)
+			{
+				auto ptr = DetectCollision(NewSpheres, i, j, RemainTime);
+				if (!ptr)
+					continue;
+
+				#pragma omp critical
+				{
+					collisions.push_back(std::move(ptr));
+				}
+			}
+		}
+
+		if (collisions.empty())
+			break;
+_++;
+		std::sort(collisions.begin(), collisions.end(),
+			[](const std::shared_ptr<CollisionInfo> &p1, const std::shared_ptr<CollisionInfo> &p2) {
+			return p1->t < p2->t;
+		});
+
 		auto it_col = collisions.begin();
 		double t1 = (*it_col)->t;
 		double before_time = t1;
@@ -303,7 +306,7 @@ void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 			j_sum_A->second[2] += j_A[2];
 		}
 
-		#pragma omp parallel for
+#pragma omp parallel for
 		for (int i = 0; i < NewSpheres.size(); i++)
 		{
 			Sphere &oldsp = m_Spheres[i];
@@ -390,11 +393,11 @@ void SphereManager::RunCollision(std::vector<Sphere> &NewSpheres)
 			}
 		}
 
-		RemainTime -= before_time;
-
-		collisions.erase(collisions.begin(), it_col);
 		map_sum_I.clear();
 		map_sum_A.clear();
+		RemainTime -= before_time;
+
+		collisions.clear();
 	}
 }
 
