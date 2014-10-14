@@ -25,6 +25,7 @@
 #include "stdafx.h"
 #include "Camera.h"
 
+//const double Camera::m_OriEye[3] = { 1154.70053837925153, 1154.70053837925153, 1154.70053837925153 };
 const double Camera::m_OriEye[3] = { 0, 0, 2000 };
 const double Camera::m_OriCenter[3] = { 0, 0, 0 };
 const double Camera::m_OriUp[3] = { 0, 1, 0 };
@@ -45,7 +46,6 @@ void Camera::Rotate(double angle)
 void Camera::Apply() const
 {
 	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
 	gluLookAt(m_eye[0], m_eye[1], m_eye[2],
 		m_center[0], m_center[1], m_center[2],
 		m_up[0], m_up[1], m_up[2]);

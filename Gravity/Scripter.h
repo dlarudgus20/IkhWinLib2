@@ -42,6 +42,8 @@ public:
 	virtual void UpdateTitle() = 0;
 	virtual void ForceScroll(bool bScroll) = 0;
 
+	virtual void UseOrtho(bool bOrtho) = 0;
+
 	virtual SphereManager *GetSphereManager() = 0;
 };
 
@@ -82,4 +84,5 @@ private:
 	void CommandSetEcho(const std::wstring &line, const std::vector<std::wstring> &vttok);
 	void CommandEcho(const std::wstring &line, const std::vector<std::wstring> &vttok);
 	void CommandForcescroll(const std::wstring &line, const std::vector<std::wstring> &vttok);
+	void CommandUseOrtho(const std::wstring &line, const std::vector<std::wstring> &vttok);
 };

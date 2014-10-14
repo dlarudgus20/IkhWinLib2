@@ -26,14 +26,24 @@
 #include "Projection.h"
 
 const double Projection::m_OriOrthoRect[4] = { -4000, 4000, -4000, 4000 };
-const double Projection::m_OriOrthoNear = 0;
+const double Projection::m_OriOrthoNear = -100000;
 const double Projection::m_OriOrthoFar = 100000;
 
+const double Projection::m_OriPersFovy = 43;
+const double Projection::m_OriPersNear = 1;
+const double Projection::m_OriPersFar = 300001;
+
 Projection::Projection()
+	: m_bOrtho(false)
 {
 	memcpy(m_OrthoRect, m_OriOrthoRect, sizeof(m_OrthoRect));
 	m_OrthoNear = m_OriOrthoNear;
 	m_OrthoFar = m_OriOrthoFar;
+
+	m_PersFovy = m_OriPersFovy;
+	m_PersAspect = 1.0f;
+	m_PersNear = m_OriPersNear;
+	m_PersFar = m_OriPersFar;
 }
 
 void Projection::SizeChanged(int cx, int cy)
@@ -42,16 +52,30 @@ void Projection::SizeChanged(int cx, int cy)
 	m_cy = cy;
 }
 
+void Projection::UseOrtho(bool bOrtho /* = true */)
+{
+	m_bOrtho = bOrtho;
+}
+
 void Projection::Apply() const
 {
 	static const double inch = 10.0;
 
 	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
 
 	if (m_cx != 0 && m_cy != 0)
 		glScaled(inch / m_cx, inch / m_cy, 1);
 
-	glOrtho(m_OrthoRect[0], m_OrthoRect[1], m_OrthoRect[2], m_OrthoRect[3],
-		m_OrthoNear, m_OrthoFar);
+	if (m_bOrtho)
+	{
+		glOrtho(m_OrthoRect[0], m_OrthoRect[1], m_OrthoRect[2], m_OrthoRect[3],
+			m_OrthoNear, m_OrthoFar);
+	}
+	else
+	{
+		gluPerspective(m_PersFovy, m_PersAspect, m_PersNear, m_PersFar);
+
+		glMatrixMode(GL_MODELVIEW);
+		glTranslated(0, 0, -10001);
+	}
 }

@@ -30,12 +30,18 @@ private:
 	static const double m_OriOrthoRect[4], m_OriOrthoNear, m_OriOrthoFar;
 	double m_OrthoRect[4], m_OrthoNear, m_OrthoFar;
 
+	static const double m_OriPersFovy, m_OriPersAspect, m_OriPersNear, m_OriPersFar;
+	double m_PersFovy, m_PersAspect, m_PersNear, m_PersFar;
+
 	int m_cx, m_cy;
+
+	bool m_bOrtho;
 
 public:
 	Projection();
 
 	void SizeChanged(int cx, int cy);
+	void UseOrtho(bool bOrtho = true);
 
 	void Apply() const;
 };

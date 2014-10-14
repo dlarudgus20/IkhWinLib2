@@ -33,6 +33,7 @@
 #include "SphereManager.h"
 #include "Camera.h"
 #include "Scripter.h"
+#include "Projection.h"
 
 class CMainWindow final : public CForm, public virtual IScriptHost
 {
@@ -49,13 +50,14 @@ private:
 
 	SphereManager m_SphereManager;
 	Camera m_Camera;
+	Projection m_projection;
 
 	Scripter m_Scripter;
 
 	bool m_bForceScroll = true;
 
 public:
-	CMainWindow() : m_RendererCtrl(&m_SphereManager, &m_Camera), m_Scripter(this) { }
+	CMainWindow() : m_RendererCtrl(&m_SphereManager, &m_Camera, &m_projection), m_Scripter(this) { }
 
 protected:
 	BOOL OnCreate(LPCREATESTRUCT lpcs);
@@ -72,5 +74,6 @@ public:
 	virtual void WriteMultiLine(const std::wstring &str) override;
 	virtual void UpdateTitle() override;
 	virtual void ForceScroll(bool bScroll) override;
+	virtual void UseOrtho(bool bOrtho) override;
 	virtual SphereManager *GetSphereManager() override;
 };

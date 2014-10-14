@@ -85,7 +85,8 @@ Scripter::Scripter(IScriptHost *pHost)
 		CMD_ENTRY(L"load", CommandLoad, L"스크립트를 불러와 실행합니다."),
 		CMD_ENTRY(L"setecho", CommandSetEcho, L"echo 활성화 여부를 설정합니다."),
 		CMD_ENTRY(L"echo", CommandEcho, L"문자열을 출력합니다."),
-		CMD_ENTRY(L"forcescroll", CommandForcescroll, L"강제 스크롤 여부를 설정합니다.")
+		CMD_ENTRY(L"forcescroll", CommandForcescroll, L"강제 스크롤 여부를 설정합니다."),
+		CMD_ENTRY(L"useortho", CommandUseOrtho, L"직교투영/원근투영 사용 여부를 설정합니다.")
 	});
 #undef CMD_ENTRY
 }
@@ -296,7 +297,7 @@ void Scripter::CommandSumMomentum(const std::wstring &line, const std::vector<st
 
 	std::array<double, 3> p = { 0, 0, 0 };
 
-	#pragma omp parallel for
+	//#pragma omp parallel for
 	for (int i = 0; static_cast<size_t>(i) < spheres.size(); ++i)
 	{
 		Sphere &sp = spheres[i];
@@ -567,4 +568,20 @@ void Scripter::CommandForcescroll(const std::wstring &line, const std::vector<st
 		throw ScripterException(usage);
 
 	m_pHost->ForceScroll(parse_bool(vttok[1]));
+}
+
+void Scripter::CommandUseOrtho(const std::wstring &line, const std::vector<std::wstring> &vttok)
+{
+	const std::wstring usage = L"useortho [직교투영-true,원근투영-false:bool]";
+
+	if (vttok.size() == 2 && vttok[1] == L"--help")
+	{
+		m_pHost->WriteLine(usage);
+		return;
+	}
+
+	if (vttok.size() != 2)
+		throw ScripterException(usage);
+
+	m_pHost->UseOrtho(parse_bool(vttok[1]));
 }

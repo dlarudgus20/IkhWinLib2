@@ -31,10 +31,10 @@
 
 #include "CTextBoxCtrl.h"
 #include "Shader.h"
-#include "Projection.h"
 
 class SphereManager;
 class Camera;
+class Projection;
 
 class CRendererCtrl final : public CIdleOpenGLWnd, public virtual IControl
 {
@@ -52,16 +52,21 @@ private:
 
 	SphereManager *m_pSphereManager;
 	Camera *m_pCamera;
-	Projection m_projection;
+	Projection *m_pProjection;
 
 	std::unique_ptr<Shader> m_pShader;
 
+	POINT m_PrevLButton;
+
 public:
-	explicit CRendererCtrl(SphereManager *psm, Camera *pc);
+	explicit CRendererCtrl(SphereManager *psm, Camera *pc, Projection *proj);
 
 protected:
 	BOOL OnCreate(LPCREATESTRUCT lpcs);
 	void OnContextMenu(HWND hContext, UINT xPos, UINT yPos);
+	void OnLButtonDown(BOOL fDoubleClick, int x, int y, UINT keyFlags);
+	void OnMouseMove(int x, int y, UINT keyFlags);
+	void OnLButtonUp(int x, int y, UINT state);
 	void OnSize(UINT state, int cx, int cy);
 	void OnDestroy();
 

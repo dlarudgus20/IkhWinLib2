@@ -174,6 +174,11 @@ void CMainWindow::WriteMultiLine(const std::wstring &str)
 	WriteLine(boost::algorithm::replace_all_copy(str, L"\n", L"\r\n"));
 }
 
+void CMainWindow::UseOrtho(bool bOrtho)
+{
+	m_projection.UseOrtho(bOrtho);
+}
+
 SphereManager *CMainWindow::GetSphereManager()
 {
 	return &m_SphereManager;

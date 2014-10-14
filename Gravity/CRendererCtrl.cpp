@@ -35,12 +35,15 @@
 BEGIN_MSGMAP(CRendererCtrl, CIdleOpenGLWnd)
 	MSGMAP_WM_CREATE(OnCreate)
 	MSGMAP_WM_CONTEXTMENU(OnContextMenu)
+	MSGMAP_WM_LBUTTONDOWN(OnLButtonDown)
+	MSGMAP_WM_MOUSEMOVE(OnMouseMove)
+	MSGMAP_WM_LBUTTONUP(OnLButtonUp)
 	MSGMAP_WM_SIZE(OnSize)
 	MSGMAP_WM_DESTROY(OnDestroy)
 END_MSGMAP(CRendererCtrl, CIdleOpenGLWnd)
 
-CRendererCtrl::CRendererCtrl(SphereManager *psm, Camera *pc)
-	: m_pSphereManager(psm), m_pCamera(pc)
+CRendererCtrl::CRendererCtrl(SphereManager *psm, Camera *pc, Projection *proj)
+	: m_pSphereManager(psm), m_pCamera(pc), m_pProjection(proj)
 	, m_ContextMenu(MAKEINTRESOURCE(IDM_CONTEXT_MENU))
 {
 }
@@ -97,6 +100,27 @@ void CRendererCtrl::OnContextMenu(HWND hContext, UINT xPos, UINT yPos)
 	}*/
 }
 
+void CRendererCtrl::OnLButtonDown(BOOL fDoubleClick, int x, int y, UINT keyFlags)
+{
+	m_PrevLButton.x = x;
+	m_PrevLButton.y = y;
+	SetCapture(*this);
+}
+
+void CRendererCtrl::OnMouseMove(int x, int y, UINT keyFlags)
+{
+	if (GetCapture() == *this)
+	{
+		// TODO: http://stackoverflow.com/questions/10985487/android-opengl-es-2-0-screen-coordinates-to-world-coordinates
+	}
+}
+
+void CRendererCtrl::OnLButtonUp(int x, int y, UINT state)
+{
+	if (GetCapture() == *this)
+		ReleaseCapture();
+}
+
 void CRendererCtrl::OnSize(UINT state, int cx, int cy)
 {
 	MSG_FORWARD_WM_SIZE(CIdleOpenGLWnd, state, cx, cy);
@@ -105,7 +129,7 @@ void CRendererCtrl::OnSize(UINT state, int cx, int cy)
 	int dpix = GetDeviceCaps(hdc, LOGPIXELSX);
 	int dpiy = GetDeviceCaps(hdc, LOGPIXELSY);
 
-	m_projection.SizeChanged(cx / dpix, cy / dpiy);
+	m_pProjection->SizeChanged(cx / dpix, cy / dpiy);
 }
 
 void CRendererCtrl::OnDestroy()
@@ -128,7 +152,12 @@ void CRendererCtrl::OnIdle()
 
 	glShadeModel(GL_FLAT);
 
-	m_projection.Apply();
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	m_pProjection->Apply();
 	m_pCamera->Apply();
 
 	// light
@@ -142,6 +171,25 @@ void CRendererCtrl::OnIdle()
 	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
 
 	glMatrixMode(GL_MODELVIEW);
+
+	// º¸Á¶¼±
+	//glBegin(GL_LINES);
+	//{
+	//	static float vertices[][3] = {
+	//		{ -10000, 0, 0 }, { 10000, 0, 0 },
+	//		{ 0, -10000, 0 }, { 0, 10000, 0 },
+	//		{ 0, 0, -10000 }, { 0, 0, 10000 },
+	//	};
+	//	static float color[4] = { 1, 1, 1, 0.3f };
+	//	for (float(&v)[3] : vertices)
+	//	{
+	//		//glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, line_color);
+	//		//glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, line_color);
+	//		//glColor4fv(line_color);
+	//		glVertex3fv(v);
+	//	}
+	//}
+	glEnd();
 
 	m_pSphereManager->UpdateIfExpired();
 	m_pSphereManager->Render();
