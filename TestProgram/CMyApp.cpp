@@ -31,10 +31,10 @@ IKHWINLIB2_APP_CLS(CMyApp)
 
 int CMyApp::Main(int argc, TCHAR *argv[])
 {
-	CMyWindow *pWnd = new CMyWindow;
+	CMyWindow wnd;
 
-	pWnd->Create();
-	ShowWindow(*pWnd, SW_NORMAL);
+	wnd.Create();
+	ShowWindow(wnd, SW_NORMAL);
 
 	return (int)Run();
 }

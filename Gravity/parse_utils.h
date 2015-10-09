@@ -35,8 +35,40 @@ namespace parse_utils
 	template <typename F>
 	std::array<float, 4> parse_rgba(const std::wstring &str, F error_handler);
 
+	template <typename F>
+	bool parse_bool(const std::wstring &str, F error_handler);
+
 	template <typename T, typename F>
 	void parse_tuple(const std::wstring &str, T *buf, size_t count, F error_handler);
+
+	inline std::wstring tostr_vec3(const std::array<double, 3> &vec3)
+	{
+		return L'('
+			+ std::to_wstring(vec3[0])
+			+ L',' + std::to_wstring(vec3[1])
+			+ L',' + std::to_wstring(vec3[2])
+			+ L')';
+	}
+
+	inline std::wstring tostr_real(double real)
+	{
+		return std::to_wstring(real);
+	}
+
+	inline std::wstring tostr_rgba(const std::array<float, 4> rgba)
+	{
+		return L'('
+			+ std::to_wstring(rgba[0])
+			+ L',' + std::to_wstring(rgba[1])
+			+ L',' + std::to_wstring(rgba[2])
+			+ L',' + std::to_wstring(rgba[3])
+			+ L')';
+	}
+
+	inline std::wstring tostr_bool(bool b)
+	{
+		return b ? L"true" : L"false";
+	}
 }
 
 #include "parse_utils_detail.h"

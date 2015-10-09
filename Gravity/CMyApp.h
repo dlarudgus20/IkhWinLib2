@@ -25,7 +25,6 @@
 #pragma once
 
 #include <IkhWinLib2/CApplication.h>
-using namespace IkhProgram::IkhWinLib2;
 
 #include "CMainWindow.h"
 
@@ -41,3 +40,8 @@ public:
 private:
 	virtual int Main(int argc, TCHAR *argv[]) override;
 };
+
+inline CMyApp *GetMyApp() NOEXCEPT
+{
+	return static_cast<CMyApp *>(IWLGetApp());
+}

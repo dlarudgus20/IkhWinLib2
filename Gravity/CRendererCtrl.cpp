@@ -25,6 +25,7 @@
 #include "stdafx.h"
 #include "CRendererCtrl.h"
 #include "CMyApp.h"
+#include "resource.h"
 
 #include <IkhWinLib2/CWndClass.h>
 
@@ -33,11 +34,19 @@
 
 BEGIN_MSGMAP(CRendererCtrl, CIdleOpenGLWnd)
 	MSGMAP_WM_CREATE(OnCreate)
+	MSGMAP_WM_CONTEXTMENU(OnContextMenu)
 	MSGMAP_WM_LBUTTONDOWN(OnLButtonDown)
-	MSGMAP_WM_LBUTTONDBLCLK(OnLButtonDown)
-	MSGMAP_WM_RBUTTONDOWN(OnRButtonDown)
+	MSGMAP_WM_MOUSEMOVE(OnMouseMove)
+	MSGMAP_WM_LBUTTONUP(OnLButtonUp)
+	MSGMAP_WM_SIZE(OnSize)
 	MSGMAP_WM_DESTROY(OnDestroy)
 END_MSGMAP(CRendererCtrl, CIdleOpenGLWnd)
+
+CRendererCtrl::CRendererCtrl(SphereManager *psm, Camera *pc, Projection *proj)
+	: m_pSphereManager(psm), m_pCamera(pc), m_pProjection(proj)
+	, m_ContextMenu(MAKEINTRESOURCE(IDM_CONTEXT_MENU))
+{
+}
 
 void CRendererCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle,
 	int x, int y, int nWidth, int nHeight, int id, HWND hWndParent)
@@ -72,35 +81,55 @@ BOOL CRendererCtrl::OnCreate(LPCREATESTRUCT lpcs)
 
 	m_InfoTextCtrl.Create(WS_CHILD /*| WS_VISIBLE*/ | WS_BORDER, 0, 0, 100, 100, 1, *this);
 
-	// Test Sphere
-	m_pSphereManager->AddSphere({ { -150, 0, 0 }, 100, 600000, { 1, 0, 0, 1 }, { 0, -22.31897804112007, 0 } });
-	m_pSphereManager->AddSphere({ { 150, 0, 0 }, 100, 600000, { 1, 0, 0, 1 }, { 0, 22.31897804112007, 0 } });
-	//m_pSphereManager->AddSphere({ { 0, 0, 0 }, 125, 1200000, { 1, 0, 0, 1 } });
-	m_pSphereManager->AddSphere({ { 1000, 0, 0 }, 75, 30, { 0, 1, 0, 0.8 }, { 0, 24.449215467167857, 0 } });
-	m_pSphereManager->AddSphere({ { 2000, 0, 0 }, 75, 20, { 0.3, 0.3, 1, 0.8 }, { 0, 12.28820605152542, 0 } });
-	m_pSphereManager->AddSphere({ { 3200, 0, 0 }, 75, 8, { 1, 1, 1, 0.8 }, { 0, 12, 0 } });
-
-	//m_pSphereManager->AddSphere({ { -75, 0, 0 }, 75, 30, { 1, 0, 0, 0.8 } });
-	//m_pSphereManager->AddSphere({ { 150, 0, 0 }, 150, 600000, { 1, 0, 0, 0.8 }, { -50, 0, 0 } });
-
 	return TRUE;
 }
 
-void CRendererCtrl::OnLButtonDown(BOOL fDoubleClick, int x, int y, UINT keyflags)
+void CRendererCtrl::OnContextMenu(HWND hContext, UINT xPos, UINT yPos)
 {
-	if (!fDoubleClick)
-	{
+	/*UINT id = TrackPopupMenu(
+		GetSubMenu(m_ContextMenu, 0),
+		TPM_LEFTALIGN | TPM_TOPALIGN | TPM_RETURNCMD, xPos, yPos, 0, *this, nullptr
+		);
 
-	}
-	else
+	switch (id)
 	{
+		case ID_NEW_SPHERE:
+			m_pSphereManager->PauseRunning();
+			m_pSphereManager->ResumeRunning();
+			break;
+	}*/
+}
 
+void CRendererCtrl::OnLButtonDown(BOOL fDoubleClick, int x, int y, UINT keyFlags)
+{
+	m_PrevLButton.x = x;
+	m_PrevLButton.y = y;
+	SetCapture(*this);
+}
+
+void CRendererCtrl::OnMouseMove(int x, int y, UINT keyFlags)
+{
+	if (GetCapture() == *this)
+	{
+		// TODO: http://stackoverflow.com/questions/10985487/android-opengl-es-2-0-screen-coordinates-to-world-coordinates
 	}
 }
 
-void CRendererCtrl::OnRButtonDown(BOOL fDoubleClick, int x, int y, UINT keyflags)
+void CRendererCtrl::OnLButtonUp(int x, int y, UINT state)
 {
+	if (GetCapture() == *this)
+		ReleaseCapture();
+}
 
+void CRendererCtrl::OnSize(UINT state, int cx, int cy)
+{
+	MSG_FORWARD_WM_SIZE(CIdleOpenGLWnd, state, cx, cy);
+
+	HDC hdc = GetDC(*this);
+	int dpix = GetDeviceCaps(hdc, LOGPIXELSX);
+	int dpiy = GetDeviceCaps(hdc, LOGPIXELSY);
+
+	m_pProjection->SizeChanged(cx / dpix, cy / dpiy);
 }
 
 void CRendererCtrl::OnDestroy()
@@ -112,27 +141,55 @@ void CRendererCtrl::OnDestroy()
 
 void CRendererCtrl::OnIdle()
 {
-	static float rotate = 0.0f;
-
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-	glCullFace(GL_CW);
+	glCullFace(GL_CCW);
 	glEnable(GL_BLEND);
 	glEnable(GL_POLYGON_SMOOTH);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0, 0, 0, 1);
 
-	glShadeModel(GL_SMOOTH);
+	glShadeModel(GL_FLAT);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+	m_pProjection->Apply();
 	m_pCamera->Apply();
+
+	// light
+	static GLfloat light_position[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	static GLfloat light_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+	static GLfloat light_diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	static GLfloat light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+
+	glMatrixMode(GL_MODELVIEW);
+
+	// º¸Á¶¼±
+	//glBegin(GL_LINES);
+	//{
+	//	static float vertices[][3] = {
+	//		{ -10000, 0, 0 }, { 10000, 0, 0 },
+	//		{ 0, -10000, 0 }, { 0, 10000, 0 },
+	//		{ 0, 0, -10000 }, { 0, 0, 10000 },
+	//	};
+	//	static float color[4] = { 1, 1, 1, 0.3f };
+	//	for (float(&v)[3] : vertices)
+	//	{
+	//		//glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, line_color);
+	//		//glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, line_color);
+	//		//glColor4fv(line_color);
+	//		glVertex3fv(v);
+	//	}
+	//}
+	glEnd();
 
 	m_pSphereManager->UpdateIfExpired();
 	m_pSphereManager->Render();

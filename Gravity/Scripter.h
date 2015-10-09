@@ -39,6 +39,11 @@ public:
 	virtual void WriteLine(const std::wstring &str) = 0;
 	virtual void WriteMultiLine(const std::wstring &str) = 0;
 
+	virtual void UpdateTitle() = 0;
+	virtual void ForceScroll(bool bScroll) = 0;
+
+	virtual void UseOrtho(bool bOrtho) = 0;
+
 	virtual SphereManager *GetSphereManager() = 0;
 };
 
@@ -49,24 +54,35 @@ private:
 	typedef boost::tokenizer<separator, std::wstring::const_iterator, std::wstring> tokenizer;
 	separator m_separator;
 
-	typedef std::function<void(const std::vector<std::wstring> &)> cmd_handler_t;
+	typedef std::function<void(const std::wstring &, const std::vector<std::wstring> &)> cmd_handler_t;
 	typedef std::unordered_map<std::wstring, std::pair<cmd_handler_t, std::wstring> > cmd_map_t;
 	cmd_map_t m_cmd_map;
 
-	typedef boost::char_separator<wchar_t> punct_separator;
-	typedef boost::tokenizer<punct_separator, std::wstring::const_iterator, std::wstring> punct_tokenizer;
-	punct_separator m_PunctSeparator;
-
 	IScriptHost *m_pHost;
+
+	struct ScripterStatus
+	{
+		bool bEcho;
+		std::wstring prompt;
+	};
+	ScripterStatus m_status;
 
 public:
 	explicit Scripter(IScriptHost *pHost);
 
-	void ExecuteLine(const std::wstring &line);
+	void ExecuteLine(const std::wstring &line, bool bThrow = false);
 
 private:
-	void CommandHelp(const std::vector<std::wstring> &vttok);
-	void CommandCreate(const std::vector<std::wstring> &vttok);
-	void CommandList(const std::vector<std::wstring> &vttok);
-	void CommandSumMomentum(const std::vector<std::wstring> &vttok);
+	void CommandHelp(const std::wstring &line, const std::vector<std::wstring> &vttok);
+	void CommandCreate(const std::wstring &line, const std::vector<std::wstring> &vttok);
+	void CommandList(const std::wstring &line, const std::vector<std::wstring> &vttok);
+	void CommandSumMomentum(const std::wstring &line, const std::vector<std::wstring> &vttok);
+	void CommandPause(const std::wstring &line, const std::vector<std::wstring> &vttok);
+	void CommandResume(const std::wstring &line, const std::vector<std::wstring> &vttok);
+	void CommandSave(const std::wstring &line, const std::vector<std::wstring> &vttok);
+	void CommandLoad(const std::wstring &line, const std::vector<std::wstring> &vttok);
+	void CommandSetEcho(const std::wstring &line, const std::vector<std::wstring> &vttok);
+	void CommandEcho(const std::wstring &line, const std::vector<std::wstring> &vttok);
+	void CommandForcescroll(const std::wstring &line, const std::vector<std::wstring> &vttok);
+	void CommandUseOrtho(const std::wstring &line, const std::vector<std::wstring> &vttok);
 };

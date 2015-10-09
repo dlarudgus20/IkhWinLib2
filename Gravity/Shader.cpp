@@ -29,15 +29,16 @@
 Shader::Shader()
 {
 	m_vertex = glCreateShader(GL_VERTEX_SHADER);
-	m_fragment = glCreateShader(GL_FRAGMENT_SHADER);
-
 	auto vs = ReadFromResource(IDR_VERT_SHADER);
-	auto fs = ReadFromResource(IDR_FRAG_SHADER);
 	glShaderSource(m_vertex, 1, &vs.first, &vs.second);
-	glShaderSource(m_fragment, 1, &fs.first, &fs.second);
-
 	glCompileShader(m_vertex);
+	ShaderCompileErrorCheck(m_vertex, "GL_VERTEX_SHADER");
+
+	m_fragment = glCreateShader(GL_FRAGMENT_SHADER);
+	auto fs = ReadFromResource(IDR_FRAG_SHADER);
+	glShaderSource(m_fragment, 1, &fs.first, &fs.second);
 	glCompileShader(m_fragment);
+	ShaderCompileErrorCheck(m_fragment, "GL_FRAGMENT_SHADER");
 
 	m_program = glCreateProgram();
 
@@ -45,6 +46,8 @@ Shader::Shader()
 	glAttachShader(m_program, m_fragment);
 
 	glLinkProgram(m_program);
+	ProgramErrorCheck(m_program);
+
 	glUseProgram(m_program);
 }
 
@@ -67,4 +70,76 @@ std::pair<const char *, GLint> Shader::ReadFromResource(UINT id)
 	HGLOBAL hMem = LoadResource(hInst, hRSrc);
 	const char *ptr = reinterpret_cast<const char *>(LockResource(hMem));
 	return { ptr, size };
+}
+
+void Shader::ShaderCompileErrorCheck(GLuint shader, const std::string &name)
+{
+	GLint bCompiled;
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &bCompiled);
+
+	GLint len;
+	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
+
+	std::string str;
+
+	if (len > 1) // '\0' character
+	{
+		str.resize(len);
+		GLsizei cWritten;
+		glGetShaderInfoLog(shader, len, &cWritten, &str[0]);
+	}
+	if (bCompiled == GL_FALSE)
+	{
+		OutputDebugStringA(name + ": error\n");
+		if (len > 1)
+		{
+			OutputDebugStringA("========\n");
+			OutputDebugStringA(str);
+			OutputDebugStringA("========\n");
+		}
+		throw std::runtime_error("shader compilation is failed in '" + name + "'");
+	}
+	else if (len > 1)
+	{
+		OutputDebugStringA(name + ": info\n");
+		OutputDebugStringA("========\n");
+		OutputDebugStringA(str);
+		OutputDebugStringA("========\n");
+	}
+}
+
+void Shader::ProgramErrorCheck(GLuint prog)
+{
+	GLint bLinked;
+	glGetProgramiv(prog, GL_LINK_STATUS, &bLinked);
+
+	GLint len;
+	glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &len);
+
+	std::string str;
+
+	if (len > 1) // '\0' character
+	{
+		str.resize(len);
+		GLsizei cWritten;
+		glGetProgramInfoLog(prog, len, &cWritten, &str[0]);
+	}
+	if (bLinked == GL_FALSE)
+	{
+		OutputDebugStringA("shader program linking error\n");
+		if (len > 1)
+		{
+			OutputDebugStringA("========\n");
+			OutputDebugStringA(str);
+			OutputDebugStringA("========\n");
+		}
+		throw std::runtime_error("shader program linking is failed");
+	}
+	else if (len > 1)
+	{
+		OutputDebugStringA("shader program info\n");
+		OutputDebugStringA("========\n");
+		OutputDebugStringA(str);
+		OutputDebugStringA("========\n");
+	}
 }

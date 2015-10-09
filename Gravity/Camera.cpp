@@ -25,20 +25,13 @@
 #include "stdafx.h"
 #include "Camera.h"
 
-const double Camera::m_OriOrthoRect[4] = { -4000, 4000, -4000, 4000 };
-const double Camera::m_OriOrthoNear = 0;
-const double Camera::m_OriOrthoFar = 100000;
-
+//const double Camera::m_OriEye[3] = { 1154.70053837925153, 1154.70053837925153, 1154.70053837925153 };
 const double Camera::m_OriEye[3] = { 0, 0, 2000 };
 const double Camera::m_OriCenter[3] = { 0, 0, 0 };
 const double Camera::m_OriUp[3] = { 0, 1, 0 };
 
 Camera::Camera()
 {
-	memcpy(m_OrthoRect, m_OriOrthoRect, sizeof(m_OrthoRect));
-	m_OrthoNear = m_OriOrthoNear;
-	m_OrthoFar = m_OriOrthoFar;
-
 	memcpy(m_eye, m_OriEye, sizeof(m_eye));
 	memcpy(m_center, m_OriCenter, sizeof(m_center));
 	memcpy(m_up, m_OriUp, sizeof(m_up));
@@ -52,13 +45,7 @@ void Camera::Rotate(double angle)
 
 void Camera::Apply() const
 {
-	//glMatrixMode(GL_PROJECTION);
-	//glLoadIdentity();
-	glOrtho(m_OrthoRect[0], m_OrthoRect[1], m_OrthoRect[2], m_OrthoRect[3],
-		m_OrthoNear, m_OrthoFar);
-
-	//glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
 	gluLookAt(m_eye[0], m_eye[1], m_eye[2],
 		m_center[0], m_center[1], m_center[2],
 		m_up[0], m_up[1], m_up[2]);

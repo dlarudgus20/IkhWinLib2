@@ -22,37 +22,60 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#version 110
+#include "stdafx.h"
+#include "Projection.h"
 
-varying vec3 v_pos3;
-varying vec3 v_nor;
+const double Projection::m_OriOrthoRect[4] = { -4000, 4000, -4000, 4000 };
+const double Projection::m_OriOrthoNear = -100000;
+const double Projection::m_OriOrthoFar = 100000;
 
-void main()
+const double Projection::m_OriPersFovy = 43;
+const double Projection::m_OriPersNear = 1;
+const double Projection::m_OriPersFar = 300001;
+
+Projection::Projection()
+	: m_bOrtho(false)
 {
-	// re-normalize
-	vec3 nor = normalize(v_nor);
+	memcpy(m_OrthoRect, m_OriOrthoRect, sizeof(m_OrthoRect));
+	m_OrthoNear = m_OriOrthoNear;
+	m_OrthoFar = m_OriOrthoFar;
 
-	vec3 lightdir_no_normal = vec3(gl_LightSource[0].position) - v_pos3;
-	float lightdist = length(lightdir_no_normal);
-	vec3 lightdir = lightdir_no_normal / lightdist;
+	m_PersFovy = m_OriPersFovy;
+	m_PersAspect = 1.0f;
+	m_PersNear = m_OriPersNear;
+	m_PersFar = m_OriPersFar;
+}
 
-	float lightdist_touched = lightdist / 178.0;
-	float attenuation = 1.0 / (1.0 + 0.045 * lightdist_touched * lightdist_touched);
+void Projection::SizeChanged(int cx, int cy)
+{
+	m_cx = cx;
+	m_cy = cy;
+}
 
-	// ambient
-	vec4 amb = gl_FrontLightProduct[0].ambient;
+void Projection::UseOrtho(bool bOrtho /* = true */)
+{
+	m_bOrtho = bOrtho;
+}
 
-	// diffuse
-	float dif_cos = max(dot(lightdir, nor), 0.0);
-	vec4 dif = gl_FrontLightProduct[0].diffuse * dif_cos;
+void Projection::Apply() const
+{
+	static const double inch = 10.0;
 
-	// specular
-	vec3 refl = normalize(reflect(-lightdir, nor));
-	float spc_cos = max(dot(refl, -v_pos3) / length(v_pos3), 0.0);
-	float spc_intensity = pow(spc_cos, 0.04 * gl_FrontMaterial.shininess);
-	vec4 spc = gl_FrontLightProduct[0].specular * spc_intensity;
+	glMatrixMode(GL_PROJECTION);
 
-	vec4 color = amb + (dif + spc) * attenuation;
-	// gamma correction
-	gl_FragColor = vec4(pow(vec3(color), vec3(1.0/2.2)), color.a);
+	if (m_cx != 0 && m_cy != 0)
+		glScaled(inch / m_cx, inch / m_cy, 1);
+
+	if (m_bOrtho)
+	{
+		glOrtho(m_OrthoRect[0], m_OrthoRect[1], m_OrthoRect[2], m_OrthoRect[3],
+			m_OrthoNear, m_OrthoFar);
+	}
+	else
+	{
+		gluPerspective(m_PersFovy, m_PersAspect, m_PersNear, m_PersFar);
+
+		glMatrixMode(GL_MODELVIEW);
+		glTranslated(0, 0, -10001);
+	}
 }

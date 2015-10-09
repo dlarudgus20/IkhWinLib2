@@ -26,7 +26,6 @@
 
 #include <IkhWinLib2/CWindow.h>
 #include <IkhWinLib2/IControl.h>
-using namespace IkhProgram::IkhWinLib2;
 
 class CTextBoxCtrl : public CWindow, public virtual IControl
 {

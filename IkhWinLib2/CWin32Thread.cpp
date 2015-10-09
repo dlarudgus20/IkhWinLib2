@@ -82,7 +82,9 @@ CWin32Thread CWin32Thread::FromFunctionImpl(const std::function<void()> &f)
 
 PollReturn CWin32Thread::Poll(MSG &msg, bool bCallOnIdle /* = true*/) NOEXCEPT
 {
+#ifdef IKHWINLIB2_ENABLE_CATCH_DURING_POLL
 	try
+#endif
 	{
 		assert(this != nullptr);
 	
@@ -126,11 +128,13 @@ PollReturn CWin32Thread::Poll(MSG &msg, bool bCallOnIdle /* = true*/) NOEXCEPT
 			return PollReturn::NoMessage;
 		}
 	}
+#ifdef IKHWINLIB2_ENABLE_CATCH_DURING_POLL
 	catch (...)
 	{
 		OnUnexpectedException(std::current_exception());
 		while (1) { }	// cannot reach here
 	}
+#endif
 }
 void CWin32Thread::OnUnexpectedException(const std::exception_ptr &eptr) NOEXCEPT
 {

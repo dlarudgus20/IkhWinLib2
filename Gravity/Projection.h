@@ -22,37 +22,26 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#version 110
+#pragma once
 
-varying vec3 v_pos3;
-varying vec3 v_nor;
-
-void main()
+class Projection final
 {
-	// re-normalize
-	vec3 nor = normalize(v_nor);
+private:
+	static const double m_OriOrthoRect[4], m_OriOrthoNear, m_OriOrthoFar;
+	double m_OrthoRect[4], m_OrthoNear, m_OrthoFar;
 
-	vec3 lightdir_no_normal = vec3(gl_LightSource[0].position) - v_pos3;
-	float lightdist = length(lightdir_no_normal);
-	vec3 lightdir = lightdir_no_normal / lightdist;
+	static const double m_OriPersFovy, m_OriPersAspect, m_OriPersNear, m_OriPersFar;
+	double m_PersFovy, m_PersAspect, m_PersNear, m_PersFar;
 
-	float lightdist_touched = lightdist / 178.0;
-	float attenuation = 1.0 / (1.0 + 0.045 * lightdist_touched * lightdist_touched);
+	int m_cx, m_cy;
 
-	// ambient
-	vec4 amb = gl_FrontLightProduct[0].ambient;
+	bool m_bOrtho;
 
-	// diffuse
-	float dif_cos = max(dot(lightdir, nor), 0.0);
-	vec4 dif = gl_FrontLightProduct[0].diffuse * dif_cos;
+public:
+	Projection();
 
-	// specular
-	vec3 refl = normalize(reflect(-lightdir, nor));
-	float spc_cos = max(dot(refl, -v_pos3) / length(v_pos3), 0.0);
-	float spc_intensity = pow(spc_cos, 0.04 * gl_FrontMaterial.shininess);
-	vec4 spc = gl_FrontLightProduct[0].specular * spc_intensity;
+	void SizeChanged(int cx, int cy);
+	void UseOrtho(bool bOrtho = true);
 
-	vec4 color = amb + (dif + spc) * attenuation;
-	// gamma correction
-	gl_FragColor = vec4(pow(vec3(color), vec3(1.0/2.2)), color.a);
-}
+	void Apply() const;
+};

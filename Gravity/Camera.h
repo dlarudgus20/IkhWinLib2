@@ -27,9 +27,6 @@
 class Camera final
 {
 private:
-	static const double m_OriOrthoRect[4], m_OriOrthoNear, m_OriOrthoFar;
-	double m_OrthoRect[4], m_OrthoNear, m_OrthoFar;
-
 	static const double m_OriEye[3], m_OriCenter[3], m_OriUp[3];
 	double m_eye[3], m_center[3], m_up[3];
 	double m_angle;

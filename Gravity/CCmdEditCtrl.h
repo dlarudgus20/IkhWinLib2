@@ -26,7 +26,6 @@
 
 #include <IkhWinLib2/CEditCtrl.h>
 #include <IkhWinLib2/FnEvent.h>
-using namespace IkhProgram::IkhWinLib2;
 
 class CCmdEditCtrl : public CEditCtrl
 {

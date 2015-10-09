@@ -181,9 +181,12 @@
     <ClCompile Include="CCmdEditCtrl.cpp" />
     <ClCompile Include="CMainWindow.cpp" />
     <ClCompile Include="CMyApp.cpp" />
+    <ClCompile Include="CNewSphereDialog.cpp" />
     <ClCompile Include="CRendererCtrl.cpp" />
     <ClCompile Include="CTextBoxCtrl.cpp" />
+    <ClCompile Include="file_util.cpp" />
     <ClCompile Include="parse_utils.cpp" />
+    <ClCompile Include="Projection.cpp" />
     <ClCompile Include="Scripter.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SphereManager.cpp" />
@@ -193,10 +196,13 @@
     <ClInclude Include="CCmdEditCtrl.h" />
     <ClInclude Include="CMainWindow.h" />
     <ClInclude Include="CMyApp.h" />
+    <ClInclude Include="CNewSphereDialog.h" />
     <ClInclude Include="CRendererCtrl.h" />
     <ClInclude Include="CTextBoxCtrl.h" />
+    <ClInclude Include="file_util.h" />
     <ClInclude Include="parse_utils.h" />
     <ClInclude Include="parse_utils_detail.h" />
+    <ClInclude Include="Projection.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scripter.h" />
     <ClInclude Include="Shader.h" />
@@ -212,7 +218,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </Text>
-    <Text Include="vertex.vs">
+    <Text Include="vertex.vert">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
@@ -225,11 +231,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\docs.md" />
+    <None Include="main.grvs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="docs\Impulse(translation).png" />
     <Image Include="docs\Impulse(translation-2).png" />
     <Image Include="docs\NormalForce.png" />
+    <Image Include="icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
