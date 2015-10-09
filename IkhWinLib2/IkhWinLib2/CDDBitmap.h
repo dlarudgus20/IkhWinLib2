@@ -25,14 +25,13 @@
 #pragma once
 
 #include "CObject.h"
-#include "NonCopyable.h"
 
 BEGIN_IKHWINLIB2()
 
-class CDDBitmap : public CObject, private NonCopyable
+class CDDBitmap : public CObject, private boost::noncopyable
 {
 private:
-	class CMemDC : private NonCopyable
+	class CMemDC : private boost::noncopyable
 	{
 	private:
 		HDC m_hMemDC;

@@ -55,7 +55,7 @@ void CRendererCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle,
 		dwExStyle,
 		CWndClass(nullptr, COpenGLWnd::CS_STYLE | CS_DBLCLKS, nullptr),
 		nullptr, dwStyle | COpenGLWnd::WS_STYLE,
-		x, y, nWidth, nHeight, hWndParent, (HMENU)id
+		x, y, nWidth, nHeight, hWndParent, id
 		);
 }
 

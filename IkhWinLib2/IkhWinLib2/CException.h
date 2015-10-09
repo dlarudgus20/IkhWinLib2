@@ -53,6 +53,6 @@ inline CException::CException(const std::wstring &str)
 inline CException::CException(std::wstring &&str)
 	: m_str(std::forward<std::wstring>(str)) { }
 
-inline const std::wstring &CException::Message() const { return m_str; }
+inline const std::wstring &CException::Message() const NOEXCEPT { return m_str; }
 
 END_IKHWINLIB2()

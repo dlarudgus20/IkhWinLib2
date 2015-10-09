@@ -31,7 +31,7 @@ void CProgressCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle,
 	int x, int y, int nWidth, int nHeight, int id, HWND hWndParent)
 {
 	CWindow::CreateEx(dwExStyle, PROGRESS_CLASS, NULL, dwStyle,
-		x, y, nWidth, nHeight, hWndParent, (HMENU)id);
+		x, y, nWidth, nHeight, hWndParent, id);
 }
 
 END_IKHWINLIB2()

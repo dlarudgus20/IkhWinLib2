@@ -40,7 +40,7 @@ void CTextBoxCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle,
 		dwExStyle,
 		CWndClass(nullptr, CS_HREDRAW | CS_VREDRAW, nullptr),
 		nullptr, dwStyle,
-		x, y, nWidth, nHeight, hWndParent, (HMENU)id
+		x, y, nWidth, nHeight, hWndParent, id
 		);
 }
 

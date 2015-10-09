@@ -86,6 +86,11 @@ using namespace std::placeholders;
 #define BOOST_BIND_NO_PLACEHOLDERS
 #endif
 
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning(disable:4819) // alt_sstream_impl.hpp
+#endif
+
 #define BOOST_THREAD_VERSION 4
 #define BOOST_RESULT_OF_USE_DECLTYPE
 #include <boost/thread/future.hpp>
@@ -94,12 +99,17 @@ using namespace std::placeholders;
 #include <boost/format.hpp>
 #include <boost/scope_exit.hpp>
 #include <boost/bind.hpp>
+#include <boost/noncopyable.hpp>
 
 #ifdef _MSC_VER
-# define NOEXCEPT throw()
-#else
-# define NOEXCEPT noexcept
+# pragma warning(pop)
 #endif
+
+//#ifdef _MSC_VER
+//# define NOEXCEPT throw()
+//#else
+# define NOEXCEPT noexcept
+//#endif
 
 // IkhWinLib2 Namespace Macro
 #define BEGIN_IKHWINLIB2() \

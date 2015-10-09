@@ -88,6 +88,15 @@ public:
 		int nWidth = CW_USEDEFAULT, int nHeight = CW_USEDEFAULT,
 		HWND hWndParent = NULL, HMENU hMenu = NULL);
 	/**
+	* @brief 창을 생성합니다. 인수의 의미는 <c>CreateWindowEx</c> API 함수와 같습니다.
+	* @example CWindow_CreateEx.cpp
+	*/
+	void CreateEx(DWORD dwExStyle,
+		LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle,
+		int x, int y,
+		int nWidth, int nHeight,
+		HWND hWndParent, int id);
+	/**
 	 * @brief 창을 생성합니다. 인수의 의미는 <c>CreateWindow</c> API 함수와 같습니다.
 	 * @example CWindow_Create.cpp
 	 */
@@ -95,6 +104,14 @@ public:
 		int x = CW_USEDEFAULT, int y = CW_USEDEFAULT,
 		int nWidth = CW_USEDEFAULT, int nHeight = CW_USEDEFAULT,
 		HWND hWndParent = NULL, HMENU hMenu = NULL);
+	/**
+	* @brief 창을 생성합니다. 인수의 의미는 <c>CreateWindowEx</c> API 함수와 같습니다.
+	* @example CWindow_CreateEx.cpp
+	*/
+	void Create(LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle,
+		int x, int y,
+		int nWidth, int nHeight,
+		HWND hWndParent, int id);
 
 	/**
 	 * @brief 이 창을 전체 화면으로 만들거나 전체 화면을 해제합니다.
@@ -161,11 +178,25 @@ public:
 inline CWindow::CWindow() : m_hWnd(NULL), m_OldProc(NULL) { }
 inline CWindow::CWindow(HWND hWnd) : m_hWnd(NULL), m_OldProc(NULL) { Attach(hWnd); }
 
+inline void CWindow::CreateEx(DWORD dwExStyle,
+	LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle,
+	int x, int y, int nWidth, int nHeight, HWND hWndParent, int id)
+{
+	assert(this != nullptr);
+	assert(id >= 0);
+	CreateEx(dwExStyle, lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, (HMENU)(uintptr_t)id);
+}
 inline void CWindow::Create(LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle,
 	int x, int y, int nWidth, int nHeight, HWND hWndParent, HMENU hMenu)
 {
 	assert(this != nullptr);
 	CreateEx(0, lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, hMenu);
+}
+inline void CWindow::Create(LPCTSTR lpClassName, LPCTSTR lpWindowName, DWORD dwStyle,
+	int x, int y, int nWidth, int nHeight, HWND hWndParent, int id)
+{
+	assert(this != nullptr);
+	CreateEx(0, lpClassName, lpWindowName, dwStyle, x, y, nWidth, nHeight, hWndParent, id);
 }
 
 inline HWND CWindow::GetHWND() const NOEXCEPT

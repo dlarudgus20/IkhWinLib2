@@ -35,7 +35,7 @@ void CPropViewCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle,
 	int x, int y, int nWidth, int nHeight, int id, HWND hWndParent)
 {
 	CWindow::CreateEx(dwExStyle, s_WndClass, NULL, dwStyle,
-		x, y, nWidth, nHeight, hWndParent, (HMENU)id);
+		x, y, nWidth, nHeight, hWndParent, id);
 }
 
 END_IKHWINLIB2()

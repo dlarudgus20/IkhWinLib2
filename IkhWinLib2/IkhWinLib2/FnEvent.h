@@ -29,7 +29,6 @@
 
 #pragma once
 
-#include "NonCopyable.h"
 #include "CLogicError.h"
 
 BEGIN_IKHWINLIB2()
@@ -48,7 +47,7 @@ template <typename F> class EventFnPtr;
  * @brief <c>FnEvent</c>의 실제 구현입니다.
  */
 template <typename Owner, typename ...Args>
-class FnEvent<Owner, void(Args...)> final : private NonCopyableMovable
+class FnEvent<Owner, void(Args...)> final : private boost::noncopyable
 {
 	friend Owner;
 public:
@@ -62,6 +61,49 @@ private:
 
 public:
 	FnEvent() : _m_pmu(std::make_shared<std::recursive_mutex>()) { }
+
+	// thread unsafe
+	FnEvent(FnEvent &&other)
+		: _m_lstFunc(std::move(other._m_lstFunc))
+		, _m_lstFuncPtr(std::move(other._m_lstFuncPtr))
+		, _m_pmu(std::move(other._m_pmu))
+	{
+	}
+	template <typename O>
+	FnEvent(FnEvent<O, void(Args...)> &&other)
+		: _m_lstFunc(std::move(other._m_lstFunc))
+		, _m_lstFuncPtr(std::move(other._m_lstFuncPtr))
+		, _m_pmu(std::move(other._m_pmu))
+	{
+	}
+	FnEvent &operator =(FnEvent &&other)
+	{
+		_m_lstFunc = std::move(other._m_lstFunc);
+		_m_lstFuncPtr = std::move(other._m_lstFuncPtr);
+		_m_pmu = std::move(other._m_pmu);
+		return *this;
+	}
+	template <typename O>
+	FnEvent &operator =(FnEvent<O, void(Args...)> &&other)
+	{
+		_m_lstFunc = std::move(other._m_lstFunc);
+		_m_lstFuncPtr = std::move(other._m_lstFuncPtr);
+		_m_pmu = std::move(other._m_pmu);
+		return *this;
+	}
+	void swap(FnEvent &other) NOEXCEPT
+	{
+		_m_lstFunc.swap(other._m_lstFunc);
+		_m_lstFuncPtr.swap(other._m_lstFuncPtr);
+		_m_pmu.swap(other._m_pmu);
+	}
+	template <typename O>
+	void swap(FnEvent<O, void(Args...)> &other) NOEXCEPT
+	{
+		_m_lstFunc.swap(other._m_lstFunc);
+		_m_lstFuncPtr.swap(other._m_lstFuncPtr);
+		_m_pmu.swap(other._m_pmu);
+	}
 
 	/**
 	 * @brief 이벤트에 핸들러를 추가합니다.

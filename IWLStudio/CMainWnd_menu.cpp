@@ -49,7 +49,7 @@ void CMainWnd::OnFileProjOpen(int id, HWND hCtl, UINT codeNotify)
 
 			m_pProject = std::move(sp);
 		}
-		catch (json_parser::json_parser_error &e)
+		catch (xml_parser::xml_parser_error &e)
 		{
 			MessageBox(*this, L"프로젝트 파일 파싱에 실패하였습니다.", L"에러", MB_OK | MB_ICONERROR);
 			OutputDebugStringA((std::string("error on opening projet file : ") + e.what() + "\n").c_str());
@@ -66,7 +66,7 @@ void CMainWnd::OnFileSave(int id, HWND hCtl, UINT codeNotify)
 			m_pProject->Save();
 		}
 	}
-	catch (json_parser::json_parser_error &e)
+	catch (xml_parser::xml_parser_error &e)
 	{
 		MessageBox(*this, L"프로젝트 파일 저장에 실패하였습니다.", L"에러", MB_OK | MB_ICONERROR);
 		OutputDebugStringA((std::string("error on saving projet file : ") + e.what() + "\n").c_str());

@@ -30,14 +30,13 @@
 #pragma once
 
 #include "CObject.h"
-#include "NonCopyable.h"
 
 BEGIN_IKHWINLIB2()
 
 /**
  * @brief 메시지 맵을 가지는 클래스의 부모 추상 클래스입니다.
  */
-class CMsgTarget : public CObject, private NonCopyableMovable
+class CMsgTarget : public CObject, private boost::noncopyable
 {
 	friend class CApplication;
 private:

@@ -25,12 +25,11 @@
 #pragma once
 
 #include "CObject.h"
-#include "NonCopyable.h"
 #include "CSystemError.h"
 
 BEGIN_IKHWINLIB2()
 
-class CImageList : public CObject, private NonCopyable
+class CImageList : public CObject, private boost::noncopyable
 {
 private:
 	HIMAGELIST m_hList;
