@@ -79,6 +79,10 @@ using std::swap;
 #include <stack>
 #include <queue>
 
+#ifdef _MSC_VER
+# pragma warning(push)
+# pragma warning(disable:4819) // alt_sstream_impl.hpp
+#endif
 
 #define BOOST_THREAD_VERSION 4
 #define BOOST_RESULT_OF_USE_DECLTYPE
@@ -89,3 +93,8 @@ using std::swap;
 #include <boost/format.hpp>
 #include <boost/scope_exit.hpp>
 #include <boost/bind.hpp>
+#include <boost/noncopyable.hpp>
+
+#ifdef _MSC_VER
+# pragma warning(pop)
+#endif

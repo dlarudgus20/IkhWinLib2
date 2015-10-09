@@ -87,9 +87,6 @@
     <ClInclude Include="IkhWinLib2\FnEvent.h">
       <Filter>IkhWinLib2</Filter>
     </ClInclude>
-    <ClInclude Include="IkhWinLib2\NonCopyable.h">
-      <Filter>IkhWinLib2</Filter>
-    </ClInclude>
     <ClInclude Include="IkhWinLib2\CLogicError.h">
       <Filter>IkhWinLib2\Exceptions</Filter>
     </ClInclude>

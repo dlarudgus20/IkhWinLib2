@@ -25,11 +25,10 @@
 #pragma once
 
 #include "CObject.h"
-#include "NonCopyable.h"
 
 BEGIN_IKHWINLIB2()
 
-class CDbBufDC : public CObject, private NonCopyable
+class CDbBufDC : public CObject, private boost::noncopyable
 {
 	friend class CDbBufBitmap;
 private:
@@ -55,7 +54,7 @@ public:
 	CDbBufBitmap &GetDbBufBitmap() const NOEXCEPT;
 };
 
-class CDbBufBitmap : public CObject, private NonCopyable
+class CDbBufBitmap : public CObject, private boost::noncopyable
 {
 	friend CDbBufDC;
 private:

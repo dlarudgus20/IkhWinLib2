@@ -29,7 +29,7 @@
 using namespace IkhProgram::IkhWinLib2;
 
 #include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 using namespace boost::property_tree;
 
 class CProject final : public CMsgTarget
@@ -44,8 +44,8 @@ private:
 public:
 	explicit CProject(CTreeViewCtrl &tvctl, const std::wstring &fname);
 
-	/** @exception json_parser::json_parser_error */
+	/** @exception xml_parser::xml_parser_error */
 	void Load(const std::wstring &fname = L"");
-	/** @exception json_parser::json_parser_error */
+	/** @exception xml_parser::xml_parser_error */
 	void Save(const std::wstring &fname = L"");
 };

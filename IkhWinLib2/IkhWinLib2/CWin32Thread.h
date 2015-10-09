@@ -25,7 +25,6 @@
 #pragma once
 
 #include "CObject.h"
-#include "NonCopyable.h"
 
 #include "FnEvent.h"
 #include "CSystemError.h"
@@ -46,7 +45,7 @@ enum class PollReturn
 /**
  * @brief Win32 스레드를 나타내는 클래스입니다.
  */
-class CWin32Thread : public CObject, private NonCopyable
+class CWin32Thread : public CObject, private boost::noncopyable
 {
 	friend class CApplication;
 	friend class CWin32AttachThread;
@@ -58,6 +57,10 @@ private:
 
 	explicit CWin32Thread() NOEXCEPT;
 public:
+	CWin32Thread(CWin32Thread &&other);
+	CWin32Thread &operator =(CWin32Thread &&other);
+	void swap(CWin32Thread &other) NOEXCEPT;
+
 	explicit CWin32Thread(unsigned(__stdcall *fn)(void *param), void *lpParam = nullptr);
 
 	template <typename F, typename ...Args>
@@ -203,6 +206,38 @@ inline CWin32Thread::CWin32Thread() NOEXCEPT
 {
 
 }
+
+inline CWin32Thread::CWin32Thread(CWin32Thread &&other)
+	: evtIdle { std::move(other.evtIdle) }
+	, evtGlobalMsg { std::move(other.evtGlobalMsg) }
+{
+	m_hThread = other.m_hThread;
+	other.m_hThread = nullptr;
+	m_id = other.m_id;
+	other.m_id = 0xffffffff;
+	m_hAccel = other.m_hAccel;
+	other.m_hAccel = nullptr;
+}
+inline CWin32Thread &CWin32Thread::operator =(CWin32Thread &&other)
+{
+	m_hThread = other.m_hThread;
+	other.m_hThread = nullptr;
+	m_id = other.m_id;
+	other.m_id = 0xffffffff;
+	m_hAccel = other.m_hAccel;
+	other.m_hAccel = nullptr;
+	evtIdle = std::move(other.evtIdle);
+	evtGlobalMsg = std::move(other.evtGlobalMsg);
+}
+inline void CWin32Thread::swap(CWin32Thread &other) NOEXCEPT
+{
+	std::swap(m_hThread, other.m_hThread);
+	std::swap(m_id, other.m_id);
+	std::swap(m_hAccel, other.m_hAccel);
+	evtIdle.swap(other.evtIdle);
+	evtGlobalMsg.swap(other.evtGlobalMsg);
+}
+
 inline CWin32Thread::CWin32Thread(unsigned (__stdcall *fn)(void *param), void *lpParam /* = nullptr*/)
 {
 	unsigned id;

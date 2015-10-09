@@ -81,7 +81,7 @@ private:
 	std::unique_ptr<CDbBufBitmap> m_pDbBit;
 
 	std::default_random_engine m_RandEng;
-	std::uniform_int_distribution<unsigned> m_RandDis;
+	std::uniform_int_distribution<LONG> m_RandDis;
 
 	BOOL IsAroundHead(const POINT &p);
 

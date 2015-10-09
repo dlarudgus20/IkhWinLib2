@@ -43,7 +43,7 @@ void CProject::Load(const std::wstring &fname)
 		m_fname = fname;
 	}
 
-	read_json(
+	read_xml(
 		boost::locale::conv::from_utf(m_fname, std::locale()),
 		m_pt
 		);
@@ -56,7 +56,7 @@ void CProject::Save(const std::wstring &fname)
 		m_fname = fname;
 	}
 
-	write_json(
+	write_xml(
 		boost::locale::conv::from_utf(m_fname, std::locale()),
 		m_pt
 		);

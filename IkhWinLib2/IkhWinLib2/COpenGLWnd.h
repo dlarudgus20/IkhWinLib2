@@ -25,7 +25,6 @@
 #pragma once
 
 #include "CWindow.h"
-#include "NonCopyable.h"
 
 BEGIN_IKHWINLIB2()
 
@@ -55,7 +54,7 @@ public:
 
 	HGLRC InitGL();
 	void DestroyGL(HGLRC hrc);
-	struct GLInitor : private IkhWinLib2::NonCopyableMovable
+	struct GLInitor : private boost::noncopyable
 	{
 		HGLRC m_hrc;
 		COpenGLWnd *m_pWnd;

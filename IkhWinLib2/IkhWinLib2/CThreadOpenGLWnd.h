@@ -25,7 +25,6 @@
 #pragma once
 
 #include "COpenGLWnd.h"
-#include "NonCopyable.h"
 
 BEGIN_IKHWINLIB2()
 
