@@ -45,6 +45,7 @@ BOOL CIdleOpenGLWnd::OnCreate(LPCREATESTRUCT lpcs)
 void CIdleOpenGLWnd::OnSize(UINT state, int cx, int cy)
 {
 	MSG_FORWARD_WM_SIZE(COpenGLWnd, state, cx, cy);
+
 	SizeChangeProc();
 }
 

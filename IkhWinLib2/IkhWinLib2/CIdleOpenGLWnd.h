@@ -34,10 +34,19 @@ class CIdleOpenGLWnd : public COpenGLWnd
 private:
 	HGLRC m_hrc;
 
+public:
+	CIdleOpenGLWnd(BYTE cDepthBits = 2, BYTE cStencilBits = 8);
+
 protected:
 	BOOL OnCreate(LPCREATESTRUCT lpcs);
 	void OnSize(UINT state, int cx, int cy);
 	void OnDestroy();
 };
+
+inline CIdleOpenGLWnd::CIdleOpenGLWnd(BYTE cDepthBits /* = 24 */, BYTE cStencilBits /* = 8 */)
+	: COpenGLWnd(cDepthBits, cStencilBits)
+{
+
+}
 
 END_IKHWINLIB2()
