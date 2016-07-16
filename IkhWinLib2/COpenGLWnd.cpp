@@ -33,8 +33,9 @@ BEGIN_MSGMAP(COpenGLWnd, CWindow)
 	MSGMAP_WM_DESTROY(OnDestroy)
 END_MSGMAP(COpenGLWnd, CWindow)
 
-COpenGLWnd::COpenGLWnd()
-	: m_fps(0), m_hdc(nullptr)
+COpenGLWnd::COpenGLWnd(BYTE cDepthBits /* = 24 */, BYTE cStencilBits /* = 8 */)
+	: m_cDepthBits(cDepthBits), m_cStencilBits(cStencilBits),
+	, m_fps(0), m_hdc(nullptr)
 	, m_count(0), m_gap(0), m_PrevTime(0), m_bCalced(false)
 {
 }
@@ -60,6 +61,9 @@ BOOL COpenGLWnd::OnCreate(LPCREATESTRUCT lpcs)
 	pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
 	pfd.iPixelType = PFD_TYPE_RGBA;
 	pfd.cColorBits = 32;
+	pfd.cDepthBits = m_cDepthBits;
+	pfd.cStencilBits = m_cStencilBits;
+	pfd.iLayerType = PFD_MAIN_PLANE;
 
 	nPixelFormat = ChoosePixelFormat(m_hdc, &pfd);
 	if (nPixelFormat != 0)

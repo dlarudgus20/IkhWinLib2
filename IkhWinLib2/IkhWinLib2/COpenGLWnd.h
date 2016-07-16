@@ -32,6 +32,9 @@ class COpenGLWnd : public CWindow
 {
 	DECLARE_MSGMAP();
 private:
+	const BYTE m_cDepthBits;
+	const BYTE m_cStencilBits;
+
 	unsigned m_fps;
 
 	DWORD m_PrevTime;
@@ -47,7 +50,7 @@ public:
 	static const DWORD CS_STYLE = CS_OWNDC;
 	static const DWORD WS_STYLE = WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 
-	COpenGLWnd();
+	COpenGLWnd(BYTE cDepthBits = 24, BYTE cStencilBits = 8);
 
 	HDC GetOwnDC();
 	void SwapBuf();

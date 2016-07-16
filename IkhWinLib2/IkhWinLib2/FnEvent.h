@@ -114,11 +114,11 @@ public:
 			std::is_convertible<std::remove_reference<F>::type, std::weak_ptr<FnObjType> >
 			>::type
 		>
-	FnEvent &operator +=(F fn)
+	FnEvent &operator +=(F&& fn)
 	{
 		SYN_LOCK_GUARD(*_m_pmu);
-		_m_lstFunc.push_back(
-			FnObjType(std::move(fn))
+		_m_lstFunc.emplace_back(
+			std::forward<F>(fn)
 			);
 		return *this;
 	}
