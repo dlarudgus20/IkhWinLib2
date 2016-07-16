@@ -34,7 +34,7 @@ BEGIN_MSGMAP(COpenGLWnd, CWindow)
 END_MSGMAP(COpenGLWnd, CWindow)
 
 COpenGLWnd::COpenGLWnd(BYTE cDepthBits /* = 24 */, BYTE cStencilBits /* = 8 */)
-	: m_cDepthBits(cDepthBits), m_cStencilBits(cStencilBits),
+	: m_cDepthBits(cDepthBits), m_cStencilBits(cStencilBits)
 	, m_fps(0), m_hdc(nullptr)
 	, m_count(0), m_gap(0), m_PrevTime(0), m_bCalced(false)
 {
