@@ -46,10 +46,10 @@ public:
 	static const DWORD CS_STYLE = CS_OWNDC;
 	static const DWORD WS_STYLE = WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 
-	CThreadOpenGLWnd();
+	CThreadOpenGLWnd(BYTE cDepthBits = 24, BYTE cStencilBits = 8);
 
 	template <typename F1, typename F2, typename F3>
-	void ThreadRun(F1 startup, F2 ondraw, F3 onupdate);
+	void ThreadRun(F1 &&startup, F2 &&ondraw, F3 &&onupdate);
 
 	void RaiseUpdate();
 	void RaiseStop();
@@ -66,7 +66,7 @@ protected:
 };
 
 template <typename F1, typename F2, typename F3>
-void CThreadOpenGLWnd::ThreadRun(F1 startup, F2 ondraw, F3 onupdate)
+void CThreadOpenGLWnd::ThreadRun(F1&& startup, F2&& ondraw, F3&& onupdate)
 {
 	assert(this != nullptr);
 	assert(m_hThread == nullptr);
@@ -75,9 +75,9 @@ void CThreadOpenGLWnd::ThreadRun(F1 startup, F2 ondraw, F3 onupdate)
 	assert(ondraw != nullptr);
 	assert(onupdate != nullptr);
 
-	m_startup = startup;
-	m_ondraw = ondraw;
-	m_onupdate = onupdate;
+	m_startup = std::forward<F1>(startup);
+	m_ondraw = std::forward<F2>(ondraw);
+	m_onupdate = std::forward<F3>(onupdate);
 
 	implThreadRun();
 }

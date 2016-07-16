@@ -34,8 +34,9 @@ BEGIN_MSGMAP(CThreadOpenGLWnd, CWindow)
 	MSGMAP_WM_DESTROY(OnDestroy)
 END_MSGMAP(CThreadOpenGLWnd, CWindow)
 
-CThreadOpenGLWnd::CThreadOpenGLWnd()
-	: m_hThread(nullptr)
+CThreadOpenGLWnd::CThreadOpenGLWnd(BYTE cDepthBits /* = 24 */, BYTE cStencilBits /* = 8 */)
+	: COpenGLWnd(cDepthBits, cStencilBits)
+	, m_hThread(nullptr)
 {
 }
 

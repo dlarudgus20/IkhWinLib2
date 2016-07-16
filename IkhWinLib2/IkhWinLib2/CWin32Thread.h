@@ -67,9 +67,9 @@ public:
 	explicit CWin32Thread(F&& f, Args&&... args);
 
 	template <typename F, typename ...Args>
-	static CWin32Thread FromFunction(F f, Args&&... args)
+	static CWin32Thread FromFunction(F&& f, Args&&... args)
 	{
-		return FromFunctionImpl(std::bind(f, std::forward<Args>(args)...));
+		return FromFunctionImpl(std::bind(std::forward<F>(f), std::forward<Args>(args)...));
 	}
 
 	virtual ~CWin32Thread() NOEXCEPT;
@@ -104,11 +104,11 @@ public:
 
 	template <typename F, typename ...Args>
 	boost::future<typename std::result_of<F(Args...)>::type>
-		Post(F f, Args&&... args)
+		Post(F&& f, Args&&... args)
 	{
 		typedef typename std::result_of<F(Args...)>::type result_type;
 		return PostImpl<result_type>(
-			std::function<result_type()>(std::bind(f, std::forward<Args>(args)...))
+			std::function<result_type()>(std::bind(std::forward<F>(f), std::forward<Args>(args)...))
 			);
 	}
 
